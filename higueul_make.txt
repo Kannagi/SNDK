@@ -1,0 +1,27 @@
+
+
+options:-debug -asm
+#options:-cycle
+#cmd_execute: pwd
+
+
+#file crt SDK
+add_file: SNDK/bss_define.egl; SNDK/header.egl; SNDK/macro.egl;
+add_file: SNDK/crt0.egl;
+
+
+#file game
+add_file:main.egl;
+
+#add_folder:src;
+
+
+#file SNDK
+add_file: SNDK/VBlank.egl; SNDK/Sprite.egl; SNDK/Print.egl; SNDK/dma.egl;
+add_file: SNDK/Init.egl;
+
+#DATA
+add_file:data.egl;
+
+compiler_run:-65816
+

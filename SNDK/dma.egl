@@ -1,0 +1,19 @@
+
+
+
+//uint16 dma_spr1.addr,dma_spr1.add,dma_spr1.size,dma_spr1.bank,dma_spr1.vmaddr,dma_spr1.channel;
+
+funclib SNDK_DMA1:uint16 adr,uint8 bank,uint16 size,uint16 vmaddr,uint16 add,uint8 channel;;
+{
+	
+	MODE16
+	SNDK_VBlank.dma_spr1.addr = adr;
+	SNDK_VBlank.dma_spr1.size = size;
+	SNDK_VBlank.dma_spr1.add = add;
+	SNDK_VBlank.dma_spr1.vmaddr = vmaddr;
+	MODE8
+	
+	SNDK_VBlank.dma_spr1.bank = bank;
+	SNDK_VBlank.dma_spr1.channel = channel;
+	
+}

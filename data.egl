@@ -1,0 +1,41 @@
+
+
+SNES_BANK 2
+//Pal
+RANDI_PAL:
+.incbin "DATA/randi.pal"
+
+
+SNES_BANK 3
+//list
+SNDK_LIST:
+
+
+SNES_BANK 4
+RANDI_SPR:
+.incbin "DATA/randi.spr"
+SNES_BANK 5
+
+SNES_BANK 6
+
+SNES_BANK 7
+
+SNES_BANK 8
+
+SNES_BANK 9
+
+SNES_BANK 10
+
+SNES_BANK 11
+
+SNES_BANK 12
+
+SNES_BANK 13
+
+SNES_BANK 14
+
+SNES_BANK 15
+
+.org 0x7F800
+.data.l RANDI_SPR:,0x1234;
+.org 0x80000

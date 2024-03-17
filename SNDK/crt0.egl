@@ -1,0 +1,195 @@
+
+SNES_BANK 0
+//error
+proc SNES_ERROR:;
+{
+	spm uint16 tdebug1,tdebug2,tdebug3,tdebug4;
+	spm uint16 reg1,reg2,reg3;
+	
+	asm "plx";
+	tdebug4 = idx;
+	asm "phx";
+	MODE16
+	reg1 = acc;
+	reg2 = idx;
+	reg3 = idy;
+	
+	MODE8
+	
+	call SNDK_PrintHexa16: reg1,2,8,SNDK_FONTPAL0;
+	call SNDK_PrintHexa16: reg2,2,9,SNDK_FONTPAL0;
+	call SNDK_PrintHexa16: reg3,2,10,SNDK_FONTPAL0;
+	
+	call SNDK_PrintHexa16: tdebug1,2,11,SNDK_FONTPAL0;
+	call SNDK_PrintHexa16: tdebug2,2,12,SNDK_FONTPAL0;
+	call SNDK_PrintHexa16: tdebug3,2,13,SNDK_FONTPAL0;
+	call SNDK_PrintHexa16: tdebug4,2,14,SNDK_FONTPAL0;
+		
+	asm "rti";
+}
+
+
+
+proc SNES_IRQHV:;
+{
+	asm "rti";
+}
+
+proc _start:;
+{
+	asm "
+	sei
+	cld
+	clc
+	xce
+
+	rep #$30
+	ldx #$01FC
+	txs
+	phk
+	pld
+	lda #0
+	tcd
+
+	sep #$20
+	
+	;fastrom
+	jml _start_jump
+	_start_jump:
+";
+
+	INIDISP = 0x80; //Forced Blank
+	MEMSEL = 1; //mode 3.58 MHz
+	
+	call SNDK_Init:;
+	
+	jump main:;
+}
+
+func SNDK_Joypad:;
+{
+	uint8 joya,joyb;
+	
+	acc = JOYSER0;
+	joya = acc;
+	if acc == 0
+	{
+		return;
+	}
+	
+	acc = JOYSER1;
+	joyb = acc;
+	if acc == 0
+	{
+		return;
+	}
+	
+	
+	uint8 pad1l,pad2l,pad3l,pad4l;
+	uint8 pad1h,pad2h,pad3h,pad4h;
+	
+	pad1l = STDCONTROL1L;
+	pad2l = STDCONTROL2L;
+	pad3l = STDCONTROL3L;
+	pad4l = STDCONTROL4L;
+	
+	pad1h = STDCONTROL1H;
+	pad2h = STDCONTROL2H;
+	pad3h = STDCONTROL3H;
+	pad4h = STDCONTROL4H;
+}
+
+proc VBlank:;
+{
+	asm "
+		jml FastVBlank
+FastVBlank:
+";
+	uint8 wait;
+	uint16 time;
+	
+	acc  = RDNMI;
+	
+	call SNDK_VBlank:;
+	
+	do
+	{
+		
+	}
+	while HVBJOY & 0x01
+	call SNDK_Joypad:;
+	
+	idy = 0;
+	if wait == 0
+	{
+		do
+		{
+			idy+=1;
+		}
+		while HVBJOY & 0x80
+	}
+	time = idy;
+	
+	
+	
+	asm "rti";
+}
+/*
+proc VBlank:;
+{
+	asm "
+		jml FastVBlank
+FastVBlank:
+	phd
+	php
+	
+	phb
+	pha
+	phx
+	phy
+	
+	sep #$20
+";
+	uint8 enable,wait;
+	uint16 time;
+	
+	acc  = RDNMI;
+	
+	if enable == 1
+	{
+		call SNDK_VBlank:;
+		
+		do
+		{
+			
+		}
+		while HVBJOY & 0x01
+		call SNDK_Joypad:;
+		
+		idy = 0;
+		if wait == 0
+		{
+			do
+			{
+				idy+=1;
+			}
+			while HVBJOY & 0x80
+		}
+		time = idy
+	}
+	
+	
+	asm "
+	
+	ply
+	plx
+	pla
+	plb
+
+	plp
+	pld
+	
+	rti
+";
+}
+*/

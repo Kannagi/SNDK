@@ -1,0 +1,170 @@
+
+proc main:;
+{
+	SNDK_memcopy SNDK_PALSPR0,RANDI_PAL,0x20
+	
+	
+	uint8 tmp;
+	uint8 position.x,position.y,joypad;
+	
+	
+	uint16 vx,vy;
+	
+	
+	MODE16
+	idx = 0x5400;
+	acc = 0x20;
+	VMADD = idx;
+	idy = (0x8);
+	do
+	{
+		VMDATA =acc;
+
+	}
+	loop idy == 0
+	MODE8
+	
+	position.x = 128;
+	position.y = 128;
+	
+	
+	call SNDK_PrintLine: $CPU_PER:,#CPU_PER:,23,0,SNDK_FONTPAL1;
+	
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_0,100,100;
+	
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_1,40,00;
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_2,40,40;
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_3,40,80;
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_4,40,120;
+	
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_5,40,160;
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_6,40,200;
+	
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_7,(-18),00;
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_8,(-18),40;
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_9,(-18),80;
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_10,(-18),120;
+	
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_11,(-18),160;
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_12,(-18),200;
+	
+	
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_13,(160),100;
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_14,(200),120;
+	call SNDK_SpriteEngineSetPosition:SPR_INDEX_15,(80),40;
+	
+	
+	SNDK_SendCGRAM 0x00,SNDK_PALBG0,0x200
+	INIDISP = 0x0F;
+	
+	VBlank.wait = 0;
+	
+	
+	
+	do
+	{
+		MODE16
+		SNDK_BG1_Scroll.x += 2;
+		SNDK_BG2_Scroll.y += 2;
+		MODE8
+		
+		
+		idy = 0;
+		idx = 0;
+		if SNDK_Joypad.pad1h & SNDK_PAD_RIGHT
+		{
+			position.x += 1;
+			idx = 0x4;
+		}
+		
+		if SNDK_Joypad.pad1h & SNDK_PAD_LEFT
+		{
+			position.x -= 1;
+			idx = (-0x4);
+		}
+		
+		if SNDK_Joypad.pad1h & SNDK_PAD_DOWN
+		{
+			position.y += 1;
+			idy = 0x4;
+		}
+		
+		if SNDK_Joypad.pad1h & SNDK_PAD_UP
+		{
+			position.y -= 1;
+			idy =  (-0x4);;
+		}
+		vx = idx;
+		vy = idy;
+		
+		call SNDK_SpriteEngineSetSpeed:SPR_INDEX_0,vx,vy;
+		
+		
+		call SNDK_PrintLine: $text_hello:,#text_hello:,0,26,SNDK_FONTPAL1;
+
+/*
+		call SNDK_Print: $text_hello:,#text_hello:,12,12,SNDK_FONTPAL1;
+		call SNDK_Print: $text_hello:,#text_hello:,12,12,SNDK_FONTPAL1;
+		call SNDK_PrintLine: $text_hello:,#text_hello:,12,5,SNDK_FONTPAL1;
+		call SNDK_PrintLine: $text_hello:,#text_hello:,12,5,SNDK_FONTPAL1;
+
+		call SNDK_Print: $text_hello:,#text_hello:,12,12,SNDK_FONTPAL1;
+		
+		call SNDK_Print: $text_hello:,#text_hello:,12,12,SNDK_FONTPAL1;
+		
+		call SNDK_Print: $text_hello:,#text_hello:,12,12,SNDK_FONTPAL1;
+		
+		call SNDK_Print: $text_hello:,#text_hello:,12,12,SNDK_FONTPAL1;
+	
+*/
+		
+		//---------
+		call SNDK_Sprite:;
+		
+		
+		//[SNDK_OAMH,0] = OAM_SIZE;
+		call SNDK_SpriteDraw: position.x,position.y,0,0x00;
+		//call SNDK_SpriteDrawMeta2x2: 0,position.y,0,0;
+		
+		call SNDK_SpriteEngine:56,16;
+		//call SNDK_SpriteEngine:56,16;
+		
+		//------funclib SNDK_DMA1:uint16 adr,uint8 bank,uint16 size,uint16 vmaddr,uint16 add,uint8 channel;;
+		
+		call SNDK_DMA1: $RANDI_SPR:,#RANDI_SPR:,0x80,0x6000,0x200,0x0F;
+		
+		
+		//30 FPS
+		if SNDK.clockf &1
+		{
+			call SNDK_PrintNumber8: SNDK.cpu,27,0,SNDK_FONTPAL2;
+			//call SNDK_PrintNumber8: position.x,2,0,SNDK_FONTPAL0;
+			//call SNDK_PrintNumber8: position.y,6,0,SNDK_FONTPAL0;
+			
+			call SNDK_PrintNumber8: SNDK.clocks,2,1,SNDK_FONTPAL0;
+		}
+		else
+		{
+			call SNDK_PrintHexa16: VBlank.time,26,1,SNDK_FONTPAL2;
+		}
+		
+		
+		call SNDK_WaitVBlank:;
+	}
+	while 1
+}
+
+
+func draw_text:;
+{
+
+
+}
+
+text_hello:
+.data.s "HELLO WORLD
+OK
+TEST 12345
+(0XFFFF) ! ?";
+CPU_PER:
+.data.s "CPU:000!";
