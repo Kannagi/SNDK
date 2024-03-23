@@ -3,44 +3,29 @@ func SNDK_Sprite:;
 {
 	uint16 oam;
 	
-	//init OAM	
-	idx = 0;
-	oam = idx;
+	oam =? 0;
 	
 	SNDK_memset SNDK_OAM0.x,SNDK_OAM_INIT_DATA,0x200	
 	
-	idy = 0x8;
-	idx = 0;
-	
-	MODE16
-	acc = 0;
-	do
-	{
-		
-		[SNDK_OAMH,idx] = acc;
-		idx += 2;
-		[SNDK_OAMH,idx] = acc;
-		idx += 2;
-	}
-	loop idy == 0
-	MODE8
-
+	SNDK_memset SNDK_OAMH,SNDK_OAM_INIT_DATA2,0x20
 }
 
 SNDK_OAM_INIT_DATA:
 .data.b 0xE0;
 
+SNDK_OAM_INIT_DATA2:
+.data.b 0x00;
+
 //---------------------------------------Engine--------------------------------------------------
 // >= <
 
-funclib SNDK_SpriteEngine:uint16 oam,uint16 n;
+funclib SNDK_SpriteEngine:uint16 oam,uint16 n,uint8 ndma;
 {
+
 	lib uint16 posx,posy;
 	lib uint8 tile,attribute;
-	lib uint16 posxh,indexh;
 	
-	lib uint8 dma;
-	uint8 dma_count;
+	uint16 dma_count;
 	MODE16
 	if n >= 16
 	{
@@ -51,6 +36,14 @@ funclib SNDK_SpriteEngine:uint16 oam,uint16 n;
 	{
 		return;
 	}
+	
+	if n & 1
+	{
+		return;
+	}
+	
+	//--------------
+	
 	
 	idy = n;
 	idx = 0;
@@ -66,8 +59,6 @@ funclib SNDK_SpriteEngine:uint16 oam,uint16 n;
 		
 		tile = [SNDK_SPRITE.t,idx] ;
 		
-
-		
 		asm "phx";
 		
 		call SNDK_SpriteEngineDraw:;
@@ -76,40 +67,100 @@ funclib SNDK_SpriteEngine:uint16 oam,uint16 n;
 		asm "plx";
 		
 		
-		if posxh == 0x3F00
-		{
-			
-		}else
-		{
-			
-		}
-		
-		MODE8
-		acc = dma_count&3;
-		if acc == 0
-		{
-			//SNDK_VBlank |= 0x01;
-		}
-		MODE16
-		
 		idx+= 0x20;
 	}
 	loop idy == 0
 	
+	
+	
+	//DMA auto
+	lib uint16 list,add,ianim,oldx,lista;
+	lib uint8 nanim,index;
+	
+	
+	//DMA1
+	idx = dma_count << 5;
+	oldx = idx;
+	
+	index = [SNDK_SPRITE.index,idx];
+	ianim = [SNDK_SPRITE.ianim,idx];
+	[SNDK_SPRITE.ianim,idx] = ianim + 2;
+	list = [SNDK_SPRITE.list,idx];
+	lista = [0x830004,list];
+	
+	nanim = [0x830000,lista];
+	idx = lista + ianim;
+	add = [0x830002,idx] + index;	
+	
+	idx = list;
+	SNDK_VBlank.dma_spr1.addr = [0x830000,idx] + add;
+	SNDK_VBlank.dma_spr1.size = [0x83000A,idx];
+	SNDK_VBlank.dma_spr1.add = [0x83000C,idx];
+	SNDK_VBlank.dma_spr1.vmaddr = [0x830008,idx];
+	
 	MODE8
 	
-	dma_count +=1;
+	SNDK_VBlank.dma_spr1.bank = [0x830002,idx];
+	SNDK_VBlank.dma_spr1.channel = [0x83000E,idx];
+
+	if ianim == nanim
+	{
+		[SNDK_SPRITE.ianim,oldx] = 0;
+	}
+
+	//DMA2
+	MODE16
+	oldx += 0x20;
+	idx = oldx;
+	
+	acc = ndma&3;
+	if acc == 2
+	{
+		ianim = [SNDK_SPRITE.ianim,idx];
+		[SNDK_SPRITE.ianim,idx] = ianim + 2;
+		list = [SNDK_SPRITE.list,idx];
+		lista = [0x830004,list];
+		
+		nanim = [0x830000,lista];
+		idx = lista + ianim;
+		add = [0x830002,idx];	
+		
+		SNDK_VBlank.dma_spr2.addr = [0x830000,idx] + add;
+		SNDK_VBlank.dma_spr2.size = [0x83000A,idx];
+		SNDK_VBlank.dma_spr2.add = [0x83000C,idx];
+		SNDK_VBlank.dma_spr2.vmaddr = [0x830008,idx];
+	}
+
+	
+	MODE8
+
+	if ndma == 2
+	{
+		SNDK_VBlank.dma_spr2.bank = [0x830002,idx];
+		SNDK_VBlank.dma_spr2.channel = [0x83000E,idx];
+		
+		if ianim == nanim
+		{
+			[SNDK_SPRITE.ianim,oldx] = 0;
+		}
+	}
+	
+	
+	//DMA end
+	dma_count +=ndma;
+	if dma_count >= n
+	{
+		dma_count = 0;
+	}
 }
 
 //---------------------------------------MODE--------------------------------------------------
 
 funclib SNDK_SpriteEngineDraw:;
 {
-	
 	lib uint16 posx,posy;
 	lib uint8 tile,attribute;
 	lib uint16 posxh,indexh;
-	
 	
 	MODE16
 	acc = posy + 0xC020;
@@ -264,6 +315,3 @@ funclib SNDK_SpriteDrawMeta2x2:uint8 position.x,uint8 position.y,uint8 tile,uint
 	SNDK_Sprite.oam = idx + 16;
 	MODE8
 }
-
-
-

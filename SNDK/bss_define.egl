@@ -213,6 +213,7 @@ uint8 HDMA_BANK_7;
 uint16 HDMA_ADD_7;
 uint8 HDMA_LINE_7;
 
+//------------------------------------------------------------
 .bss 0x7ED000
 uint8 SNDK_OAM0.x;
 uint8 SNDK_OAM0.y;
@@ -255,10 +256,7 @@ uint8 SNDK_BG2_Scroll.x2;
 uint8 SNDK_BG2_Scroll.y;
 uint8 SNDK_BG2_Scroll.y2;
 
-uint16 SNDK_BG1Scroll.x;
-uint16 SNDK_BG1Scroll.y;
-uint16 SNDK_BG2Scroll.x;
-uint16 SNDK_BG2Scroll.y;
+
 
 //---------------------SPRITE ENGINE----------------------------
 uint16 SNDK_SPRITE.x;
@@ -266,23 +264,39 @@ uint16 SNDK_SPRITE.y;
 uint16 SNDK_SPRITE.vx;
 uint16 SNDK_SPRITE.vy;
 
-uint16 SNDK_SPRITE.address;
-uint16 SNDK_SPRITE.vram;
-uint16 SNDK_SPRITE.anim;
-uint16 SNDK_SPRITE.visible;
-
-uint16 SNDK_SPRITE.w;
-uint16 SNDK_SPRITE.h;
-
 uint8 SNDK_SPRITE.t;
 uint8 SNDK_SPRITE.a;
+uint16  SNDK_SPRITE.list;
+uint16 SNDK_SPRITE.visible;
+uint16 SNDK_SPRITE.index;
+
 uint8 SNDK_SPRITE.oam;
 uint8 SNDK_SPRITE.ianim;
+uint8 SNDK_SPRITE.mode
 
-uint8 SNDK_SPRITE.mode;
+uint8 SNDK_SPRITE (0x200);
 
-uint64 SNDK_SPRITE.reserved2;
-uint16 SNDK_SPRITE (0x200-0x20);
+.macro SNDK_SpriteEngineSetList
+	idx= .arg1;
+	
+	asm "rep #$20"
+	[SNDK_SPRITE.list,idx] = $.arg2:;
+	asm "sep #$20"
+	
+	[SNDK_SPRITE.t,idx] = .arg3;
+	[SNDK_SPRITE.a,idx] = .arg4;
+.endmacro
+
+.macro SNDK_SpriteEngineSetList
+	idx= .arg1;
+	
+	asm "rep #$20"
+	[SNDK_SPRITE.list,idx] = $.arg2:;
+	asm "sep #$20"
+	
+	[SNDK_SPRITE.t,idx] = .arg3;
+	[SNDK_SPRITE.a,idx] = .arg4 | 0x20;
+.endmacro
 
 .define SPRITE_ENGINE_MODE0 0x00 //1 sprite
 .define SPRITE_ENGINE_MODE1 0x01 //2x2 sprite
@@ -304,10 +318,13 @@ uint8 SNDK_BUF_BG1.v 0x40;
 uint8 SNDK_BUF_BG2.h 0x40;
 uint8 SNDK_BUF_BG2.v 0x40;
 
-uint8 SNDK_Bullet.x 128;
-uint8 SNDK_Bullet.y 128;
-uint8 SNDK_Bullet.vx 128;
-uint8 SNDK_Bullet.vy 128;
+uint16 SNDK_Bullet.x 0x80;
+uint16 SNDK_Bullet.y 0x80;
+uint16 SNDK_Bullet.vx 0x80;
+uint16 SNDK_Bullet.vy 0x80;
+uint8 SNDK_Bullet.t 0x80;
+uint8 SNDK_Bullet.a 0x80;
+
 uint8 SNDK_BG3.t1;
 uint8 SNDK_BG3.t2 0x800;
 
@@ -330,7 +347,6 @@ uint8 SNDK_PALSPR4 0x20;
 uint8 SNDK_PALSPR5 0x20;
 uint8 SNDK_PALSPR6 0x20;
 uint8 SNDK_PALSPR7 0x20;
-
 
 
 .bss 0x7F0000
@@ -356,9 +372,10 @@ uint8 SNDK_BufferSPR3 0x2000;
 	SNDK_SPR_DEC   = (.arg1<<1);
 	SNDK_SPR_DEC2 = (.arg2<<1);
 .endmacro
+
 .bss 0x100
 uint8 SNDK_MEMSET;
-.bss 0xC0
+.bss 0xD0
 uint8 SNDK_SPR_SIZE;
 uint8 SNDK_SPR_SIZET;
 uint8 SNDK_SPR_SIZE2;

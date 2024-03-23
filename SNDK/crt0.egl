@@ -44,8 +44,9 @@ proc _start:;
 	xce
 
 	rep #$30
-	ldx #$01FC
+	ldx #$01F8
 	txs
+	
 	phk
 	pld
 	lda #0
@@ -85,18 +86,19 @@ func SNDK_Joypad:;
 	}
 	
 	
-	uint8 pad1l,pad2l,pad3l,pad4l;
-	uint8 pad1h,pad2h,pad3h,pad4h;
+	uint8 pad1l,pad1h,pad2l,pad2h;
+	uint8 pad3l,pad3h,pad4l,pad4h;
 	
-	pad1l = STDCONTROL1L;
-	pad2l = STDCONTROL2L;
-	pad3l = STDCONTROL3L;
-	pad4l = STDCONTROL4L;
-	
+	pad1l =? STDCONTROL1L;
+	pad2l =? STDCONTROL2L;
+	pad3l =? STDCONTROL3L;
+	pad4l =? STDCONTROL4L;
+	/*
 	pad1h = STDCONTROL1H;
 	pad2h = STDCONTROL2H;
 	pad3h = STDCONTROL3H;
 	pad4h = STDCONTROL4H;
+	*/
 }
 
 proc VBlank:;
@@ -105,11 +107,12 @@ proc VBlank:;
 		jml FastVBlank
 FastVBlank:
 ";
-	uint8 wait;
+	uint8 enable,wait;
 	uint16 time;
 	
 	acc  = RDNMI;
 	
+	INIDISP = 0x8F;
 	call SNDK_VBlank:;
 	
 	do
@@ -130,8 +133,10 @@ FastVBlank:
 	}
 	time = idy;
 	
+	//SNDK_SendVRAM 0x4000,DATA_FONT_SNDK_S,0xAB0
+	INIDISP = 0x0F;
 	
-	
+	acc = 0;
 	asm "rti";
 }
 /*

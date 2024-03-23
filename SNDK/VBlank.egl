@@ -34,7 +34,7 @@ func SNDK_VBlank:;
 	BG2V0FS = SNDK_BG2_Scroll.y2;
 	
 	
-	INIDISP = 0x8F;
+	
 	//-----------------BG line/col-----------------
 	uint16 bg1.h,bg1.v,bg2.h,bg2.v;
 
@@ -57,7 +57,7 @@ func SNDK_VBlank:;
 	//BG1 H
 	if bg & 0x01
 	{
-		idy = bg1.h:
+		idy = bg1.h;
 		VMADD = idy;
 		MDMAEN = 0x01;
 	}
@@ -66,7 +66,7 @@ func SNDK_VBlank:;
 	//BG2 H
 	if bg & 0x04
 	{
-		idy = bg2.h:
+		idy = bg2.h;
 		VMADD = idy;
 		MDMAEN = 0x04;
 	}
@@ -77,7 +77,7 @@ func SNDK_VBlank:;
 	//BG1 V
 	if bg & 0x02
 	{
-		idy = bg1.v:
+		idy = bg1.v;
 		VMADD = idy;
 		MDMAEN = 0x02;
 	}
@@ -85,7 +85,7 @@ func SNDK_VBlank:;
 	//BG2 V
 	if bg & 0x08
 	{
-		idy = bg2.v:
+		idy = bg2.v;
 		VMADD = idy;
 		MDMAEN = 0x08;
 	}
@@ -117,25 +117,28 @@ func SNDK_VBlank:;
 	
 	if dma_spr0.channel & 0x01
 	{
-		VMADD = tmp1;
+		VMADD =? tmp1;
 		MDMAEN = 0x01;
 	}
 	
 	if dma_spr0.channel & 0x02
 	{
-		VMADD = tmp2;
+		idx = tmp2;
+		VMADD = idx;
 		MDMAEN = 0x02;
 	}
 	
 	if dma_spr0.channel & 0x04
 	{
-		VMADD = tmp3;
+		idx = tmp3;
+		VMADD = idx;
 		MDMAEN = 0x4;
 	}
 	
 	if dma_spr0.channel & 0x08
 	{
-		VMADD = tmp4;
+		idx = tmp4;
+		VMADD = idx;
 		MDMAEN = 0x8;
 	}
 	dma_spr0.channel = 0;
@@ -169,29 +172,25 @@ func SNDK_VBlank:;
 	
 	if dma_spr1.channel & 0x01
 	{
-		idx = tmp1;
-		VMADD = idx;
+		VMADD =? tmp1;
 		MDMAEN = 0x01;
 	}
 	
 	if dma_spr1.channel & 0x02
 	{
-		idx = tmp2;
-		VMADD = idx;
+		VMADD =? tmp2;
 		MDMAEN = 0x02;
 	}
 	
 	if dma_spr1.channel & 0x04
 	{
-		idx = tmp3;
-		VMADD = idx;
+		VMADD =? tmp3;
 		MDMAEN = 0x4;
 	}
 	
 	if dma_spr1.channel & 0x08
 	{
-		idx = tmp4;
-		VMADD = idx;
+		VMADD =? tmp4;
 		MDMAEN = 0x8;
 	}
 	dma_spr1.channel = 0;
@@ -223,25 +222,29 @@ func SNDK_VBlank:;
 	
 	if dma_spr2.channel & 0x01
 	{
-		VMADD = tmp1;
+		idx = tmp1;
+		VMADD = idx;
 		MDMAEN = 0x01;
 	}
 	
 	if dma_spr2.channel & 0x02
 	{
-		VMADD = tmp2;
+		idx = tmp2;
+		VMADD = idx;
 		MDMAEN = 0x02;
 	}
 	
 	if dma_spr2.channel & 0x04
 	{
-		VMADD = tmp3;
+		idx = tmp3;
+		VMADD = idx;
 		MDMAEN = 0x4;
 	}
 	
 	if dma_spr2.channel & 0x08
 	{
-		VMADD = tmp4;
+		idx = tmp4;
+		VMADD = idx;
 		MDMAEN = 0x8;
 	}
 	dma_spr2.channel = 0;
@@ -310,7 +313,7 @@ func SNDK_VBlank:;
 	
 	acc = adrbg3;
 	acc += 0x80;
-	if acc == 0x780
+	if acc == 0x700
 	{
 		acc = 0;
 	}
@@ -323,26 +326,22 @@ func SNDK_VBlank:;
 	
 	MDMAEN = 1;
 	//-----------------end------------------
-	
 	//SNDK_SendVRAM 0x2000,RANDI_SPR:,0x1000
 	
-	INIDISP = 0x0F;
+	
 	bg = 0;
 	
 }
 
 func SNDK_WaitVBlank:;
 {
-	acc = SNDK.clockf;
-	acc += 1;
+	acc = SNDK.clockf + 1;
 	if acc == 60 //60 frames
 	{
-		acc = SNDK.clocks;
-		acc += 1;
+		acc = SNDK.clocks + 1;
 		if acc == 60 //60 secondes
 		{
-			acc = SNDK.clockm;
-			acc += 1;
+			acc = SNDK.clockm + 1;
 			if acc == 60 //60 minutes
 			{
 				SNDK.clockh += 1;
@@ -376,8 +375,9 @@ func SNDK_WaitVBlank:;
 	
 	SNDK.cpu = RDDIVL;
 	NMITIMEN = 0x81;
-	//VBlank.enable = 1;
-	asm "wai";
-	//VBlank.enable = 0;
+	acc = 1;
+	do
+	{ }
+	while acc == 1
 	NMITIMEN = 0x00;
 }

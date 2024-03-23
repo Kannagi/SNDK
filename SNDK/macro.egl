@@ -1,7 +1,7 @@
 
 .macro SNDK_memcopy
 
-	idy =  $.arg1;
+	idy =  $.arg1; 
 	WMADD = idy;
 	WMADDH = #.arg1;
 	
@@ -31,7 +31,7 @@
 	idy = .arg3;
 	DMA_SIZE_7 = idy;
 	
-	MDMAEN = 0x80;
+	MDMAEN = 0x80; 
 
 .endmacro
 
@@ -67,22 +67,6 @@
 	MDMAEN = 1;
 .endmacro
 
-.macro  SNDK_SendVRAM_ADR
-
-	idy =  .arg1;
-	VMADD = idy;
-	
-	DMA_BANK_0 =  .arg2;
-	
-	idy =  .arg3;
-	DMA_ADD_0 = idy;
-	
-	idy =  .arg4;
-	DMA_SIZE_0 = idy;
-	
-	MDMAEN = 1;
-.endmacro
-
 .macro SNDK_SendCGRAM
 
 	CGADD = .arg1;
@@ -98,22 +82,3 @@
 	MDMAEN = 0x20;
 
 .endmacro
-
-.macro SNDK_SendCGRAM_ADR
-
-	CGADD = .arg1;
-	
-	DMA_BANK_5 = .arg3;
-	
-	idy = .arg2;
-	DMA_ADD_5 = idy;
-	
-	idy = .arg4;
-	DMA_SIZE_5 = idy;
-	
-	MDMAEN = 0x20;
-
-.endmacro
-
-
-

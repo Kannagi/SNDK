@@ -5,7 +5,7 @@
 //      "1234567890123456789"
 .data.b 0x30; //0x20 2.68 MHz / 0x30 3.58 MHz
 .data.b 0x00; //ROM only
-.data.b 0x09; //ROM size 1<<x kio 9 : 512 KB / 10 :1MB / 11 : 2MB / 12 : 4MB
+.data.b 0x0A; //ROM size 1<<x kio  / 9 : 512 KB / A :1MB / B : 2MB / C : 4MB
 .data.b 0x00; //RAM size 16<<(x-1) kio
 .data.b 0x01; //0 = japan, 1 = usa , 2 = europe
 .data.b 0x00; //ID extension
@@ -41,9 +41,9 @@
 .endmacro
 
 //config
-.funcmap 0x200
-.funcmap.spm 0xF0
-.funcmap.lib    0xE0
+.map.func 0x200
+.map.funcspm 0xF0
+.map.funclib    0xE0
 .map.spm 0x00
-.map.lib 0xA0
+.map.lib 0x80
 //0xD0 Register no use

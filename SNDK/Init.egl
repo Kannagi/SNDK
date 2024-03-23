@@ -114,10 +114,10 @@ func SNDK_Init:;
 	DMA_7 = 0x18;
 	DMA_BADD_7 = 0x80; //WMDATA memset $80
 	
-	SNDK_memset SNDK_RAM,SNDK_INIT_DATA1,0xFE00
 	//clear RAM
+	SNDK_memset SNDK_RAM,SNDK_INIT_DATA1,0xFE00
+	
 	MODE16
-
 	
 	//VRAM CLEAR
 	idx = 0;
@@ -152,19 +152,12 @@ func SNDK_Init:;
 	loop idy == 0
 	
 	MODE8	
-	
-	
-	
-			
-	
+
 	SNDK_SendVRAM 0x4000,DATA_FONT_SNDK_S,0x400
-	
 	
 	SNDK_memcopy SNDK_PALBG0,DATA_FONT_SNDK_P,0x20
 	
-
 	SNDK_SendOAM
-	
 	
 	OBJSEL = SNDK_SPR_16_32;
 	SNDK_SPR_META 16,32
@@ -227,6 +220,10 @@ funclib tesss:uint8 ok;
 	ok = 8;
 	
 	[SNDK_OAMH,posxh] = ok;
+	
+	
+	uint16 tadr;
+	tadr =+ LIST_SPR1:
 }
 
 DATA_FONT_SNDK_S:

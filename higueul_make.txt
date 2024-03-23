@@ -1,6 +1,6 @@
 
 
-options:-debug -asm
+#options:-debug -asm
 #options:-cycle
 #cmd_execute: pwd
 

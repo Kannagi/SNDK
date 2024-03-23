@@ -5,15 +5,17 @@
 
 funclib SNDK_DMA1:uint16 adr,uint8 bank,uint16 size,uint16 vmaddr,uint16 add,uint8 channel;;
 {
-	
+	/*
+	idx = 0;
 	MODE16
-	SNDK_VBlank.dma_spr1.addr = adr;
-	SNDK_VBlank.dma_spr1.size = size;
-	SNDK_VBlank.dma_spr1.add = add;
-	SNDK_VBlank.dma_spr1.vmaddr = vmaddr;
+	[SNDK_SPRITE.addr,idx] = adr;
+	[SNDK_SPRITE.size,idx] = size;
+	[SNDK_SPRITE.add,idx] = add;
+	[SNDK_SPRITE.vmaddr,idx] = vmaddr;
+	
 	MODE8
 	
-	SNDK_VBlank.dma_spr1.bank = bank;
-	SNDK_VBlank.dma_spr1.channel = channel;
-	
+	[SNDK_SPRITE.bank,idx] = bank;
+	[SNDK_SPRITE.channel,idx] = channel;
+	* */
 }
