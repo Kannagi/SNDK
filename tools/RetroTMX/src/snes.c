@@ -157,7 +157,7 @@ void snes_map(TMX *tmx,char *out,int compress)
 
 				if(pal == 6) pal = 5;
 				if(pal >= 7) pal = 6;
-				if(tile >= 0xF0) pal = 7;
+				if(tile >= 0xF8) pal = 7;
 
 				pal = pal<<10;
 				tmp = 0;
@@ -170,6 +170,7 @@ void snes_map(TMX *tmx,char *out,int compress)
 
 
 				data = id + pal + tmp + flip;
+				if(tile == 0) data = 0;
 
 				tmx->layer[i].data[l] = data;
 
