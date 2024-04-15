@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Retro Convert Tracker" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Linux_mac">
+				<Option output="bin/retrotracker" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/" />
+				<Option object_output="obj/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="zelda3.xm -oasm 0 -compress2" />
+				<Compiler>
+					<Add option="-Wextra" />
+					<Add option="-Wall" />
+				</Compiler>
+			</Target>
+			<Target title="Windows">
+				<Option output="bin/retrotracker" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/" />
+				<Option object_output="obj/" />
+				<Option type="1" />
+				<Option compiler="mingw__compiler" />
+				<Option parameters=" zeldagbt.mod -sfc &amp; snes9x-gtk -displayframerate -displaykeypress music.smc" />
+				<Compiler>
+					<Add option="-Wextra" />
+					<Add option="-Wall" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-fexpensive-optimizations" />
+			<Add option="-O1" />
+		</Compiler>
+		<Linker>
+			<Add option="-s" />
+			<Add option="-lm" />
+		</Linker>
+		<Unit filename="src/KS.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/KS.h" />
+		<Unit filename="src/KS_PCE.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/KS_SNES.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/KS_debug.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/KS_track.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/brr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/it.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/it.h" />
+		<Unit filename="src/it_debug.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/midi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/mod.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/mod.h" />
+		<Unit filename="src/mod_debug.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/mod_debug.h" />
+		<Unit filename="src/resample.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/s3m.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/s3m.h" />
+		<Unit filename="src/s3m_debug.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/spc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/xm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/xm.h" />
+		<Unit filename="src/xm_debug.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>

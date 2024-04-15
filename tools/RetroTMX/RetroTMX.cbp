@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="RetroTMX" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="bin">
+				<Option output="bin/retrotmx" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin" />
+				<Option object_output="obj/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+			</Target>
+			<Target title="bin (Windows)">
+				<Option platforms="Unix;Mac;" />
+				<Option output="bin/retrotmx" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="bin" />
+				<Option object_output="obj/windows/" />
+				<Option type="1" />
+				<Option compiler="mingw__compiler" />
+				<Option parameters="-ng stage1.tmx" />
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-fomit-frame-pointer" />
+			<Add option="-fexpensive-optimizations" />
+			<Add option="-O1" />
+			<Add option="-w" />
+			<Add option="-Wall" />
+			<Add option="-s" />
+		</Compiler>
+		<Linker>
+			<Add option="-s" />
+		</Linker>
+		<Unit filename="src/aura.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/aura.h" />
+		<Unit filename="src/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/md_custom.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/ng.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/pc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/pce.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/retro.h" />
+		<Unit filename="src/snes.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/tmx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/tmx.h" />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
