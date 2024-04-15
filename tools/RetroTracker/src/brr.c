@@ -21,19 +21,37 @@ void output_filename(char *adresse,char *schaine)
     schaine[l] = 0;
 }
 
+static FILE *filebrr = NULL;
+
+void init_brr(char * str,int mode)
+{
+	char ostr[256];
+	sprintf(ostr,"%s.brr",str);
+
+	if(mode == 0)
+		filebrr = fopen(ostr,"wb");
+	else
+	{
+		filebrr = fopen("demo.smc","rb+");
+		fseek(filebrr,0x8000*4,SEEK_SET);
+	}
+
+}
+
+void offset_brr(int offset)
+{
+	if(filebrr != NULL)
+		fseek(filebrr,offset,SEEK_SET);
+}
+
+void close_brr()
+{
+	if(filebrr != NULL)
+		fclose(filebrr);
+}
 
 int savebrr( char *adresse,unsigned char *data,int len,int type,int dec,int begin,int out)
 {
-    FILE *file = NULL;
-    if(out == 0)
-		file = fopen(adresse,"wb");
-	else
-	{
-		file = fopen("music.smc","rb+");
-		fseek(file,(0x8000*2)+out-1,SEEK_SET);
-	}
-    if(file == NULL) return 0;
-
 	int end,octet;
     int hbrr;
     int pcm[16];
@@ -115,7 +133,7 @@ int savebrr( char *adresse,unsigned char *data,int len,int type,int dec,int begi
 
         if(end == 1) hbrr += 0x01;
 
-        fputc(hbrr+2,file);
+        fputc(hbrr+2,filebrr);
 
         int tmppcm;
         for(l = 0;l < 16;l+=2)
@@ -149,11 +167,10 @@ int savebrr( char *adresse,unsigned char *data,int len,int type,int dec,int begi
             }
 
 
-            fputc(octet,file);
+            fputc(octet,filebrr);
         }
     }
 
-    fclose(file);
 
     return size;
 }

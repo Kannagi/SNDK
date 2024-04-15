@@ -7,39 +7,13 @@
 
 void KS_write(KS_FORMAT *ks,int *option)
 {
+	KS_write_track(ks,option,0);
 
 	if(option[12] == 0)
-		KS_write_SNES(ks,option);
+		KS_write_header_SNES(ks,option,0);
 
 	if(option[12] == 1)
-		KS_write_PCE(ks,option);
-}
-
-void KS_write_PCE(KS_FORMAT *ks,int *option)
-{
-	if(option[5] == 0)
-	{
-		KS_write_track(ks,option,2);
 		KS_write_header_PCE(ks,option,0);
-	}else
-	{
-		KS_write_track(ks,option,3);
-		KS_write_header_PCE(ks,option,1);
-	}
-}
-
-
-void KS_write_SNES(KS_FORMAT *ks,int *option)
-{
-	if(option[5] == 0)
-	{
-		KS_write_track(ks,option,0);
-		KS_write_header_SNES(ks,option,0);
-	}else
-	{
-		KS_write_track(ks,option,1);
-		KS_write_header_SNES(ks,option,1);
-	}
 }
 
 void KS_instruments_init(KS_FORMAT *ks,int i)
@@ -159,18 +133,7 @@ void KS_set_pattern(KS_FORMAT *ks,int size)
 	}
 }
 
-void KS_delay_fputc(int delay,FILE *out)
-{
-	if( delay >= 0x40)
-	{
-		fputc( ((delay&0x3F00)>>8)+0xC0,out);
-		fputc(delay&0x00FF,out);
-	}else
-	{
-		fputc(delay+0x80,out);
-	}
-}
-/*
+
 void KS_delay_fputc(int delay,FILE *out)
 {
 	if( delay >= 0x80)
@@ -182,7 +145,7 @@ void KS_delay_fputc(int delay,FILE *out)
 		fputc(delay,out);
 	}
 }
-*/
+
 int KS_pitch(int notes)
 {
 	double frq;

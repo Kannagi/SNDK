@@ -131,14 +131,17 @@ void snes_map(TMX *tmx,char *out,int compress)
 			{
 				pal = 0;
 				anim = 0;
-/*
+				tile = tmx->layer[i].data[l];
+
 				if(usebuffer != -1)
 				{
 					anim = tmx->layer[usebuffer].data[l];
+					if(anim != 0)
+						tile = anim;
 				}
-*/
-				tile = tmx->layer[i].data[l];
-				if(tile > 0) tile -= first;
+
+
+				if(tile > 0) tile -= 1;
 
 
 				flip = (tile>>30)&3;
@@ -313,7 +316,7 @@ void snes_map(TMX *tmx,char *out,int compress)
 			{
 				data = tile = tmx->layer[i].data[l];
 
-				if(tile > 0) tile -= first;
+				if(tile > 0) tile -= 257;
 				data = tile&0x7F;
 
 				if((tile&0x80) == 0)
@@ -322,7 +325,7 @@ void snes_map(TMX *tmx,char *out,int compress)
 
 					if(compress == 0)
 					{
-					printf("nocommpress \n",compress);
+						printf("nocommpress \n",compress);
 						size++;
 						fputc(data,file);
 					}
@@ -337,6 +340,7 @@ void snes_map(TMX *tmx,char *out,int compress)
 					tag[itag].x = ((l%tmx->layer[i].width)*16);
 					tag[itag].y = ((l/tmx->layer[i].width)*16);
 					itag++;
+					itag &= 0x7F;
 				}
 
 			}
@@ -344,7 +348,7 @@ void snes_map(TMX *tmx,char *out,int compress)
 
 			if(compress != 0)
 			{
-							printf("commpress \n",compress);
+				printf("commpress \n",compress);
 
 				fputc(0,file);
 				fputc(0,file);
@@ -419,8 +423,6 @@ void snes_map(TMX *tmx,char *out,int compress)
 					tag[j].type |= data<<8;
 					j++;
 				}
-
-
 			}
 		}
 

@@ -17,6 +17,7 @@ int XM_Load(char *name,int *option)
 
     if(fichier == NULL) return 1;
 
+
     KS_FORMAT ks;
 
     XM_HEADER xm;
@@ -31,6 +32,7 @@ int XM_Load(char *name,int *option)
     	return 1;
     }
     printf("XM file : %.20s\n",xm.Module_name);
+
 
 	fread ( ( (char*)&xm )+64,1,xm.Header_size-4,fichier);
 	int info = option[2];
@@ -67,6 +69,7 @@ int XM_Load(char *name,int *option)
 	output_filename(name,str);
 
 	KS_set_header(&ks,str,xm.Nchannels,xm.Ninstruments,xm.tempo,xm.BPM);
+	init_brr(ks.name,option[3]);
 
 	xm.instruments = malloc(xm.Ninstruments * sizeof(XM_INSTRUMENTS*));
 	if(xm.instruments == NULL) return 1;
@@ -280,6 +283,8 @@ int XM_Load(char *name,int *option)
 		printf("pattern data total : %d $%x %d \n",total,total,ik);
 
 	KS_write(&ks,option);
+
+	close_brr();
 
     return 0;
 }

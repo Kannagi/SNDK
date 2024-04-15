@@ -20,25 +20,23 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 	int max = ks->size_pattern,pattern = 0;
 
 	char str[100];
-	sprintf(str,"%s_track.sks",ks->name);
-	if(option[9] > 0)
-		sprintf(str,"music%d_track.sks",option[9]-1);
+	sprintf(str,"%s.sks",ks->name);
 
     FILE *file;
 
-    int begin = 0;
+    int begin = 0x100;
 
-    out = out&1;
-    if(out == 0)
-		file = fopen(str,"wb");
-	else
+	if(option[3] != 0)
 	{
-		file = fopen("music.smc","rb+");
-		fseek(file,(0x8000*3)+320,SEEK_SET);
-		begin = (0x8000*3)+320;
-	}
+		file = fopen("demo.smc","rb+");
+		fseek(file,0x8000*3,SEEK_SET);
+		begin = (0x8000*3) + 0x100;
+	}else
+		file = fopen(str,"wb");
 
     if(file == NULL) return;
+    for(int i = 0;i < 256;i++) //header
+		fputc(00,file);
 
     if((out&2) == 0)
 	{
@@ -51,101 +49,108 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 
 	fticks_line = ( (TIME/(float)ks->BPM)*(float)ks->tempo);
 
-	printf("ticks %f / %d %d\n",fticks_line,ks->BPM,ks->tempo);
+	printf("ticks: %f / BPM: %d / Tempo: %d\n",fticks_line,ks->BPM,ks->tempo);
 
-	int row;
-	int irow = 0;
-	k = 0;
-	int flags = 0,end = 0;
-	int note[8];
-	int index[8];
-	int volume[8];
-	//int effect[8];
+	int i;
+	int testsize = 0;
 
-	for(l = 0;l < 8;l++)
+	for(i = 0;i < ks->Nchannels;i++)
 	{
-		note[l] = -1;
-		index[l] = -1;
-		volume[l] = -1;
-		//effect[l] = -1;
-	}
+		int note = -1;
+		int index = -1;
+		int volume = -1;
+		int delay = 0;
+		int olddelay = 0;
+		int ticks = 0;
+		int flagsp = 0;
+		int row;
 
-	fticks = 0;
-	int cmd = 0;
+		int irow = 0;
+		int flags = 0;
+		int end = 0;
+		int cmd = 0;
 
-	float fdelay = 0;
-	float oldfdelay = 0;
+		float fdelay = 0;
+		float oldfdelay = 0;
 
-	for(l = 0;l < max;l++)
-	{
-		//------------
-		row = ks->rows[k];
+		k = 0;
+		fticks = 0;
 
-		if(irow >= row)
+		ks->begin[i] = ftell(file) - begin;
+
+		fticks_line = ( (TIME/(float)ks->BPM)*(float)ks->tempo);
+
+		for(l = 0;l < max;l++)
 		{
-			//printf("%x\n",k);
-			irow = 0;
-			k++;
 			row = ks->rows[k];
-		}
-		irow++;
-		//------------
 
-
-
-
-		int jmpbreak = 0;
-		cmd = 0;
-		for(j = 0;j < ks->Nchannels;j++)
-		{
-			int tmp_effect = ks->pattern[j][l].effect1;
-			int tmp_effect2 = ks->pattern[j][l].effect2;
-
-			flags = ks->pattern[j][l].flags;
-
-			//Effect A
-			if(flags&0x18)
+			if(irow >= row)
 			{
-				//F Set tempo/BPM
-				if(tmp_effect == 0x0F)
-				{
-					fticks_line = ( (TIME/(float)ks->BPM)*(float)ks->pattern[j][l].effect2);
-				}
-				//D Pattern break
-				if(tmp_effect == 0x0D)
-				{
-					jmpbreak = 1;
-				}
+				//printf("%x\n",k);
+				irow = 0;
+				k++;
+				row = ks->rows[k];
+			}
+			irow++;
 
-				//B Position Jump
-				if(tmp_effect == 0x0B)
+			for(j = 0;j < ks->Nchannels;j++)
+			{
+				int tmp_effect = ks->pattern[j][l].effect1;
+				int tmp_effect2 = ks->pattern[j][l].effect2;
+
+
+				flagsp = ks->pattern[j][l].flags;
+
+				if(flagsp&0x18)
 				{
-					if(tmp_effect2 > k)
+					//F Set tempo/BPM
+					if(tmp_effect == 0x0F)
 					{
-						while(tmp_effect2 > k)
+						if(tmp_effect2 < 0x20)
+							ks->tempo = tmp_effect2;
+						else
+							ks->BPM = tmp_effect2;
+
+						fticks_line = ( (TIME/(float)ks->BPM)*(float)ks->tempo);
+					}
+					//D Pattern break
+					if(tmp_effect == 0x0D)
+					{
+						//if(i == 0) printf("%x %x\n",l,row -(l%row) );
+						l += row -(l%row)-1;
+						irow = 0;
+					}
+					//B Position Jump
+					if(tmp_effect == 0x0B)
+					{
+						if(tmp_effect2 > k)
 						{
-							row = ks->rows[k];
 
-							if(irow >= row)
+							while(tmp_effect2 > k)
 							{
-								irow = 0;
-								k++;
 								row = ks->rows[k];
+
+								if(irow >= row)
+								{
+									irow = 0;
+									k++;
+									row = ks->rows[k];
+								}
+								irow++;
+								l++;
 							}
-							irow++;
-							l++;
+
+							j = 0;
+							continue;
+
+
+						}else
+						{
+							if(i == 0)
+								printf("Not supported Jump row %x line $%x (Effect B%x)\n",k,irow-1,tmp_effect2);
+
+							end = 1;
 						}
-
-
-						j = 0;
-						continue;
-
-
-					}else
-					{
-						printf("Not supported Jump row %x line $%x (Effect B%x)\n",k,irow-1,tmp_effect2);
-
-						end = 1;
 					}
 				}
 			}
@@ -154,101 +159,82 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 
 			if(end == 1)
 			{
-				l = max;
 				break;
 			}
 
-			flags = ks->pattern[j][l].flags;
+			flags = ks->pattern[i][l].flags;
 			pattern = 0;
 
 			//note
 			if(flags&0x01)
 			{
-				if(note[j] != ks->pattern[j][l].note)
+				if(note != ks->pattern[i][l].note)
 					pattern |= 0x1;
 				else
 					pattern |= 0x2;
 
-				note[j] = ks->pattern[j][l].note;
+				note = ks->pattern[i][l].note;
 			}
 
 			//instrument
 			if(flags&0x02)
 			{
-				if(index[j] != ks->pattern[j][l].instrument-1)
-					pattern |= 0x4;
+				if(index != ks->pattern[i][l].instrument-1)
+					pattern |= 0x8;
 
-				index[j] = ks->pattern[j][l].instrument-1;
+				index = ks->pattern[i][l].instrument-1;
 			}
 
 			//volume
 			if(flags&0x04)
 			{
-				if(volume[j] != ks->pattern[j][l].volume)
-					pattern |= 0x8;
-				volume[j] = ks->pattern[j][l].volume;
+				if(volume != ks->pattern[i][l].volume)
+					pattern |= 0x4;
+				volume = ks->pattern[i][l].volume;
 			}
 
-			//Effect B
-			if(flags&0x18)
-			{
-				tmp_effect = ks->pattern[j][l].effect1;
-				tmp_effect2 = ks->pattern[j][l].effect2;
-
-				//pattern |= 0x3;
-			}
-
-
-			if( (cmd == 0) && (pattern != 0) )
-			{
-				int tmp = fdelay;
-				if(tmp != 0)
-				KS_delay_fputc(tmp,file);
-				oldfdelay = fticks;
-			}
 
 
 			if(pattern != 0)
 			{
-				int tmp = j<<4;
-				fputc(tmp+pattern,file);
+				int tmp = fdelay;
+				KS_delay_fputc(tmp,file);
+				oldfdelay = fticks;
 
-				if(pattern&0x03)
+				int bnote = note;
+
+				if(bnote != 0)
 				{
+					tmp = index+1;
+					tmp = (tmp&0x1F) | (pattern<<5);
+
+					fputc(tmp,file);
+
 					if(pattern&0x01)
-						fputc(note[j],file);
+						fputc(note,file);
 
-					//if(pattern&0x03) //Effect+note
-				}
-				if(pattern&0x04) fputc(index[j],file);
-				if(pattern&0x08) fputc(volume[j],file);
-				cmd++;
+					if(pattern&0x04)
+						fputc(volume,file);
 
-				if(j == 5)
+				}else
 				{
-					//KS_debug_note(note[j]);
-					//printf(" %x %x %x\n",note[j],index[j],volume[j]);
+					fputc(0,file);
 				}
+
 			}
 
+			fticks += fticks_line;
+			fdelay = (fticks-oldfdelay);
 		}
 
-		if(jmpbreak != 0)
-		{
-			//printf("%x %x / %x %x\n",l,row -(l%row),k,irow );
-			l += row -(l%row)-1;
-			irow = 0;
-			k++;
-		}
-
-		fticks += fticks_line;
-		fdelay = (fticks-oldfdelay);
-
-
+		int tmp = fdelay;
+		KS_delay_fputc(tmp,file);
+		oldfdelay = fticks;
+		fputc(0,file);
+		fputc(0xFF,file);
+		fputc(0xFF,file);
 	}
 
-	fputc(0xFF,file);
-	fputc(0xFF,file);
 
 	ks->ticks = fticks;
 	ks->size_track = ftell(file) - begin;

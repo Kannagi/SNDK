@@ -93,6 +93,9 @@ void KS_write_header_PCE(KS_FORMAT *ks,int *option,int out);
 
 void KS_debug_note(int note);
 
+void init_brr(char * str,int mode);
+void close_brr();
+void offset_brr(int offset);
 #define KS_Appregio  0
 #define KS_Toneporta 1
 #define KS_Vibrato   2

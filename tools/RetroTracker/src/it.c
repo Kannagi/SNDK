@@ -34,12 +34,12 @@ int IT_Load(char *name,int *option)
     }
     fread ( (char*)&it.title,1,188,fichier);
 
-
     if(info != 0) it_print(it);
 
     output_filename(name,str);
 
 	KS_set_header(&ks,str,16,it.insnum,it.is,it.it);
+	init_brr(ks.name,option[3]);
 
     fread ( (char*)&it.ord_table,1,it.ordnum,fichier);
 
@@ -47,11 +47,11 @@ int IT_Load(char *name,int *option)
     fread ( (int*)&it.smpOff,4,it.smpnum,fichier);
     fread ( (int*)&it.patOff,4,it.patnum,fichier);
 
-
     // read instruments
 	for (i = 0; i < it.insnum; i++)
 	{
 		fseek(fichier,it.insOff[i],SEEK_SET);
+		KS_instruments_init(&ks,i);
 
 		fread ( (char*)&it_instruments,1,17,fichier);
 		if(info != 0) it_print_instruments(it_instruments,i);
@@ -73,6 +73,8 @@ int IT_Load(char *name,int *option)
 			fread ( (char*)&it_instruments.o.notetrans,1,240,fichier);
 			fread ( (char*)&it_instruments.o.vol_env,1,250,fichier);
 		}
+
+
 	}
 
 	// read samples
@@ -89,8 +91,6 @@ int IT_Load(char *name,int *option)
 
 
 		if(info != 0) it_print_sample(it_sample,i);
-
-		KS_instruments_init(&ks,i);
 
 		//0x01 enable/disable ,0x02 :8/16 bits ,0x08 PCM/compressed , 0x10 loop , ping pong etc etc
 		if(it_sample.flag&1)
@@ -146,19 +146,16 @@ int IT_Load(char *name,int *option)
 	for (i = 0; i < it.patnum; i++)
 	{
 		l = it.ord_table[i];
-
 		fseek(fichier,it.patOff[l],SEEK_SET);
 		fread ( (char*)&it_patterns,1,8,fichier);
-
 		ks.rows[i] = it_patterns.rows;
 		it_convert_pattern(&ks,fichier,it_patterns.length,size);
-
 		size += it_patterns.rows;
 	}
-
 	fclose(fichier);
 
 	KS_write(&ks,option);
+	close_brr();
 
     return 0;
 

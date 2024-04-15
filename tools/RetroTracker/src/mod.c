@@ -53,6 +53,7 @@ int MOD_Load(char *name,int *option)
 	if(info != 0) mod_print2(mod);
 
 	KS_set_header(&ks,mod.name,chan,32,6,125);
+	init_brr(ks.name,option[3]);
 
 	int patnum=0;
 	for (i = 0;i < mod.ordnum;i++)
@@ -155,6 +156,7 @@ int MOD_Load(char *name,int *option)
 
 	KS_write(&ks,option);
 
+	close_brr();
 	return 0;
 }
 

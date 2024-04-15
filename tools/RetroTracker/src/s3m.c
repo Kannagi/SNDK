@@ -46,6 +46,7 @@ int S3M_Load(char *name,int *option)
 
 
 	KS_set_header(&ks,s3m.name,chan,s3m.instrumentCount,s3m.initialSpeed,s3m.initialTempo);
+	init_brr(ks.name,option[3]);
 	size = s3m.patternPtrCount*64;
 	KS_set_pattern(&ks,size);
 
@@ -185,7 +186,7 @@ int S3M_Load(char *name,int *option)
 	fclose(fichier);
 
 	KS_write(&ks,option);
-
+	close_brr();
 	return 0;
 }
 
