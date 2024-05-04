@@ -70,9 +70,6 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 		int end = 0;
 		int cmd = 0;
 
-		float fdelay = 0;
-		float oldfdelay = 0;
-
 		k = 0;
 		fticks = 0;
 
@@ -197,9 +194,9 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 
 			if(pattern != 0)
 			{
-				int tmp = fdelay;
+				int tmp = delay;
 				KS_delay_fputc(tmp,file);
-				oldfdelay = fticks;
+				olddelay = ticks;
 
 				int bnote = note;
 
@@ -224,12 +221,13 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 			}
 
 			fticks += fticks_line;
-			fdelay = (fticks-oldfdelay);
+			ticks = fticks;
+			delay = (ticks-olddelay);
 		}
 
-		int tmp = fdelay;
+		int tmp = delay;
 		KS_delay_fputc(tmp,file);
-		oldfdelay = fticks;
+		olddelay = ticks;
 		fputc(0,file);
 		fputc(0xFF,file);
 		fputc(0xFF,file);
