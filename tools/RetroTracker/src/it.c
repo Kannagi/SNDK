@@ -143,7 +143,7 @@ int IT_Load(char *name,int *option)
 	// convert pattern
 	size = 0;
 	i = 0;
-	for (i = 0; i < it.patnum; i++)
+	for (i = 0; i < it.ordnum-1; i++)
 	{
 		l = it.ord_table[i];
 		fseek(fichier,it.patOff[l],SEEK_SET);
