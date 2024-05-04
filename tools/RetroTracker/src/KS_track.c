@@ -58,6 +58,7 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 	{
 		int note = -1;
 		int prevnote = -1;
+		int prevnoteNOKOFF = -1;
 		int index = -1;
 		int volume = -1;
 		int delay = 0;
@@ -166,14 +167,17 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 			//note
 			if(flags&0x01)
 			{
-				if(prevnote != ks->pattern[i][l].note)
+				if(prevnoteNOKOFF != ks->pattern[i][l].note)
 					pattern |= 0x1;
 				else
 					pattern |= 0x2;
 
 				note = ks->pattern[i][l].note;
 				if (note != 0)
-					prevnote = note;
+					prevnoteNOKOFF = note;
+				else if (prevnote == 0)
+					pattern &= 0xFC;
+				prevnote = note;
 			}
 
 			//instrument
