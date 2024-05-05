@@ -46,7 +46,7 @@ typedef struct
 {
 	char id[4],name[28+32];
 
-	unsigned char Nchannels,Ninstruments,tempo,BPM;
+	unsigned char Nchannels,Ninstruments,tempo,BPM,chFlag;
 	int ticks,size_pattern;
 	int begin[32];
 

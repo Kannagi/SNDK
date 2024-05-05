@@ -31,13 +31,15 @@ void KS_write_header_PCE(KS_FORMAT *ks,int *option,int out)
 	printf("%d\n",ks->Ninstruments);
 
 	int Nchannels = 0;
-	for(i = 0;i <ks->Nchannels;i++)
-		Nchannels += 1<<i;
+	for(i = 0;i <ks->Nchannels;i++)	{
+		if ((ks->chFlag & (1<<i)) != 0)
+			Nchannels += 1;
+	}
 
-	printf("Nchannels : %d\n",ks->Nchannels);
+	printf("Nchannels : %d/%d\n",Nchannels,ks->Nchannels);
 
 	fputc(0x00,file); //flg
-    fputc(Nchannels,file); //kon
+    fputc(ks->chFlag,file); //kon
 
 	printf("ticks  : %d / 65535\n",ks->ticks);
 	printf("second : %d / 262\n",(ks->ticks*option[8])/8000);

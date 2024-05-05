@@ -54,6 +54,7 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 	int i;
 	int testsize = 0;
 
+	ks->chFlag = 0;
 	for(i = 0;i < ks->Nchannels;i++)
 	{
 		int note = -1;
@@ -225,12 +226,15 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 			delay = (ticks-olddelay);
 		}
 
-		int tmp = delay;
-		KS_delay_fputc(tmp,file);
-		olddelay = ticks;
-		fputc(0,file);
-		fputc(0xFF,file);
-		fputc(0xFF,file);
+		if ((ftell(file)-ks->begin[i]-begin) != 0) {
+			ks->chFlag |= 1<<i;
+			int tmp = delay;
+			KS_delay_fputc(tmp,file);
+			olddelay = ticks;
+			fputc(0,file);
+			fputc(0xFF,file);
+			fputc(0xFF,file);
+		}
 	}
 
 
