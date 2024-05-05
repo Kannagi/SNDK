@@ -115,7 +115,8 @@ void KS_write_header_SNES(KS_FORMAT *ks,int *option,int out)
 			fputc(0x7F,file);
 			fputc(0xE0,file);
 			fputc(option[5],file);
-			fputc(instruments[i].volume,file);
+			fputc(0x00,file);
+			//fputc(instruments[i].volume,file);
 		}else
 		{
 			fputc(0x00,file);
