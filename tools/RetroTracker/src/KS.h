@@ -53,7 +53,7 @@ typedef struct
 	KS_FORMAT_INSTRUMENTS *instruments;
 	KS_FORMAT_PATTERN **pattern;
 	//KS_FORMAT_PATTERN pattern[128][128];
-	int rows[128];
+	int rows[200];
 	int nrows,size_sample,size_track;
 
 }KS_FORMAT;
