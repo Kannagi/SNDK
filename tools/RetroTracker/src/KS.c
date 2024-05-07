@@ -57,18 +57,12 @@ void KS_savedata_sample(KS_FORMAT *ks,char *str,int *option,unsigned char *data,
 
 	if(option[12] == 0)
 	{
-		if(option[5] != 0)
-			brrlength = savebrr( str,data,slength_out,bitssize,0,0,temp_length+1);
-		else
-			brrlength = savebrr( str,data,slength_out,bitssize,0,0,0);
+		brrlength = savebrr( str,data,slength_out,bitssize,0,0,2);
 	}
 
 	if(option[12] == 1)
 	{
-		if(option[5] != 0)
-			brrlength = savepcm5b( str,data,slength_out,bitssize,0,0,temp_length+1);
-		else
-			brrlength = savepcm5b( str,data,slength_out,bitssize,0,loop_start,0);
+		brrlength = savepcm5b( str,data,slength_out,bitssize,0,loop_start,0);
 
 		//printf("%d\n",brrlength);
 	}
@@ -133,6 +127,21 @@ void KS_set_pattern(KS_FORMAT *ks,int size)
 	}
 }
 
+void KS_delay_buf(int delay,unsigned char *buf,int *ibuf)
+{
+	int i = *ibuf;
+	if( delay >= 0x80)
+	{
+		buf[i+0] = ((delay&0x7F00)>>8) + 0x80;
+		buf[i+1] = delay&0x00FF;
+
+		*ibuf += 2;
+	}else
+	{
+		buf[i] = delay;
+		*ibuf += 1;
+	}
+}
 
 void KS_delay_fputc(int delay,FILE *out)
 {

@@ -1,0 +1,115 @@
+
+
+SNES_BANK 2
+
+
+/*
+.define SNDK_SIZE_8x8     0x20
+.define SNDK_SIZE_16x16 0x80
+.define SNDK_SIZE_32x32 0x200
+.define SNDK_SIZE_48x48 0x300
+.define SNDK_SIZE_64x64 0x400
+*/
+
+//list
+SNDK_LIST:
+LIST_SPR2:
+// label   data              anim
+.data.l   SHIP1_SPR:,SHIP_ANIM:
+.data.w 0x6040, 0x80,0x200,         0x0F
+//---------VRAM    size   decalage  , channel
+
+LIST_SPR1:
+.data.l   SHIP1_SPR:,SHIP_ANIM2:
+.data.w 0x6000, 0x80,0x200,         0x0F
+
+
+//----------------------------------
+LIST_SPR3:
+.data.l   ENNEMY_SPR:,ENNEMY_ANIM:
+.data.w 0x6080, 0x80,0x200,         0x0F
+
+LIST_SPR4:
+.data.l   ENNEMY_SPR:,ENNEMY_ANIM:
+.data.w 0x60C0, 0x80,0x200,         0x0F
+
+LIST_SPR5:
+.data.l   ENNEMY_SPR:,ENNEMY_ANIM:
+.data.w 0x6400, 0x80,0x200,         0x0F
+
+LIST_SPR6:
+.data.l   ENNEMY_SPR:,ENNEMY_ANIM:
+.data.w 0x6440, 0x80,0x200,         0x0F
+
+LIST_SPR7:
+.data.l   ENNEMY_SPR:,ENNEMY_ANIM:
+.data.w 0x6480, 0x80,0x200,         0x0F
+
+LIST_SPR8:
+.data.l   ENNEMY_SPR:,ENNEMY_ANIM:
+.data.w 0x64C0, 0x80,0x200,         0x0F
+
+
+
+LIST_SPR9:
+.data.l   ENNEMY_SPR:,ENNEMY_ANIM:
+.data.w 0x6800, 0x80,0x200,         0x0F
+
+LIST_SPR10:
+.data.l   ENNEMY_SPR:,ENNEMY_ANIM:
+.data.w 0x6840, 0x80,0x200,         0x0F
+
+LIST_SPR11:
+.data.l   ENNEMY_SPR:,ENNEMY_ANIM:
+.data.w 0x6880, 0x80,0x200,         0x0F
+
+LIST_SPR12:
+.data.l   ENNEMY_SPR:,ENNEMY_ANIM:
+.data.w 0x68C0, 0x80,0x200,         0x0F
+
+LIST_SPR13:
+.data.l   ENNEMY_SPR:,ENNEMY_ANIM:
+.data.w 0x6C00, 0x80,0x200,         0x0F
+
+LIST_SPR14:
+.data.l   ENNEMY_SPR:,ENNEMY_ANIM:
+.data.w 0x6C40, 0x80,0x200,         0x0F
+
+
+
+//------------------------
+SHIP_ANIM2:
+.data.w (1*2),0x180 ,0x180
+.data.w (1*2),0x980 ,0x980
+
+SHIP_ANIM:
+.data.w (3*2),0x00 ,0x080,0x100,0x80,
+.data.w (3*2),0x800 ,0x880,0x900,0x880
+.data.w (1*2),0x2800 ,0x2800
+
+ENNEMY_ANIM:
+.data.w (1*2),0x00 ,0x00
+
+.data.w (7*2),0x3800   ,0x3880,0x3900  ,0x3980
+.data.w 0x3100,0x3180,0x3180,0x3180,,0x3180,
+
+//--------------
+SNDK_MAPLIST:
+
+.data.l   MAP1_DATA:,0,0
+.data.w 256, 8192,
+
+.data.l   MAP2_DATA:,0,0
+.data.w 256, 8192,
+
+.data.l   MAP3_DATA:,0,0
+.data.w 256, 8192,
+
+.data.l   MAP4_DATA:,0,0
+.data.w 256, 8192,
+
+.data.l   MAP5_DATA:,0,0
+.data.w 256, 8192,
+
+.data.l   MAP6_DATA:,0,0
+.data.w 256, 8192,

@@ -1,0 +1,27 @@
+
+
+
+proc player:
+{
+	uint16 x,y,px,py
+	uint16 score1,score2
+	uint16 hscore1,hscore2
+}
+
+proc impact:
+{
+	uint8 x 0x10
+	uint8 y 0x10
+	uint8 i
+}
+
+
+proc ennemy:
+{
+	uint16 x 0x10
+	uint16 y 0x10
+	uint16 px 0x10
+	uint16 py 0x10
+	uint16 pv 0x10
+	uint16 hit 0x10
+}

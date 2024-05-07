@@ -1,0 +1,270 @@
+
+
+play_music:
+
+	mov a,cvolume+x
+	mov volume,a
+	
+	mov a,csrcn+x
+	mov srcn,a
+	call !select_index
+	
+	mov y,#0
+	mov a,[ZP]+y
+	mov tmp+4,a
+
+	call !sks_pattern
+
+	mov a,tmp+4
+	and a,#$40
+	cmp a,#$40
+	bne +
+		mov a,delayl+x
+		mov tmp+0,a
+
+		mov a,delayh+x
+		mov tmp+1,a
+
+		ret
+	+:
+	
+	inc y
+	call !play_delay
+	
+	mov a,tmp+0
+	mov delayl+x,a
+
+	mov a,tmp+1
+	mov delayh+x,a
+
+	ret
+
+;-----------------------------
+sks_pattern:
+	
+	;instrument
+	and a,#$1F
+	clrc
+	adc a,#0
+	mov csrcn+x,a
+	mov srcn,a
+	call !select_index
+	mov a,note+x
+	mov tmp+3,a
+			
+	;pitch
+	mov a,tmp+4
+	and a,#$20
+	cmp a,#$20
+	bne +
+		inc y
+		mov a,[ZP]+y
+		mov note+x,a
+		mov tmp+3,a
+	+:
+
+	;volume
+	mov a,tmp+4
+	and a,#$80
+	cmp a,#$80
+	bne +
+		inc y
+		mov a,[ZP]+y
+		mov cvolume+x,a
+		mov volume,a
+	+:
+		
+	;void
+	mov a,tmp+4
+	and a,#$1F
+	cmp a,#$00
+	bne +
+		mov volume,#0
+		mov tmp+3,#0
+	+:
+	
+	mov a,tmp+3
+	call !play_sample
+	
+
+	ret
+
+play_delay:
+	mov a,[ZP]+y
+	
+	mov tmp+2,a
+	
+	and a,#$80
+	cmp a,#$80
+	bne +
+		inc y
+		mov a,[ZP]+y
+		mov tmp+0,a
+		
+		mov a,tmp+2
+		and a,#$7F
+		mov tmp+1,a
+		
+		ret
+	+:
+		mov tmp+0,tmp+2
+		mov tmp+1,#0
+	++:
+	
+	ret
+	
+play_sample:
+	
+	push a
+	mov a,bkof
+	and a,ckon
+	cmp a,#$00
+	beq +
+		pop a
+		ret
+	+:
+	pop a
+	
+	push y
+	
+	clrc
+	adc a,relativ
+	call !set_pitch
+	
+	mov a,volume
+	adc a,avolume
+	mov arg+4,a
+	mov arg+5,a
+	
+	call !set_voice
+	
+	SPC700 KON,ckon
+	
+	pop y
+
+	ret
+;-------------------------------------------------------------------------------
+
+set_pitch:
+
+	asl a
+	mov y,a
+	
+	mov a,!Pitch0+0+y
+	mov arg+6,a
+	mov a,!Pitch0+1+y
+	mov arg+7,a
+	
+	ret
+
+
+set_voice:
+
+	mov a,x
+	
+	mov y,#$10
+	mul ya
+
+	;VOLL
+	mov y,arg+4
+	movw REG_ADD,YA
+
+	;VOLR
+	inc a
+	mov y,arg+5
+	movw REG_ADD,YA
+	
+	;PITCHL
+	inc a
+	mov y,arg+6
+	movw REG_ADD,YA
+	
+	;PITCHH
+	inc a
+	mov y,arg+7
+	movw REG_ADD,YA
+
+	;SRCN
+	inc a
+	mov y,arg+0
+	movw REG_ADD,YA
+	
+	;ADSR1
+	inc a
+	mov y,arg+1
+	movw REG_ADD,YA
+	
+	;ADSR2
+	inc a
+	mov y,arg+2
+	movw REG_ADD,YA
+	
+	;GAIN
+	inc a
+	mov y,arg+3
+	movw REG_ADD,YA
+	
+	ret
+
+select_index:
+	
+	mov a,srcn
+
+	call !set_index
+	
+	mov a,srcn
+	clrc
+	adc a,#$40
+	mov arg+0,a
+
+	ret
+
+set_index:
+	
+	push y
+	
+	mov y,#$5
+	mul ya
+	
+	mov y,a
+		
+	mov a,!SKSINDEX+0+y
+	mov relativ,a
+	
+	mov a,!SKSINDEX+1+y
+	mov arg+1,a
+	
+	mov a,!SKSINDEX+2+y
+	mov arg+2,a
+	
+	mov a,!SKSINDEX+3+y
+	mov arg+3,a
+	
+	mov a,!SKSINDEX+4+y
+	mov avolume,a
+	
+	pop y
+	ret
+
+
+;-------------------------------------------------------------------------------
+Pitch0:
+.dw $0010,$0011,$0012,$0013,$0015,$0016,$0017,$0019,$001a,$001c,$001d,$001f
+Pitch1:
+.dw $0021,$0023,$0025,$0027,$002a,$002c,$002f,$0032,$0035,$0038,$003b,$003f
+Pitch2:
+.dw $0042,$0046,$004b,$004f,$0054,$0059,$005e,$0064,$006a,$0070,$0077,$007e
+Pitch3:
+.dw $0085,$008d,$0096,$009f,$00a8,$00b2,$00bd,$00c8,$00d4,$00e1,$00ee,$00fc
+Pitch4:
+.dw $010b,$011b,$012c,$013e,$0151,$0165,$017a,$0191,$01a9,$01c2,$01dd,$01f9
+Pitch5:
+.dw $0217,$0237,$0259,$027d,$02a3,$02cb,$02f5,$0322,$0352,$0385,$03ba,$03f3
+Pitch6:
+.dw $042f,$046f,$04b2,$04fa,$0546,$0596,$05eb,$0645,$06a5,$070a,$0775,$07e6
+Pitch7:
+.dw $085f,$08de,$0965,$09f4,$0a8c,$0b2c,$0bd6,$0c8b,$0d4a,$0e14,$0eea,$0fcd
+Pitch8:
+.dw $10be,$11bd,$12cb,$13e9,$1518,$1659,$17ad,$1916,$1a94,$1c28,$1dd5,$1f9b
+Pitch9:
+.dw $217c,$237a,$2596,$27d3,$2a31,$2cb3,$2f5b,$322c,$3528,$3851,$3bab,$3f37

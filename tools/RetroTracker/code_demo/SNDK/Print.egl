@@ -1,0 +1,348 @@
+
+.macro PRINT_POSITION
+	MODE16
+	idx = py << 6;
+	acc = px <<1;
+	idx += acc;
+	MODE8
+
+.endmacro
+
+funclib SNDK_PrintLine:uint16 adr,uint8 ibank,uint16 px,uint16 py,uint8 pal;
+{
+	PRINT_POSITION
+
+	acc = @adr;
+	do
+	{		
+		[SNDK_BG3.t1,idx] = acc-32;
+		[SNDK_BG3.t2,idx] = pal;
+		
+		MODE16
+		adr +=1;
+		idx+=2;
+		MODE8
+		
+		acc = @adr;
+	}
+	while acc!= 0
+}
+
+funclib SNDK_Print:uint16 adr,uint8 ibank,uint16 px,uint16 py,uint8 pal;
+{
+	lib uint16 count;
+	idx = 2;
+	count = idx;
+	
+	PRINT_POSITION
+	acc = @adr;
+	do
+	{		
+		[SNDK_BG3.t1,idx] = acc-32;
+		[SNDK_BG3.t2,idx] = pal;
+		
+		MODE16
+		adr +=1;
+		idx+=2;
+		count+=2;
+		MODE8
+		
+		if @adr == 0x0A
+		{
+			MODE16
+			idx +=0x40;
+			idx  -= count;
+			count = 2;
+			adr +=1;
+			idx+=2;
+			MODE8
+		}
+	}
+	while @adr != 0
+}
+
+.macro PRINT_HEXA
+	acc = acc & 0xF;
+	if acc >= 0xA
+	{
+		acc += 7;
+	}
+	acc += 0x10;
+.endmacro
+
+.macro PRINT_DECIMAL100
+	if tnumber >= 100
+	{
+		tnumber -= 100;
+		.arg1 += 1;
+	}
+	
+	if tnumber >= 100
+	{
+		tnumber -= 100;
+		.arg1 += 1;
+	}
+
+.endmacro
+
+.macro PRINT_DECIMAL
+	//5
+	if tnumber >= .arg1
+	{
+		tnumber -= .arg1;
+		.arg4 += 5;
+	}
+	
+	//2
+	if tnumber >= .arg2
+	{
+		tnumber -= .arg2;
+		.arg4 += 2;
+	}
+	
+	//2
+	if tnumber >= .arg2
+	{
+		tnumber -= .arg2;
+		.arg4 += 2;
+	}
+	
+	//1
+	if tnumber >= .arg3
+	{
+		tnumber -= .arg3;
+		.arg4 += 1;
+	}
+
+.endmacro
+
+funclib SNDK_PrintNumber8:uint8 number,uint16 px,uint16 py,uint8 pal;
+{
+	PRINT_POSITION
+	
+	lib uint8 tnumber1,tnumber2,tnumber;
+	tnumber = number;
+	tnumber1 = 0x10;
+	tnumber2 = acc;
+	
+	PRINT_DECIMAL100 tnumber1
+	[SNDK_BG3.t1,idx] = tnumber1;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	PRINT_DECIMAL 50,20,10,tnumber2
+	[SNDK_BG3.t1,idx] = tnumber2;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	[SNDK_BG3.t1,idx] = tnumber + 0x10;
+	[SNDK_BG3.t2,idx] = pal;
+}
+
+funclib SNDK_PrintNumber16:uint16 number,uint16 px,uint16 py,uint8 pal;
+{
+	PRINT_POSITION
+	
+	MODE16
+	
+	lib uint16 tnumber1,tnumber2,tnumber3,tnumber4,tnumber;
+	tnumber = number;
+	tnumber1 = 0x10;
+	tnumber2 = acc;
+	tnumber3 = acc;
+	tnumber4 = acc;
+	
+	PRINT_DECIMAL 50000,20000,10000,tnumber1
+	PRINT_DECIMAL 5000,2000,1000,tnumber2
+	PRINT_DECIMAL 500,200,100,tnumber3
+	PRINT_DECIMAL 50,20,10,tnumber4
+	
+	MODE8
+	[SNDK_BG3.t1,idx] = tnumber1;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	
+	[SNDK_BG3.t1,idx] = tnumber2;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	[SNDK_BG3.t1,idx] = tnumber3;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	[SNDK_BG3.t1,idx] = tnumber4;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	[SNDK_BG3.t1,idx] = tnumber + 0x10;
+	[SNDK_BG3.t2,idx] = pal;
+}
+
+//---------------------------------------
+
+funclib SNDK_PrintHexa8:uint8 number,uint16 px,uint16 py,uint8 pal;
+{
+	PRINT_POSITION
+	
+	acc = number>>4;
+	PRINT_HEXA
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	acc = number;
+	PRINT_HEXA
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+}
+
+funclib SNDK_PrintHexa16:uint16 number,uint16 px,uint16 py,uint8 pal;
+{
+	lib uint16 tnumber2,tnumber3;
+	
+	PRINT_POSITION
+	MODE16
+	acc = number;
+	tnumber3 = acc>>4;
+	tnumber2 = acc>>4;
+	acc = acc>>4;
+	MODE8
+	
+	
+	PRINT_HEXA
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	acc = tnumber2;
+	PRINT_HEXA
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	acc = tnumber3;
+	PRINT_HEXA
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	acc = number;
+	PRINT_HEXA
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+}
+
+//-----------------------------
+
+funclib SNDK_PrintDec2:uint8 number,uint16 px,uint16 py,uint8 pal;
+{
+	PRINT_POSITION
+	
+	acc = number>>4;
+	acc += 0x10;
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	acc = number &0x0F;
+	acc += 0x10;
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+}
+
+funclib SNDK_PrintDec4:uint16 number,uint16 px,uint16 py,uint8 pal;
+{
+	PRINT_POSITION
+	
+	lib uint8 tnumber,tnumber2
+	MODE16
+	tnumber = number
+	MODE8
+	
+	acc = tnumber2>>4;
+	acc += 0x10;
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	acc = tnumber2 &0x0F;
+	acc += 0x10;
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+	idx +=2
+	
+	acc = number>>4;
+	acc += 0x10;
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	acc = number &0x0F;
+	acc += 0x10;
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+}
+
+funclib SNDK_PrintDec8:uint16 number,uint16 number2,uint16 px,uint16 py,uint8 pal;
+{
+	PRINT_POSITION
+	
+	lib uint8 tnumber,tnumber2
+	MODE16
+	tnumber = number
+	MODE8
+	
+	acc = tnumber2>>4;
+	acc += 0x10;
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	acc = tnumber2 &0x0F;
+	acc += 0x10;
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+	idx +=2
+	
+	acc = number>>4;
+	acc += 0x10;
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	acc = number &0x0F;
+	acc += 0x10;
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	//---
+	MODE16
+	tnumber = number2
+	MODE8
+	
+	acc = tnumber2>>4;
+	acc += 0x10;
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	acc = tnumber2 &0x0F;
+	acc += 0x10;
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+	idx +=2
+	
+	acc = number2>>4;
+	acc += 0x10;
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+	idx+=2;
+	
+	acc = number2 &0x0F;
+	acc += 0x10;
+	[SNDK_BG3.t1,idx] = acc;
+	[SNDK_BG3.t2,idx] = pal;
+}
+

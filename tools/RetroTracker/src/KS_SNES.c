@@ -78,7 +78,7 @@ void KS_write_header_SNES(KS_FORMAT *ks,int *option,int out)
 	printf("Nchannels : %d/8\n",ks->Nchannels);
 
 	fputc(0x00,file); //flg
-    fputc(Nchannels,file); //kon
+    fputc(ks->chFlag,file); //kon
 
     for(i = 0;i < 11;i++) //efb,evoll,evollr ,firc0-c7
 		fputc(00,file);
@@ -115,8 +115,8 @@ void KS_write_header_SNES(KS_FORMAT *ks,int *option,int out)
 			fputc(0x7F,file);
 			fputc(0xE0,file);
 			fputc(option[5],file);
-			fputc(0x00,file);
-			//fputc(instruments[i].volume,file);
+			//fputc(0x00,file);
+			fputc(instruments[i].volume,file);
 		}else
 		{
 			fputc(0x00,file);

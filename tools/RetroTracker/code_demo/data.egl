@@ -1,0 +1,25 @@
+
+
+
+
+
+SNES_BANK 3
+MUSIC_TRACK1:
+//.incbin "sound/zelda3.sks"
+.data.b 0xFF
+SNES_BANK 4
+//SAMPLE
+MUSIC_BRR1:
+//.incbin "sound/zelda3.brr"
+.data.b 0xFF
+
+SNES_BANK 5
+//PARTITION
+
+
+
+SNES_BANK 6
+
+
+
+.org 0x40000

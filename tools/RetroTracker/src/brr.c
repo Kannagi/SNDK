@@ -133,7 +133,7 @@ int savebrr( char *adresse,unsigned char *data,int len,int type,int dec,int begi
 
         if(end == 1) hbrr += 0x01;
 
-        fputc(hbrr+2,filebrr);
+        fputc(hbrr+out,filebrr);
 
         int tmppcm;
         for(l = 0;l < 16;l+=2)

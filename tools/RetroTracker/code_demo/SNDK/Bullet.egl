@@ -1,0 +1,277 @@
+
+funclib SNDK_BulletInit:uint16 n
+{
+	MODE16
+	
+	idy = n;
+	idx = 0;
+	do
+	{	
+		acc = 0
+		[SNDK_Bullet.vx,idx] = acc
+		[SNDK_Bullet.vy,idx] = acc
+		[SNDK_Bullet.t,idx] = acc
+		[SNDK_Bullet.x,idx] = acc
+		
+		[SNDK_Bullet.y,idx] = 0xE000
+		
+		[SNDK_Bullet.usable1,idx] = 1
+		[SNDK_Bullet.usable2,idx] = 1
+		
+		idx += 2
+	}
+	loop idy == 0
+
+	
+	MODE8
+}
+
+
+funclib SNDK_BulletEngine:uint16 n1,uint16 n2
+{
+	lib uint16 oam,xuse;
+	
+	
+	MODE16
+	oam = SNDK_Sprite.oam
+	
+	//-------------
+	xuse = 0
+	idy = n1;
+	idx = 0;
+	[SNDK_Bullet.usable1,0]  = 1
+	do
+	{	
+		call SNDK_BulletOut1:
+
+		idx += 2
+		
+	}
+	loop idy == 0
+	MODE16
+	[SNDK_Bullet.usable1,xuse]  = 1
+	//----
+	
+	SNDK_Sprite.oam = oam
+	MODE8
+	
+	if n2 == 0
+	{
+		return
+	}
+	
+	MODE16
+	//-------------
+	xuse = 0
+	idy = n2;
+	idx = n1<<1;
+	[SNDK_Bullet.usable2,0]  = 1
+	do
+	{	
+		call SNDK_BulletOut2:
+
+		idx += 2
+		
+	}
+	loop idy == 0
+	MODE16
+	[SNDK_Bullet.usable2,xuse]  = 1
+	//----
+	
+	SNDK_Sprite.oam = oam
+	MODE8
+	
+	return
+}
+
+funclib SNDK_BulletHiboxSet:uint16 beg,uint16 n,uint16 x,uint16 y,uint16 w,uint16 h
+{
+	uint16 begin,count
+	uint16 rect.x,rect.y,rect.w,rect.h
+	
+	begin = beg<<1
+	count = n
+	
+	rect.x = x
+	rect.y = y
+	rect.w = x+w
+	rect.h = y+h
+}
+
+funclib SNDK_BulletHibox:
+{
+	lib uint16 x,y
+	lib uint16 rect.x,rect.y,rect.w,rect.h
+	
+	rect.x = SNDK_BulletHiboxSet.rect.x
+	rect.y = SNDK_BulletHiboxSet.rect.y
+	rect.w = SNDK_BulletHiboxSet.rect.w
+	rect.h = SNDK_BulletHiboxSet.rect.h
+	
+	idy = SNDK_BulletHiboxSet.count;
+	idx = SNDK_BulletHiboxSet.begin;
+	idx+=1
+	do
+	{	y = [SNDK_Bullet.y,idx]
+		if acc != 0xE0
+		{
+			acc = [SNDK_Bullet.x,idx]
+			if acc >= rect.x
+			{
+				if acc < rect.w
+				{
+					x = acc
+					acc = y
+					if acc >= rect.y
+					{
+						if acc < rect.h
+						{
+							MODE16
+							idx -=1
+							[SNDK_Bullet.y,idx] = 0xE000
+							
+							acc = 0
+							[SNDK_Bullet.x,idx] =acc
+							[SNDK_Bullet.vx,idx] = acc
+							[SNDK_Bullet.vy,idx] = acc
+
+							MODE8
+							return 1
+						}
+					}
+				}
+			}
+		}
+	
+		idx += 2
+	}
+	loop idy == 0
+	
+	return 0
+}
+
+funclib SNDK_BulletOut1:
+{
+	lib uint16 oam,xuse,tmp;
+	lib uint8 posx,posx2;
+	lib uint8 posy,posy2;
+	lib uint8 tile,attribute;
+	
+	MODE16
+	
+	[SNDK_Bullet.x,idx]  +=  [SNDK_Bullet.vx,idx];
+	posx = acc
+	acc = acc & 0xF800
+	if acc == 0xF800
+	{
+		acc = 0
+		[SNDK_Bullet.x,idx] = acc
+		[SNDK_Bullet.vx,idx] = acc
+		[SNDK_Bullet.vy,idx] = acc
+		
+		[SNDK_Bullet.y,idx] = 0xE000
+	}
+	
+	[SNDK_Bullet.y,idx]  +=  [SNDK_Bullet.vy,idx];
+	posy = acc
+	acc = acc & 0xF000
+	if acc == 0xF000
+	{
+		acc = 0
+		[SNDK_Bullet.x,idx] = acc
+		[SNDK_Bullet.vx,idx] = acc
+		[SNDK_Bullet.vy,idx] = acc
+		
+		[SNDK_Bullet.y,idx] = 0xE000
+	}
+	
+	tile = [SNDK_Bullet.t,idx] ;
+	
+	tmp = idx
+	asm "phx";
+	
+	if posy == 0xE000
+	{
+		idx = xuse
+		[SNDK_Bullet.usable1,idx] = tmp 
+		idx+=2
+		xuse = idx
+	}
+	
+	acc = oam
+	idx = acc
+	oam = acc + 4
+
+	[SNDK_OAM0.t,idx] = tile;
+	MODE8
+	
+	[SNDK_OAM0.x,idx] = posx2;
+	[SNDK_OAM0.y,idx] = posy2;
+
+	
+	asm "plx";
+}
+
+funclib SNDK_BulletOut2:
+{
+	lib uint16 oam,xuse,tmp;
+	lib uint8 posx,posx2;
+	lib uint8 posy,posy2;
+	lib uint8 tile,attribute;
+	
+	
+	MODE16
+	
+	[SNDK_Bullet.x,idx]  +=  [SNDK_Bullet.vx,idx];
+	posx = acc
+	acc = acc & 0xF800
+	if acc == 0xF800
+	{
+		acc = 0
+		[SNDK_Bullet.x,idx] = acc
+		[SNDK_Bullet.vx,idx] = acc
+		[SNDK_Bullet.vy,idx] = acc
+		
+		[SNDK_Bullet.y,idx] = 0xE000
+	}
+	
+	[SNDK_Bullet.y,idx]  +=  [SNDK_Bullet.vy,idx];
+	posy = acc
+	acc = acc & 0xF000
+	if acc == 0xF000
+	{
+		acc = 0
+		[SNDK_Bullet.x,idx] = acc
+		[SNDK_Bullet.vx,idx] = acc
+		[SNDK_Bullet.vy,idx] = acc
+		
+		[SNDK_Bullet.y,idx] = 0xE000
+	}
+	
+	tile = [SNDK_Bullet.t,idx] ;
+	
+	tmp = idx
+	asm "phx";
+
+	if posy == 0xE000
+	{
+		idx = xuse
+		[SNDK_Bullet.usable2,idx] = tmp 
+		idx+=2
+		xuse = idx
+	}
+	
+	acc = oam
+	idx = acc
+	oam = acc + 4
+
+	[SNDK_OAM0.t,idx] = tile;
+	MODE8
+	
+	[SNDK_OAM0.x,idx] = posx2;
+	[SNDK_OAM0.y,idx] = posy2;
+	
+	
+	asm "plx";
+}
+

@@ -44,7 +44,7 @@ void SPC_pitch()
 
 void SPC_Sample(int *option)
 {
-	int i,len,div = option[10];
+	int i,len,div = 1;
 	char str[100];
 
 	WAV wav;
@@ -52,7 +52,13 @@ void SPC_Sample(int *option)
 
 	int size = 0;
 	int num = 0;
-	int offset = 0;
+	option[10]--;
+	int offset = 0x8000 + (option[10]*0x800);
+
+	printf("offset %x\n",offset);
+
+	FILE *file = fopen("SFX.dir","wb");
+	if(file == NULL) return;
 
 	init_brr("SFX",0);
 
@@ -86,8 +92,6 @@ void SPC_Sample(int *option)
 				wav.DataSize = len*2;
 			}
 
-			offset_brr(size);
-
 			sprintf(str,"SFX%d.brr",i);
 			len = savebrr(str,data,wav.DataSize,wav.BytePerBloc,0,0,0);
 
@@ -95,22 +99,21 @@ void SPC_Sample(int *option)
 			if(option[1] == 1)
 				savewav( str,data,wav.DataSize,wav.BytePerBloc,frq);
 
-
-			offset = size;
-			offset_brr(size);
-
-			if(len&0x3FF)
-				size += 0x400;
-
-			size += len&0xFC00;
+			fputc(offset,file);
+			fputc(offset>>8,file);
+			fputc(0x02,file);
+			fputc(0x02,file);
+			offset += len;
+			size += len;
 
 			int tmp = frq/500;
-			printf("%d : %d Hz -> %d Hz , pitch brr : %x , SFX : %d %d / size : %x\n",i,wav.frequence,frq ,tmp*0x40,offset/0x400, (offset/0x400)+12 , len);
+			printf("%d : %d Hz, pitch : %x ,size : %x\n",i,wav.frequence ,tmp*0x40, len);
 		}
 
 
 	}
 
+	fclose(file);
 	close_brr();
 
 	printf("size %d bytes / max 20416 - 32704 bytes\n",size);

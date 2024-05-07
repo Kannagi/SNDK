@@ -5,6 +5,9 @@
 
 #include "KS.h"
 
+unsigned char buffer_track[0x10000];
+void KS_delay_buf(int delay,unsigned char *buf,int *ibuf);
+
 void KS_write_track(KS_FORMAT *ks,int *option,int out)
 {
 	int l,k,j;
@@ -23,6 +26,8 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 	sprintf(str,"%s.sks",ks->name);
 
     FILE *file;
+    ks->chFlag = 0;
+
 
     int begin = 0x100;
 
@@ -62,6 +67,7 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 		int index = -1;
 		int volume = -1;
 		int delay = 0;
+		int redelay = -1;
 		int olddelay = 0;
 		int ticks = 0;
 		int flagsp = 0;
@@ -71,6 +77,12 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 		int flags = 0;
 		int end = 0;
 		int cmd = 0;
+		int empty = 0;
+		int next_pattern = 0;
+		int debug_delay;
+
+		int ibuf = 0;
+		int oldibuf = 0;
 
 		k = 0;
 		fticks = 0;
@@ -201,28 +213,51 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 
 			if(pattern != 0)
 			{
+				empty = 1;
+				pattern &= 5;
 				int tmp = delay;
-				KS_delay_fputc(tmp,file);
 				olddelay = ticks;
-
 				int bnote = note;
 
-				if(bnote != 0)
+				if(tmp == redelay)
 				{
-					tmp = index+1;
-					tmp = (tmp&0x1F) | (pattern<<5);
-
-					fputc(tmp,file);
-
-					if(pattern&0x01)
-						fputc(note,file);
-
-					if(pattern&0x04)
-						fputc(volume,file);
+					debug_delay = redelay;
+					buffer_track[oldibuf] |= 0x40;
 
 				}else
 				{
-					fputc(0,file);
+					KS_delay_buf(tmp,buffer_track,&ibuf);
+				}
+				redelay = tmp;
+				oldibuf = ibuf;
+
+
+				if(bnote != 0)
+				{
+
+					tmp = index+1;
+					tmp = (tmp&0x1F) | (pattern<<5);
+
+
+					buffer_track[ibuf] = tmp;
+					ibuf++;
+
+					if(pattern&0x01)
+					{
+						buffer_track[ibuf] = note;
+						ibuf++;
+					}
+
+					if(pattern&0x04)
+					{
+						buffer_track[ibuf] = volume;
+						ibuf++;
+					}
+
+				}else
+				{
+					buffer_track[ibuf] = 0;
+					ibuf++;
 				}
 
 			}
@@ -232,12 +267,34 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 			delay = (ticks-olddelay);
 		}
 
-		int tmp = delay;
-		KS_delay_fputc(tmp,file);
-		olddelay = ticks;
-		fputc(0,file);
-		fputc(0xFF,file);
-		fputc(0xFF,file);
+		if(empty == 1)
+		{
+			ks->chFlag |= 1<<i;
+
+			int tmp = delay;
+			if(delay > 2) tmp -= 2;
+
+			KS_delay_buf(tmp,buffer_track,&ibuf);
+
+			buffer_track[ibuf] = 0;
+			ibuf++;
+
+			buffer_track[ibuf] = 0xFF;
+			ibuf++;
+
+			buffer_track[ibuf] = 0xFF;
+			ibuf++;
+			/*
+			KS_delay_fputc(tmp,file);
+			fputc(0,file);
+			fputc(0xFF,file);
+			fputc(0xFF,file);
+			*/
+
+			fwrite(buffer_track,1,ibuf,file);
+		}
+
+
 	}
 
 
