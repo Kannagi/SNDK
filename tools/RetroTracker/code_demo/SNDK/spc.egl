@@ -71,7 +71,7 @@ func Load_SKS:
 funclib LKS_SPC_SetData: uint16 addr, uint16 bank, uint16 isize
 {
 	idx = isize
-	asm"
+	asm "
 	
 	rep #$20
 	lda $104

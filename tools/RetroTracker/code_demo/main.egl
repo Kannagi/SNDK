@@ -218,7 +218,7 @@ text_channel3:
 .data.s "CHANNEL3"
 	
 text_channel4:
-.data.s"CHANNEL4"
+.data.s "CHANNEL4"
 	
 text_channel5:
 .data.s "CHANNEL5"
