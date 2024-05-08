@@ -118,8 +118,12 @@ int IT_Load(char *name,int *option)
 			int type = 0;
 			if(it_sample.flag&0xF0) type = 1;
 
+			int volume = it_sample.vol*4;
+			if (volume > 255)
+				volume = 255;
+
 			KS_savedata_sample(&ks,str,option,data,i,loop_start,loop_end,
-								it_sample.vol,relative,type,bitssize,it_sample.c5speed/2);
+								volume,relative,type,bitssize,it_sample.c5speed/2);
 			free(data);
 		}
 	}

@@ -98,8 +98,11 @@ int S3M_Load(char *name,int *option)
 
 			s3m_resample(data,slength,bitssize);
 
+			int volume = s3m_instrument.volume*4;
+			if (volume > 255)
+				volume = 255;
 			KS_savedata_sample(&ks,str,option,data,i,s3m_instrument.loopStart,slength,//s3m_instrument.loopEnd,
-								s3m_instrument.volume,relative+(12*2),s3m_instrument.flags&1,bitssize,s3m_instrument.c2spd);
+								volume,relative+(12*2),s3m_instrument.flags&1,bitssize,s3m_instrument.c2spd);
 
 
 			total += size;
