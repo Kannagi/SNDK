@@ -132,7 +132,6 @@ play_sample:
 	call !set_pitch
 	
 	mov a,volume
-	adc a,avolume
 	mov arg+4,a
 	mov arg+5,a
 	
