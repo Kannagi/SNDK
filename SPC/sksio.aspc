@@ -76,14 +76,14 @@ SKS_IO:
 		
 		call !clear_voice
 		
-		mov tmp+0,#7
-		mov tmp+1,#$80
+		mov x,#7
+		mov tmp,#$80
 		
 		mov a,PORT_2
 		call !brr_on
 		
-		mov tmp+0,#6
-		mov tmp+1,#$40
+		mov x,#6
+		mov tmp,#$40
 		
 		mov a,PORT_3
 		call !brr_on
@@ -96,14 +96,14 @@ SKS_IO:
 	bne +
 		call !clear_voice
 		
-		mov tmp+0,#5
-		mov tmp+1,#$20
+		mov x,#5
+		mov tmp,#$20
 		
 		mov a,PORT_2
 		call !brr_on
 		
-		mov tmp+0,#4
-		mov tmp+1,#$10
+		mov x,#4
+		mov tmp,#$10
 		
 		mov a,PORT_3
 		call !brr_on
@@ -235,22 +235,19 @@ brr_on:
 	mov arg+0,a
 	
 	mov a,#KOF
-	mov y,tmp+1
+	mov y,tmp
 	movw REG_ADD,YA
 	
-	mov x,tmp
 	call !set_voice
 	
 	mov a,#KOF
 	mov y,#0
 	movw REG_ADD,YA
 	
-	mov a,bkof
-	or a,tmp
-	mov bkof,a
+	or bkof, tmp
 	
 	mov a,#KON
-	mov y,tmp+1
+	mov y,tmp
 	movw REG_ADD,YA
 		
 
