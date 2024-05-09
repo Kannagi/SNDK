@@ -62,7 +62,6 @@ sks_pattern:
 	mov a,tmp+4
 	and a,#$1F
 	bne +
-		mov volume,a
 		mov tmp+3,a
 	+:
 	
@@ -101,6 +100,12 @@ play_sample:
 	and a,ckon
 	pop a
 	beq +
+		ret
+	+:
+	cmp a,#$00
+	bne +
+		mov REG_ADD, #KOF
+		or REG_DATA,ckon
 		ret
 	+:
 	
