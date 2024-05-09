@@ -266,7 +266,10 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 
 					if(pattern&0x04)
 					{
-						buffer_track[ibuf] = volume<<1;
+						if (volume >= 64)
+							buffer_track[ibuf] = 127;
+						else
+							buffer_track[ibuf] = volume<<1;
 						ibuf++;
 					}
 
