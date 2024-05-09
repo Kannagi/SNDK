@@ -63,22 +63,9 @@ SKS_IO:
 		ret
 	+:
 	
-	cmp a,#LKS_SPC_SVOLUME
-	bne +
-		mov svolume,PORT_2
-
-		inc PORT_0
-		ret
-	+:
-	
 	cmp a,#LKS_SPC_PLAY
 	bne +
 		mov play,PORT_2
-
-		mov a,#0
-		
-		mov ticks,a
-		mov ticks+1,a
 		
 		inc PORT_0
 		ret
@@ -89,39 +76,17 @@ SKS_IO:
 		
 		call !clear_voice
 		
+		mov tmp+0,#7
+		mov tmp+1,#$80
+		
 		mov a,PORT_2
-		cmp a,#$FF
-		beq ++
-			clrc
-			adc a,#$20
-			mov arg+0,a
-			
-			mov x,#7
-			call !set_voice
-			
-			WDSP KON,$80
-			
-			mov a,bkof
-			or a,#$80
-			mov bkof,a
-		++:
+		call !brr_on
+		
+		mov tmp+0,#6
+		mov tmp+1,#$40
 		
 		mov a,PORT_3
-		cmp a,#$FF
-		beq ++
-			clrc
-			adc a,#$20
-			mov arg+0,a
-			
-			mov x,#6
-			call !set_voice
-			
-			WDSP KON,$40
-			
-			mov a,bkof
-			or a,#$40
-			mov bkof,a
-		++:
+		call !brr_on
 		
 		inc PORT_0
 		ret
@@ -129,42 +94,19 @@ SKS_IO:
 	
 	cmp a,#LKS_SPC_BRR_PLAY56
 	bne +
-		
 		call !clear_voice
 		
+		mov tmp+0,#5
+		mov tmp+1,#$20
+		
 		mov a,PORT_2
-		cmp a,#$FF
-		beq ++
-			clrc
-			adc a,#$20
-			mov arg+0,a
-			
-			mov x,#5
-			call !set_voice
-			
-			WDSP KON,$20
-			
-			mov a,bkof
-			or a,#$20
-			mov bkof,a
-		++:
+		call !brr_on
+		
+		mov tmp+0,#4
+		mov tmp+1,#$10
 		
 		mov a,PORT_3
-		cmp a,#$FF
-		beq ++
-			clrc
-			adc a,#$20
-			mov arg+0,a
-			
-			mov x,#4
-			call !set_voice
-			
-			WDSP KON,$10
-			
-			mov a,bkof
-			or a,#$10
-			mov bkof,a
-		++:
+		call !brr_on
 
 		inc PORT_0
 		ret
@@ -282,7 +224,38 @@ SKS_IO:
 	+:
 	
 	ret
+	
+brr_on:
+	cmp a,#$FF
+	bne +
+		ret
+	+:
+	clrc
+	adc a,#$20
+	mov arg+0,a
+	
+	mov a,#KOF
+	mov y,tmp+1
+	movw REG_ADD,YA
+	
+	mov x,tmp
+	call !set_voice
+	
+	mov a,#KOF
+	mov y,#0
+	movw REG_ADD,YA
+	
+	mov a,bkof
+	or a,tmp
+	mov bkof,a
+	
+	mov a,#KON
+	mov y,tmp+1
+	movw REG_ADD,YA
+		
 
+	ret
+	
 clear_voice:
 	mov arg+1,#$7F
 	mov arg+2,#$E0

@@ -5,10 +5,6 @@ play_music:
 	mov a,cvolume+x
 	mov volume,a
 	
-	mov a,csrcn+x
-	mov srcn,a
-	call !select_index
-	
 	mov y,#0
 	mov a,[ZP]+y
 	mov tmp+4,a
@@ -44,9 +40,6 @@ sks_pattern:
 	
 	;instrument
 	and a,#$1F
-	clrc
-	adc a,#0
-	mov csrcn+x,a
 	mov srcn,a
 	call !select_index
 	mov a,note+x
@@ -132,7 +125,6 @@ play_sample:
 	call !set_pitch
 	
 	mov a,volume
-	adc a,avolume
 	mov arg+4,a
 	mov arg+5,a
 	
