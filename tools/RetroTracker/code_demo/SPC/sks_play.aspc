@@ -1,11 +1,8 @@
 
 .MACRO SKS_TRACK_PLAY
-	mov a,kon
-	and a,#1<<\1
-	cmp a,#1<<\1
-	bne ++
+	bbc kon.\1, ++
 	
-	cmp cfirst+(\1),#0
+	mov a,cfirst+(\1)
 	bne +
 		clrc
 		
@@ -73,7 +70,6 @@ sks_play:
 	+:
 	
 	;PAUSE
-	mov a,play
 	cmp a,#$00
 	bne +
 		ret

@@ -11,10 +11,7 @@ play_music:
 
 	call !sks_pattern
 
-	mov a,tmp+4
-	and a,#$40
-	cmp a,#$40
-	bne +
+	bbc tmp+4.6, +
 		mov a,delayl+x
 		mov tmp+0,a
 
@@ -46,10 +43,7 @@ sks_pattern:
 	mov tmp+3,a
 			
 	;pitch
-	mov a,tmp+4
-	and a,#$20
-	cmp a,#$20
-	bne +
+	bbc tmp+4.5, +
 		inc y
 		mov a,[ZP]+y
 		mov note+x,a
@@ -57,10 +51,7 @@ sks_pattern:
 	+:
 
 	;volume
-	mov a,tmp+4
-	and a,#$80
-	cmp a,#$80
-	bne +
+	bbc tmp+4.7, +
 		inc y
 		mov a,[ZP]+y
 		mov cvolume+x,a
@@ -70,10 +61,9 @@ sks_pattern:
 	;void
 	mov a,tmp+4
 	and a,#$1F
-	cmp a,#$00
 	bne +
-		mov volume,#0
-		mov tmp+3,#0
+		mov volume,a
+		mov tmp+3,a
 	+:
 	
 	mov a,tmp+3
@@ -87,9 +77,7 @@ play_delay:
 	
 	mov tmp+2,a
 	
-	and a,#$80
-	cmp a,#$80
-	bne +
+	bpl +
 		inc y
 		mov a,[ZP]+y
 		mov tmp+0,a
@@ -111,12 +99,10 @@ play_sample:
 	push a
 	mov a,bkof
 	and a,ckon
-	cmp a,#$00
+	pop a
 	beq +
-		pop a
 		ret
 	+:
-	pop a
 	
 	push y
 	
