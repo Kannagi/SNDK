@@ -66,11 +66,10 @@ sks_play:
 		WDSP KOF,$FF
 		
 		mov play,#0
-		ret
 	+:
 	
 	;PAUSE
-	cmp a,#$00
+	mov a,play
 	bne +
 		ret
 	+:
