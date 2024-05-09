@@ -84,6 +84,8 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 		int ibuf = 0;
 		int oldibuf = 0;
 
+		int first_v = 0;
+
 		k = 0;
 		fticks = 0;
 
@@ -232,6 +234,20 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 				oldibuf = ibuf;
 
 
+				if (first_v == 0)
+				{
+					if(pattern&0x04)
+					{
+
+					}else
+					{
+						volume = ks->instruments[index].volume;
+						pattern |= 0x04;
+					}
+				}
+				first_v = 1;
+
+
 				if(bnote != 0)
 				{
 
@@ -250,7 +266,7 @@ void KS_write_track(KS_FORMAT *ks,int *option,int out)
 
 					if(pattern&0x04)
 					{
-						buffer_track[ibuf] = volume;
+						buffer_track[ibuf] = volume<<1;
 						ibuf++;
 					}
 

@@ -131,14 +131,10 @@ play_sample:
 	adc a,relativ
 	call !set_pitch
 	
-	mov y,volume
-	mov a,avolume
-	cmp a,#$FF
-	beq +
-		mul ya
-+:
-	mov arg+4,y
-	mov arg+5,y
+	mov a,volume
+	adc a,avolume
+	mov arg+4,a
+	mov arg+5,a
 	
 	call !set_voice
 	
@@ -227,7 +223,7 @@ set_index:
 	
 	push y
 	
-	mov y,#$5
+	mov y,#$4
 	mul ya
 	
 	mov y,a
@@ -243,9 +239,6 @@ set_index:
 	
 	mov a,!SKSINDEX+3+y
 	mov arg+3,a
-	
-	mov a,!SKSINDEX+4+y
-	mov avolume,a
 	
 	pop y
 	ret

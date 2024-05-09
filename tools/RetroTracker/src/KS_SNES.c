@@ -26,13 +26,13 @@ void KS_write_header_SNES(KS_FORMAT *ks,int *option,int out)
 	int i,length = 0x3000;
 	int loop_start;
 
-	printf("Ninstruments : %d/23\n",ks->Ninstruments);
+	printf("Ninstruments : %d/27\n",ks->Ninstruments);
 
 	fputc(0x00,file);
 	fputc(0x02,file);
 	fputc(0x00,file);
 	fputc(0x02,file);
-	for(i = 0;i < 23;i++)
+	for(i = 0;i < 27;i++)
 	{
 		if(i < ks->Ninstruments)
 		{
@@ -106,8 +106,7 @@ void KS_write_header_SNES(KS_FORMAT *ks,int *option,int out)
 	fputc(0x7F,file);
 	fputc(0xE0,file);
 	fputc(0x00,file);
-	fputc(0x00,file);
-	for(i = 0;i < 23;i++)
+	for(i = 0;i < 27;i++)
 	{
 		if(i < ks->Ninstruments)
 		{
@@ -115,15 +114,12 @@ void KS_write_header_SNES(KS_FORMAT *ks,int *option,int out)
 			fputc(0x7F,file);
 			fputc(0xE0,file);
 			fputc(option[5],file);
-			//fputc(0x00,file);
-			fputc(instruments[i].volume,file);
 		}else
 		{
 			fputc(0x00,file);
 			fputc(0x7F,file);
 			fputc(0xE0,file);
 			fputc(option[5],file);
-			fputc(0x3F,file);
 		}
 
 	}

@@ -146,9 +146,7 @@ int MOD_Load(char *name,int *option)
 
 			mod_resample(data,slength,0);
 
-			int volume = mod_sample[i].volume*4;
-			if (volume > 255)
-				volume = 255;
+			int volume = mod_sample[i].volume;
 
 			KS_savedata_sample(&ks,str,option,data,i,mod_sample[i].loopstart,slength, //mod_sample[i].looplen
 								volume,(12*2),1,0,0);

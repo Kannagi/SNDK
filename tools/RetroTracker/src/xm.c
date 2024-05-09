@@ -129,9 +129,8 @@ int XM_Load(char *name,int *option)
 					{
 						xm_resample(data,slength,bitssize);
 
-						int volume = xm_sample[l].Volume*4;
-						if (volume > 255)
-							volume = 255;
+						int volume = xm_sample[l].Volume;
+
 						KS_savedata_sample(&ks,str,option,data,i,xm_sample[l].loop_start,length,//xm_sample[l].loop_length,
 								volume,xm_sample[l].Relative+(12*2),xm_sample[l].type,bitssize,0);
 					}
