@@ -8,16 +8,21 @@ To test please download the beta version in release then launch `higueulc`
 Discord : https://discord.gg/cWa37SRgYU  
 If you have problems with the language or SDK
 
-# TODO LIST
-- Make functions optimized for one-dimensional scrolling
-- Update the sound driver
-- Yorder
-- Handle sprites larger than 32x32/64x32
-- improved sprite management
-- texture compression
-- make tools to facilitate game creation
+# CAN DO
+- sprite management and animation
+- map management (via Tiled and RLE compression)
+- play music and sounds
 - hitbox
-- bullet engine
+- different number display (hex, decimal or decimal mode)
+- text display
+- joypad
+- automatic management of SNES hardware (VBlank, DMA, Fastrom etc)
+
+# TODO LIST
+- Zorder
+- manage more meta sprites
+- texture compression
 - collision
+- VScode plugin
 
 

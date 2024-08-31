@@ -26,7 +26,7 @@ func SNDK_Init:;
 	TM = 0x17; //bg 1,2,3 ,obj enable
 	COLDATA = 0xE0;
 	WRIO = 0xFF;
-	NMITIMEN  = 0x00; //Disable all
+	
 	SETINI = 0;
 		
 	TS = 0x00;
@@ -117,12 +117,30 @@ func SNDK_Init:;
 	//clear RAM
 	SNDK_memset SNDK_RAM,SNDK_INIT_DATA1,0xFE00
 	
+	idy =  0;
+	WMADD = idy;
+	WMADDH = 0x7F;
+	
+	DMA_BANK_7 = #SNDK_INIT_DATA1:
+	
+	idy = $SNDK_INIT_DATA1:
+	DMA_ADD_7 = idy;
+	
+	idy = 0xFF00;
+	DMA_SIZE_7 = idy;
+	
+	MDMAEN = 0x80; 
+	
+	//Load driver audio
+	call Load_SKS:
+	[0x104] = 0
+	
 	MODE16
 	
 	//VRAM CLEAR
 	idx = 0;
 	acc = 0;
-	VMADD = idx;
+	VMADD = 0;
 	idy = (0x1000);
 	do
 	{
@@ -161,12 +179,17 @@ func SNDK_Init:;
 	
 	OBJSEL = SNDK_SPR_16_32;
 	SNDK_SPR_META 16,32
+	
+	SNDK_SFX1 = 0xFF
+	SNDK_SFX2 = 0xFF
+	SNDK_SFX3 = 0xFF
+	SNDK_SFX4 = 0xFF
 }
 	
 SNDK_INIT_DATA1:
 .data.b 0;
 
-func SNDK_ModeAlpha:;
+func SNDK_ModeAlphaBG1:
 {
 	TS = 0x11;
 	CGSWSEL = 0x02;
@@ -174,57 +197,23 @@ func SNDK_ModeAlpha:;
 }
 
 
-
-
-
-funclib tesss:uint8 ok;
+func SNDK_ModeAlphaBG2:
 {
-	spm uint8 ok1;
-	lib uint8 ok2;
-	ok = ok1 + ok2;;
-	
-	spm uint16 address;
-	spm uint8 bank,tmp;
-	idy = $text_hello:;
-	address = idy;
-	address = #text_hello:;
-	
-	idx = 0;
-	spm uint16 idx1,idx2;
-	idx1 = 0;
-	idx2 = 0;
-	do
-	{
-		tmp = @address;
-		address +=1;
-
-	}
-	while tmp != 0
-	
-	
-	idy = $text_hello:;
-	address = idy;
-	bank = #text_hello:;
-	
-	acc = address;
-	acc = acc>>8;
-	
-	DMA_ADD_0 = $SNDK_BG3.t1 + address;
-	
-	DMA_ADD_0 = acc+ $SNDK_BG3.t1;
-	idx = idx>>4;
-	MODE16
-	lib uint16 posxh;
-	posxh = 0;
-	ok1 = 5;
-	ok = 8;
-	
-	[SNDK_OAMH,posxh] = ok;
-	
-	
-	uint16 tadr;
-	tadr =+ LIST_SPR1:
+	TS = 0x12;
+	CGSWSEL = 0x02;
+	CGADSUB = 0x41;
 }
+
+
+func SNDK_NoModeAlpha:
+{
+	TS = 0x00;
+	CGSWSEL = 0x00;
+	CGADSUB = 0x00;
+}
+
+
+
 
 DATA_FONT_SNDK_S:
 .incbin "SNDK/fontm.spr"
@@ -233,7 +222,9 @@ DATA_FONT_SNDK_P:
 .incbin "SNDK/fontm.pal"
 .incbin "SNDK/fontm2.pal"
 .incbin "SNDK/fontm3.pal"
-.data.w 0x7777,0;
+.incbin "SNDK/fontm4.pal"
+
+
 
 .org 0xFFB0
 .org 0xFFC0

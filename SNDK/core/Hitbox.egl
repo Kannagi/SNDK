@@ -1,0 +1,90 @@
+
+funclib SNDK_HitboxSet:uint16 x,uint16 y,uint16 w,uint16 h
+{
+	lib uint16 rect.x,rect.y,rect.w,rect.h
+	
+	MODE16
+	if x & 0x2000
+	{
+		acc = x & 0xFF
+		acc = acc ^ 0xFF
+		w -= acc
+		x = 0
+	}
+	
+	
+	rect.x = x
+	rect.y = y
+	rect.w = x+w
+	rect.h = y+h
+	
+	if rect.w & 0x1F00
+	{
+		rect.w = 255
+	}
+	MODE8
+}
+
+funclib SNDK_HitboxRectDot: uint8 px, uint8 py
+{
+	lib uint16 rect.x,rect.y,rect.w,rect.h
+	
+	acc = py
+	if acc == 0xE0
+	{
+		return 0
+	}
+
+	if acc >= rect.y
+	{
+		if acc < rect.h
+		{
+			acc = px
+			if acc >= rect.x
+			{
+				if acc < rect.w
+				{
+					return 1
+				}
+			}
+		}
+	}
+	
+	return 0
+}
+
+funclib SNDK_HitboxAABB: uint8 px, uint8 py,uint8 w, uint8 h
+{
+	lib uint16 rect.x,rect.y,rect.w,rect.h
+	
+	acc = py
+	if acc == 0xE0
+	{
+		return 0
+	}
+	
+	if acc >= rect.h
+	{
+		return 0
+	}
+	
+	acc += h
+	if acc < rect.y
+	{
+		return 0
+	}
+	
+	acc = px
+	if acc >= rect.w
+	{
+		return 0
+	}
+	
+	acc += w
+	if acc < rect.x
+	{
+		return 0
+	}
+	
+	return 1
+}

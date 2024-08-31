@@ -1,0 +1,120 @@
+
+
+func sprite_engine:
+{
+	FORCED_BLANK
+	
+	//update pal
+	SNDK_memcopy SNDK_PALSPR0,HERO_PAL,0x40
+	
+	SNDK_SendCGRAM 0x00,SNDK_PALBG0,0x200
+	
+	//--------SPR0----
+	MODE16
+	idx = SPR_INDEX_0
+	
+	[SNDK_SPRITE.list,idx] = $LIST_SPR1:
+	[SNDK_SPRITE.x,idx] = (70<<2)
+	[SNDK_SPRITE.y,idx] = (50<<2)
+	[SNDK_SPRITE.mode,idx] = $SNDK_SpriteEngineDrawMode0z:
+	[SNDK_SPRITE.index,idx]  = 52
+	[SNDK_SPRITE.ianim,idx]  = 0
+	MODE8
+	
+	[SNDK_SPRITE.flag,idx] = 0x02
+	[SNDK_SPRITE.t,idx] = 0;
+	[SNDK_SPRITE.a,idx] = (OAM_PAL0 | OAM_PRIO2);
+	
+	//--------SPR1----
+	MODE16
+	idx = SPR_INDEX_1
+	
+	[SNDK_SPRITE.list,idx] = $LIST_SPR2:
+	[SNDK_SPRITE.x,idx] = (100<<2)
+	[SNDK_SPRITE.y,idx] = (120<<2)
+	[SNDK_SPRITE.mode,idx] = $SNDK_SpriteEngineDrawMode0z:
+	[SNDK_SPRITE.index,idx]  = 52
+	[SNDK_SPRITE.ianim,idx]  = 0
+	MODE8
+	
+	[SNDK_SPRITE.flag,idx] = 0x08
+	[SNDK_SPRITE.t,idx] = 4;
+	[SNDK_SPRITE.a,idx] = (OAM_PAL1 | OAM_PRIO2);
+	
+	//-----------------------
+	
+	spm uint8 fade,anim
+	fade = 0
+	
+	TM = (SNDK_OBJ | SNDK_BG3)
+	
+	do
+	{
+		call SNDK_Sprite:
+		
+		call SNDK_SpriteEngine:0,2,1
+		
+		MODE16
+		idx = SPR_INDEX_0
+		[SNDK_SPRITE.vx,idx] = 0
+		[SNDK_SPRITE.vy,idx] = 0
+		
+		anim = 0
+		
+		
+		if SNDK_Joypad.pad1h & SNDK_PAD_RIGHT
+		{
+			[SNDK_SPRITE.vx,idx] = 3
+			[SNDK_SPRITE.index,idx]  = 26
+			[SNDK_SPRITE.a,idx] = (OAM_PAL0 | OAM_PRIO2);
+			anim = 1
+		}
+		
+		if SNDK_Joypad.pad1h & SNDK_PAD_LEFT
+		{
+			[SNDK_SPRITE.vx,idx] = (-3)
+			[SNDK_SPRITE.index,idx]  = 26
+			[SNDK_SPRITE.a,idx] = (OAM_PAL0 | OAM_PRIO2 | OAM_XFLIP);
+			anim = 1
+		}
+		
+		if SNDK_Joypad.pad1h & SNDK_PAD_UP
+		{
+			[SNDK_SPRITE.vy,idx] = (-3)
+			[SNDK_SPRITE.index,idx]  = 0
+			anim = 1
+		}
+		
+		if SNDK_Joypad.pad1h & SNDK_PAD_DOWN
+		{
+			[SNDK_SPRITE.vy,idx] = 3
+			[SNDK_SPRITE.index,idx]  = 52
+			anim = 1
+		}
+		MODE8
+		
+		if anim == 0
+		{
+			[SNDK_SPRITE.ianim,idx] = 0
+		}
+		
+		
+		if SNDK_Joypad.pad1h & SNDK_PAD_SELECT
+		{
+			fade = 1
+		}
+		
+		call SNDK_Fade: 6,fade
+		if acc == 1
+		{
+			if fade == 1
+			{
+				FORCED_BLANK
+				TM = (SNDK_BG3)
+				return
+			}
+		}
+		call SNDK_WaitVBlank:
+	}
+	while 1 == 1
+}

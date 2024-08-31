@@ -208,7 +208,6 @@ void snes_map(TMX *tmx,char *out,int compress)
 
 						//-----------------------
 						//RLE
-
 						while(tmx->layer[i].data[j+0] == tmx->layer[i].data[j+1])
 						{
 							rle++;
@@ -223,7 +222,6 @@ void snes_map(TMX *tmx,char *out,int compress)
 							flag = 0x1;
 
 						//-----------------------
-
 
 						if(rle == 0)
 						{
@@ -275,6 +273,7 @@ void snes_map(TMX *tmx,char *out,int compress)
 
 						l = j;
 					}
+
 
 					if(flag != 0)
 						data++;
@@ -330,7 +329,6 @@ void snes_map(TMX *tmx,char *out,int compress)
 
 					if(compress == 0)
 					{
-						printf("nocommpress \n",compress);
 						size++;
 						fputc(data,file);
 					}
@@ -352,8 +350,6 @@ void snes_map(TMX *tmx,char *out,int compress)
 
 			if(compress != 0)
 			{
-				printf("commpress \n",compress);
-
 				fputc(0,file);
 				fputc(0,file);
 				int rle;

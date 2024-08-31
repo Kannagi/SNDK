@@ -1,14 +1,6 @@
 
 
-SNES_BANK 2
-//Pal
-RANDI_PAL:
-.incbin "DATA/randi.pal"
-.incbin "DATA/man.pal"
-.incbin "DATA/soldat.pal"
-.incbin "DATA/Jean.pal"
-.incbin "DATA/old_man.pal"
-
+SNES_BANK 3
 MAP1_PAL:
 .incbin "DATA/map/tile_0.pal"
 .incbin "DATA/map/tile_1.pal"
@@ -17,114 +9,8 @@ MAP1_PAL:
 .incbin "DATA/map/tile_4.pal"
 .incbin "DATA/map/tile_5.pal"
 .incbin "DATA/map/tile_6.pal"
-/*
-.define SNDK_SIZE_8x8     0x20
-.define SNDK_SIZE_16x16 0x80
-.define SNDK_SIZE_32x32 0x200
-.define SNDK_SIZE_48x48 0x300
-.define SNDK_SIZE_64x64 0x800
-*/
-SNES_BANK 3
-//list
-SNDK_LIST:
-LIST_SPR1:
-// label   data              anim
-.data.l   RANDI_SPR:,RANDI_ANIM:
-.data.w 0x6000, 0x80,0x200,         0x0F
-//---------VRAM    size   decalage  , channel
-
-LIST_SPR2:
-.data.l   PNJ_SPR1:,RANDI_ANIM2:
-.data.w 0x6040, 0x80,0x200,         0x0F
-
-LIST_SPR3:
-.data.l   PNJ_SPR2:,RANDI_ANIM2:
-.data.w 0x6080, 0x80,0x200,         0x0F
-
-LIST_SPR4:
-.data.l   PNJ_SPR3:,RANDI_ANIM2:
-.data.w 0x60C0, 0x80,0x200,         0x0F
-
-
-
-LIST_SPR5:
-.data.l   PNJ_SPR1:,RANDI_ANIM2:
-.data.w 0x6400, 0x80,0x200,         0x0F
-
-LIST_SPR6:
-.data.l   PNJ_SPR2:,RANDI_ANIM2:
-.data.w 0x6440, 0x80,0x200,         0x0F
-
-LIST_SPR7:
-.data.l   PNJ_SPR3:,RANDI_ANIM2:
-.data.w 0x6480, 0x80,0x200,         0x0F
-
-LIST_SPR8:
-.data.l   PNJ_SPR4:,RANDI_ANIM2:
-.data.w 0x64C0, 0x80,0x200,         0x0F
-
-
-
-LIST_SPR9:
-.data.l   PNJ_SPR1:,RANDI_ANIM2:
-.data.w 0x6800, 0x80,0x200,         0x0F
-
-LIST_SPR10:
-.data.l   PNJ_SPR2:,RANDI_ANIM2:
-.data.w 0x6840, 0x80,0x200,         0x0F
-
-LIST_SPR11:
-.data.l   PNJ_SPR3:,RANDI_ANIM2:
-.data.w 0x6880, 0x80,0x200,         0x0F
-
-LIST_SPR12:
-.data.l   PNJ_SPR4:,RANDI_ANIM2:
-.data.w 0x68C0, 0x80,0x200,         0x0F
-
-
-
-LIST_SPR13:
-.data.l   PNJ_SPR1:,RANDI_ANIM2:
-.data.w 0x6C00, 0x80,0x200,         0x0F
-
-LIST_SPR14:
-.data.l   PNJ_SPR2:,RANDI_ANIM2:
-.data.w 0x6C40, 0x80,0x200,         0x0F
-
-LIST_SPR15:
-.data.l   PNJ_SPR3:,RANDI_ANIM2:
-.data.w 0x6C80, 0x80,0x200,         0x0F
-
-LIST_SPR16:
-.data.l   PNJ_SPR4:,RANDI_ANIM2:
-.data.w 0x6CC0, 0x80,0x200,         0x0F
-
-RANDI_ANIM:
-.data.w (3*2),0x00 ,0x80,0x100,0x180
-.data.w (3*2),0x1000 ,0x1080,0x1100,0x1180
-
-RANDI_ANIM2:
-.data.w (3*2),0x00 ,0x80,0x100,0x180
 
 SNES_BANK 4
-RANDI_SPR:
-.incbin "DATA/randi.spr"
-
-
-
-SNES_BANK 5
-
-
-PNJ_SPR1:
-.incbin "DATA/old_man.spr"
-PNJ_SPR2:
-.incbin "DATA/man.spr"
-PNJ_SPR3:
-.incbin "DATA/Jean.spr"
-PNJ_SPR4:
-.incbin "DATA/soldat.spr"
-
-SNES_BANK 6
 MAP1_SPR:
 .incbin "DATA/map/tile_0.spr"
 .incbin "DATA/map/tile_1.spr"
@@ -133,25 +19,64 @@ MAP1_SPR:
 .incbin "DATA/map/tile_4.spr"
 .incbin "DATA/map/tile_5.spr"
 .incbin "DATA/map/tile_6.spr"
-SNES_BANK 7
-MAP1_DATAA:
-.incbin "DATA/map/tile_A.ktm"
-MAP1_DATAB:
-.incbin "DATA/map/tile_B.ktm"
-SNES_BANK 8
 
+SNES_BANK 5
+MAP1_DATA:
+.incbin "DATA/map/map_A.ktm"
+
+MAP2_DATA:
+.incbin "DATA/map/map_B.ktm"
+
+MAPC_DATA:
+.incbin "DATA/map/map_C.ktm"
+
+SNES_BANK 6
+SPRITE1_SPR:
+.incbin "DATA/sprite/car.spr"
+.incbin "DATA/sprite/shmup.spr"
+
+SPRITE1_PAL:
+.incbin "DATA/sprite/car.pal"
+.incbin "DATA/sprite/shmup.pal"
+
+SNES_BANK 7
+SFX_BRR:
+.incbin "DATA/sound/SFX.brr"
+
+SFX_DIR:
+.incbin "DATA/sound/SFX.dir"
+
+
+MUSIC_BRR:
+.incbin "DATA/sound/Chrono_Trigger.brr"
+
+MUSIC_TRACK1:
+.incbin "DATA/sound/Chrono_Trigger.sks"
+
+SNES_BANK 8
+HERO_SPR:
+.incbin "DATA/sprite/rpg_hero.spr"
+
+HERO_PAL:
+.incbin "DATA/sprite/rpg_hero.pal"
+.incbin "DATA/sprite/rpg_hero2.pal"
 SNES_BANK 9
 
 SNES_BANK 10
 
+
 SNES_BANK 11
 
+
 SNES_BANK 12
+
 
 SNES_BANK 13
 
 SNES_BANK 14
 
+
 SNES_BANK 15
 
-.org 0x100000
+
+.org 0x80000

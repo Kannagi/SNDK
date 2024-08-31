@@ -42,7 +42,7 @@
 	
 	DMA_BANK_4 =  0x7E;
 	
-	idy = 0xD000;
+	idy = $SNDK_OAM0.x;
 	DMA_ADD_4 = idy;
 	
 	idy =  0x220;
@@ -81,4 +81,41 @@
 	
 	MDMAEN = 0x20;
 
+.endmacro
+
+
+.macro SNDK_AddDec
+	asm "sed"
+	acc = .arg1 + .arg2
+	asm "cld"
+.endmacro
+
+
+.macro SNDK_SubDec
+	asm "sed"
+	acc = .arg1 - .arg2
+	asm "cld"
+.endmacro
+
+
+.macro SNDK_AddDec2
+
+	[0x106] = .arg3
+	asm "sed"
+	.arg1 = .arg1 + .arg2
+	asm "
+	lda $106
+	adc #0
+	cld"
+.endmacro
+
+
+.macro SNDK_SubDec2
+
+	[0x106] = .arg3
+	asm "sed"
+	.arg1 = .arg1 - .arg2
+	asm "
+	sbc $106
+	cld"
 .endmacro

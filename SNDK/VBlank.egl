@@ -5,11 +5,9 @@ SNES_HEADER
 
 SNES_BANK 1
 
-	
-	//0x800 3 DMA                            [x]
-	//0x40 palette                             [x]
-	//0x100 scrolling BG1&2             [x]
-	//0x40 line tilemap                      [x]
+Super_Kannagi_Sound:
+.incbin "SPC/Super_Kannagi_Sound.spc"
+
 	
 func SNDK_VBlank:;
 {
@@ -33,53 +31,63 @@ func SNDK_VBlank:;
 	BG2V0FS = SNDK_BG2_Scroll.y;
 	BG2V0FS = SNDK_BG2_Scroll.y2;
 	
-	
-	
+
 	//-----------------BG line/col-----------------
 	uint16 bg1.h,bg1.v,bg2.h,bg2.v;
 
 	MODE16
-	DMA_ADD_0 = SNDK_BUF_BG1.h;
-	DMA_ADD_1 = SNDK_BUF_BG1.v;
-	DMA_ADD_2 = SNDK_BUF_BG2.h;
-	DMA_ADD_3 = SNDK_BUF_BG2.v;
+	DMA_ADD_0 = SNDK_BUF_BG1.h1;
+	DMA_ADD_1 = SNDK_BUF_BG1.h2;
+	DMA_ADD_2 = SNDK_BUF_BG2.h1;
+	DMA_ADD_3 = SNDK_BUF_BG2.h2;
 	
-	DMA_SIZE_0 = 0x40;
+	DMA_SIZE_0 = 0x20;
 	DMA_SIZE_1 = acc;
 	DMA_SIZE_2 = acc;
 	DMA_SIZE_3 = acc;
 	
-	DMA_BANK_0 = 0x7E;
+	MODE8
+	DMA_BANK_0 = 0x7F;
 	DMA_BANK_1 = acc;
 	DMA_BANK_2 = acc;
 	DMA_BANK_3 = acc;
-	MODE8
+	
 	//BG1 H
 	if bg & 0x01
 	{
 		idy = bg1.h;
 		VMADD = idy;
-		MDMAEN = 0x01;
+		MDMAEN = 0x03;
 	}
-	
 	
 	//BG2 H
 	if bg & 0x04
 	{
 		idy = bg2.h;
 		VMADD = idy;
-		MDMAEN = 0x04;
+		MDMAEN = 0x0C;
 	}
 	
 	
 	VMAINC = 0x81;
+	
+	MODE16
+	DMA_ADD_0 = $SNDK_BUF_BG1.v;
+	DMA_ADD_1 = $SNDK_BUF_BG2.v;
+	
+	DMA_SIZE_0 = 0x40;
+	DMA_SIZE_1 = acc;
+
+	MODE8
+	DMA_BANK_0 = 0x7E;
+	DMA_BANK_1 = acc;
 	
 	//BG1 V
 	if bg & 0x02
 	{
 		idy = bg1.v;
 		VMADD = idy;
-		MDMAEN = 0x02;
+		MDMAEN = 0x01;
 	}
 	
 	//BG2 V
@@ -87,7 +95,7 @@ func SNDK_VBlank:;
 	{
 		idy = bg2.v;
 		VMADD = idy;
-		MDMAEN = 0x08;
+		MDMAEN = 0x02;
 	}
 	VMAINC = 0x80;
 	//-----------------SPRITE ENGINE DMA0-----------------
@@ -256,10 +264,9 @@ func SNDK_VBlank:;
 	DMA_ADD_0 = dma_tile.addr;
 	DMA_ADD_1 = acc + dma_tile.add;
 	
-	DMA_SIZE_0 = 0x40;
+	DMA_SIZE_0 = dma_tile.size;
 	DMA_SIZE_1 = acc;
 
-	
 	tmp1 = dma_tile.vmaddr;
 	tmp2 = acc + 0x100;
 	MODE8
@@ -269,13 +276,13 @@ func SNDK_VBlank:;
 	
 	if dma_tile.channel & 0x01
 	{
-		VMADD = tmp1;
+		VMADD =? tmp1;
 		MDMAEN = 0x01;
 	}
 	
 	if dma_tile.channel & 0x02
 	{
-		VMADD = tmp2;
+		VMADD =? tmp2;
 		MDMAEN = 0x02;
 	}
 	
@@ -326,12 +333,11 @@ func SNDK_VBlank:;
 	
 	MDMAEN = 1;
 	//-----------------end------------------
-	//SNDK_SendVRAM 0x2000,RANDI_SPR:,0x1000
-	
 	
 	bg = 0;
 	
 }
+
 
 func SNDK_WaitVBlank:;
 {
@@ -351,6 +357,7 @@ func SNDK_WaitVBlank:;
 			acc = 0;
 		}
 		SNDK.clocks = acc;
+		SNDK.pcpu  = 0
 		acc = 0;
 	}
 	SNDK.clockf = acc;
@@ -381,3 +388,23 @@ func SNDK_WaitVBlank:;
 	while acc == 1
 	NMITIMEN = 0x00;
 }
+
+func SNDK_Sprite:;
+{
+	uint16 oam;
+	
+	oam =? 0;
+	
+	SNDK_memset SNDK_OAM0.x,SNDK_OAM_INIT_DATA,0x200	
+	
+	SNDK_memset SNDK_OAMH,SNDK_OAM_INIT_DATA2,0x20
+}
+
+
+
+SNDK_OAM_INIT_DATA:
+.data.b 0xE0;
+
+SNDK_OAM_INIT_DATA2:
+.data.b 0x00;
+

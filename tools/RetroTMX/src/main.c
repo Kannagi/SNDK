@@ -66,6 +66,8 @@ int main(int argc, char** argv)
 	int console = option[3];
 
 
+
+
 	if(console == 0)
 		bin_map(&tmx,str,option[1]);
 

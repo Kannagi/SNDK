@@ -19,14 +19,14 @@ SNDK_OAM_INIT_DATA2:
 //---------------------------------------Engine--------------------------------------------------
 // >= <
 
-funclib SNDK_SpriteEngine:uint16 oam,uint16 n,uint8 ndma;
+funclib SNDK_SpriteEngine_old:uint16 oam,uint16 n,uint8 ndma;
 {
 
 	lib uint16 posx,posy;
 	lib uint8 tile,attribute;
 	
 	uint16 dma_count;
-	MODE16
+	
 	if n >= 16
 	{
 		n = 16;
@@ -42,6 +42,7 @@ funclib SNDK_SpriteEngine:uint16 oam,uint16 n,uint8 ndma;
 		return;
 	}
 	
+	MODE16
 	//--------------
 	
 	
@@ -156,7 +157,7 @@ funclib SNDK_SpriteEngine:uint16 oam,uint16 n,uint8 ndma;
 
 //---------------------------------------MODE--------------------------------------------------
 
-funclib SNDK_SpriteEngineDraw:;
+funclib SNDK_SpriteEngineDraw_old:;
 {
 	lib uint16 posx,posy;
 	lib uint8 tile,attribute;

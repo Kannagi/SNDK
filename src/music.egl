@@ -1,0 +1,72 @@
+
+STR_MUSIC:
+.data.s "PRESS A REPLAY"
+
+
+STR_MUSIC2:
+.data.s "PRESS B STOP"
+
+func music_test:
+{
+	FORCED_BLANK
+	
+	//load BRR 
+	call SNDK_SPC_Set2: LKS_SPC_ADDR,0x3000
+	call SNDK_SPC_SetData: $MUSIC_BRR:,#MUSIC_BRR:,0x5000
+	
+	//load SKS (track)
+	call SNDK_SPC_Set2: LKS_SPC_ADDR,0xB00
+	call SNDK_SPC_SetData: $MUSIC_TRACK1:,#MUSIC_TRACK1:,0x2400
+	
+	
+	//Volume global  ,volume SFX
+	call SNDK_SPC_Set: LKS_SPC_VOLUME,0x2F,0x2F
+	call SNDK_SPC_Set: LKS_SPC_BRR_VOLUME,0x7F,0x7F
+	
+	call SNDK_SPC_Set2:  LKS_SPC_PLAY,LKS_SPC_REPLAY
+	
+	
+	call SNDK_PrintLine: $STR_MUSIC:,#STR_MUSIC:,8,4,SNDK_FONTPAL0;
+	
+	call SNDK_PrintLine: $STR_MUSIC2:,#STR_MUSIC:,8,6,SNDK_FONTPAL0;
+	
+	uint8 key1,key2
+
+	uint8 fade
+	fade = 0
+	do
+	{
+		if SNDK_Joypad.npad1l & SNDK_PAD_A
+		{
+			call SNDK_SPC_Set2:  LKS_SPC_PLAY,LKS_SPC_REPLAY
+		}
+		
+		if SNDK_Joypad.npad1h & SNDK_PAD_B
+		{
+			call SNDK_SPC_Set2:  LKS_SPC_PLAY,LKS_SPC_STOP
+		}
+		
+		
+		
+		if SNDK_Joypad.npad1h & SNDK_PAD_SELECT
+		{
+			fade = 1
+		}
+		
+		call SNDK_Fade: 6,fade
+		if acc == 1
+		{
+			if fade == 1
+			{
+				call SNDK_SPC_Set2:  LKS_SPC_PLAY,LKS_SPC_STOP
+				return
+			}
+		}
+		
+		//Send SFX , delay
+		call SNDK_SFX_Engine: 12
+		
+		call SNDK_WaitVBlank:
+	}
+	while 1 == 1
+}

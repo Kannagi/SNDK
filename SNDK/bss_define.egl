@@ -214,7 +214,7 @@ uint16 HDMA_ADD_7;
 uint8 HDMA_LINE_7;
 
 //------------------------------------------------------------
-.bss 0x7ED000
+.bss 0x7EE000
 uint8 SNDK_OAM0.x;
 uint8 SNDK_OAM0.y;
 uint8 SNDK_OAM0.t;
@@ -238,11 +238,17 @@ uint8 SNDK_OAM3.a;
 uint8 SNDK_OAML 0x1F0;
 uint8 SNDK_OAMH 0x20;
 
-uint8 SNDK_Bullet.i 14;
-uint8 SNDK_Bullet.n 14;
-
 uint8  SNDK.cpu,SNDK.mcpu,SNDK.pcpu;
 uint8  SNDK.clockf,SNDK.clocks,SNDK.clockm,SNDK.clockh;
+uint8 SNDK_SFX_TIMER;
+uint16 SNDK_vrand;
+uint8 SNDK_Light;
+
+uint8 SNDK_SFX1;
+uint8 SNDK_SFX2;
+uint8 SNDK_SFX3;
+uint8 SNDK_SFX4;
+
 
 uint8 SNDK_BG1_Scroll.x;
 uint8 SNDK_BG1_Scroll.x2;
@@ -256,7 +262,8 @@ uint8 SNDK_BG2_Scroll.x2;
 uint8 SNDK_BG2_Scroll.y;
 uint8 SNDK_BG2_Scroll.y2;
 
-
+uint16 SNDK_BG_Scroll.addy;
+uint16 SNDK_BG_Scroll.addx;
 
 //---------------------SPRITE ENGINE----------------------------
 uint16 SNDK_SPRITE.x;
@@ -270,60 +277,48 @@ uint16  SNDK_SPRITE.list;
 uint16 SNDK_SPRITE.visible;
 uint16 SNDK_SPRITE.index;
 
+//0x10
+uint16 SNDK_SPRITE.mode
+uint16 SNDK_SPRITE.ianim;
+uint16 SNDK_SPRITE.offsetx
+uint16 SNDK_SPRITE.offsety
+
 uint8 SNDK_SPRITE.oam;
-uint8 SNDK_SPRITE.ianim;
-uint8 SNDK_SPRITE.mode
+uint8 SNDK_SPRITE.flag
+uint8 SNDK_SPRITE.eanim
+uint8 SNDK_SPRITE.draw
 
-uint8 SNDK_SPRITE (0x200);
 
-.macro SNDK_SpriteEngineSetList
-	idx= .arg1;
-	
-	asm "rep #$20"
-	[SNDK_SPRITE.list,idx] = $.arg2:;
-	asm "sep #$20"
-	
-	[SNDK_SPRITE.t,idx] = .arg3;
-	[SNDK_SPRITE.a,idx] = .arg4;
-.endmacro
+uint8 SNDK_SPRITE (0x400);
 
-.macro SNDK_SpriteEngineSetList
-	idx= .arg1;
-	
-	asm "rep #$20"
-	[SNDK_SPRITE.list,idx] = $.arg2:;
-	asm "sep #$20"
-	
-	[SNDK_SPRITE.t,idx] = .arg3;
-	[SNDK_SPRITE.a,idx] = .arg4 | 0x20;
-.endmacro
 
-.define SPRITE_ENGINE_MODE0 0x00 //1 sprite
-.define SPRITE_ENGINE_MODE1 0x01 //2x2 sprite
-.define SPRITE_ENGINE_MODE2 0x02 //2x1 sprite
-.define SPRITE_ENGINE_MODE3 0x03 //1x2 sprite
 
-.define SPRITE_ENGINE_MODE4 0x04 //3x2 sprite
-.define SPRITE_ENGINE_MODE5 0x05 //2x3 sprite
-.define SPRITE_ENGINE_MODE6 0x06 //4x2 sprite
-.define SPRITE_ENGINE_MODE7 0x07 //2x4 sprite
-
-.define SPRITE_ENGINE_MODE8 0x04 //48x48 sprite (only  16x32)
-.define SPRITE_ENGINE_MODE9 0x05 //48x32 sprite (only  16x32)
-
+uint8 SNDK_ZORDER 0x80
 //--------------------------------------
-uint8 SNDK_BUF_BG1.h 0x40;
 uint8 SNDK_BUF_BG1.v 0x40;
-
-uint8 SNDK_BUF_BG2.h 0x40;
 uint8 SNDK_BUF_BG2.v 0x40;
+
+uint16 SNDK_BUF_BG1.h1;
+uint16 SNDK_BUF_BG1.h2;
+
+uint16 SNDK_BUF_BG2.h1;
+uint16 SNDK_BUF_BG2.h2;
+
+uint16 SNDK_BG.w;
+uint16 SNDK_BG.h;
+
 
 uint16 SNDK_Bullet.x 0x80;
 uint16 SNDK_Bullet.y 0x80;
 uint16 SNDK_Bullet.vx 0x80;
 uint16 SNDK_Bullet.vy 0x80;
-uint8 SNDK_Bullet.t 0x80;
-uint8 SNDK_Bullet.a 0x80;
+uint8 SNDK_Bullet.t;
+uint8 SNDK_Bullet.a 0x100;
+uint16 SNDK_Bullet.id 0x80;
+
+uint16 SNDK_Bullet.usable1  0x80;
+uint16 SNDK_Bullet.usable2  0x80;
+
 
 uint8 SNDK_BG3.t1;
 uint8 SNDK_BG3.t2 0x800;
@@ -350,28 +345,11 @@ uint8 SNDK_PALSPR7 0x20;
 
 
 .bss 0x7F0000
-uint8 SNDK_BufferBG1 0x4000;
 uint8 SNDK_BufferBG2 0x4000;
-uint8 SNDK_BufferCOL 0x2000;
+uint8 SNDK_BufferBG1 0x4000;
+uint8 SNDK_BufferBGC 0x2000;
+uint8 SNDK_BufferSPR 0x6000;
 
-uint8 SNDK_BufferSPR1 0x2000;
-uint8 SNDK_BufferSPR2 0x2000;
-uint8 SNDK_BufferSPR3 0x2000;
-/*
- * 
- * .define SNDK_SPR_8_16    0x03 
-.define SNDK_SPR_8_32    0x23
-.define SNDK_SPR_16_32  0x63
-*/
-.macro SNDK_SPR_META
-	SNDK_SPR_SIZE = .arg1;
-	SNDK_SPR_SIZET = (.arg1>>3);
-	SNDK_SPR_SIZE2 = .arg2;
-	SNDK_SPR_SIZET2 = (.arg2>>3);
-	
-	SNDK_SPR_DEC   = (.arg1<<1);
-	SNDK_SPR_DEC2 = (.arg2<<1);
-.endmacro
 
 .bss 0x100
 uint8 SNDK_MEMSET;
@@ -385,13 +363,55 @@ uint8 SNDK_SPR_DEC;
 uint8 SNDK_SPR_DEC2;
 .bss 0x7E0200
 uint8 SNDK_RAM;
+.bss 0x1000
 
 .bss 0x7E2000
 
 //--------------
 
-.define OAM_XFLIP 0x80
-.define OAM_YFLIP 0x40
+.define SNDK_BG_SCROLL_UP 0x00
+.define SNDK_BG_SCROLL_DOWN 0x1C0
+.define SNDK_BG_SCROLL_LEFT 0x00
+.define SNDK_BG_SCROLL_RIGHT 0x10
+
+
+.macro SNDK_SpriteEngineSetList
+	idx= .arg1;
+	
+	asm "rep #$20"
+	[SNDK_SPRITE.list,idx] = $.arg2:;
+	asm "sep #$20"
+	
+	[SNDK_SPRITE.t,idx] = .arg3;
+	[SNDK_SPRITE.a,idx] = .arg4 | 0x20;
+.endmacro
+
+.macro SNDK_SPR_META
+	SNDK_SPR_SIZE = .arg1;
+	SNDK_SPR_SIZET = (.arg1>>3);
+	SNDK_SPR_SIZE2 = .arg2;
+	SNDK_SPR_SIZET2 = (.arg2>>3);
+	
+	SNDK_SPR_DEC   = (.arg1<<1);
+	SNDK_SPR_DEC2 = (.arg2<<1);
+.endmacro
+
+.define SNDK_BG1 0x01
+.define SNDK_BG2 0x02
+.define SNDK_BG3 0x04
+.define SNDK_BG4 0x08
+
+.define SNDK_OBJ 0x10
+
+
+.define SNDK_BG1SH 0x01
+.define SNDK_BG1SV 0x02
+.define SNDK_BG2SH 0x04
+.define SNDK_BG2SV 0x08
+
+
+.define OAM_YFLIP 0x80
+.define OAM_XFLIP 0x40
 .define OAM_PRIO0 0x00
 .define OAM_PRIO1 0x10
 .define OAM_PRIO2 0x20
@@ -410,8 +430,8 @@ uint8 SNDK_RAM;
 
 .define SNDK_PAD_B 0x80
 .define SNDK_PAD_Y 0x40
-.define SNDK_PAD_START 0x20
-.define SNDK_PAD_SELECT 0x10
+.define SNDK_PAD_START 0x10
+.define SNDK_PAD_SELECT 0x20
 .define SNDK_PAD_UP 0x08
 .define SNDK_PAD_DOWN 0x04
 .define SNDK_PAD_LEFT 0x02
@@ -435,8 +455,17 @@ uint8 SNDK_RAM;
 .define SNDK_SPR_8_32    0x23
 .define SNDK_SPR_16_32  0x63
 
+.define FORCED_BLANK INIDISP = 0x80
+
 .define MODE8   asm "sep #$20";
 .define MODE16 asm "rep #$20";
+
+
+.define SAVEX   asm "phx";
+.define RESTOREX asm "plx";
+
+.define SAVEY   asm "phx";
+.define RESTOREY asm "plx";
 
 .define SPR_INDEX_0 0x00
 .define SPR_INDEX_1 0x20
@@ -457,3 +486,47 @@ uint8 SNDK_RAM;
 .define SPR_INDEX_13 0x1A0
 .define SPR_INDEX_14 0x1C0
 .define SPR_INDEX_15 0x1E0
+
+
+.define SPR_INDEX_S0 0x200
+.define SPR_INDEX_S1 0x220
+.define SPR_INDEX_S2 0x240
+.define SPR_INDEX_S3 0x260
+
+.define SPR_INDEX_S4 0x280
+.define SPR_INDEX_S5 0x2A0
+.define SPR_INDEX_S6 0x2C0
+.define SPR_INDEX_S7 0x2E0
+
+.define SPR_INDEX_S8 0x300
+.define SPR_INDEX_S9 0x320
+.define SPR_INDEX_S10 0x340
+.define SPR_INDEX_S11 0x360
+
+.define SPR_INDEX_S12 0x380
+.define SPR_INDEX_S13 0x3A0
+.define SPR_INDEX_S14 0x3C0
+.define SPR_INDEX_S15 0x3E0
+
+//------------------SPC---------------
+.define LKS_SPC_VOLUME	0x10
+.define LKS_SPC_PLAY  	0x12
+.define LKS_SPC_ADDR	0x14
+.define LKS_SPC_DATA	0x16
+
+.define LKS_SPC_RDATA	0x18
+.define LKS_SPC_TICKS	0x1A
+.define LKS_SPC_DEBUG	0x1C
+.define LKS_SPC_RADDR	0x1E
+
+.define LKS_SPC_BRR_VOLUME	0x20
+.define LKS_SPC_BRR_PLAY		0x22
+.define LKS_SPC_BRR_PLAY_TEST 	0x24
+.define LKS_SPC_BRR_PLAY76	0x26
+.define LKS_SPC_BRR_PLAY54	0x28
+.define LKS_SPC_SVOLUME	0x30
+
+.define LKS_SPC_STOP 	0xFF
+.define LKS_SPC_ON 	0x01
+.define LKS_SPC_REPLAY	0x02
+.define LKS_SPC_PAUSE 0x00
