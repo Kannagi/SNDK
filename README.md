@@ -4,6 +4,9 @@ SDK for SNES with Higueul language
 SDK is in stable version 0.3   
 To test please download the stable version in release then launch `higueulc`   
 
+You can learn Higueulc, by reading the example source code, but it has some difference with C, so I advise you to read the wiki :  
+https://github.com/Kannagi/Higueul/wiki
+
 Video demo:
 https://www.youtube.com/watch?v=RJY_59_gB6c
 
