@@ -1,9 +1,11 @@
 # SNDK
 SDK for SNES with Higueul language  
 
-SDK is in beta version  
-To test please download the beta version in release then launch `higueulc`   
+SDK is in stable version 0.3   
+To test please download the stable version in release then launch `higueulc`   
 
+Video demo:
+https://www.youtube.com/watch?v=RJY_59_gB6c
 
 Discord : https://discord.gg/cWa37SRgYU  
 If you have problems with the language or SDK
