@@ -1,11 +1,11 @@
 # SNDK
 SDK for SNES with Higueul language  
-it is an SDK that aims to have an efficient compilation.  
+It is an SDK that aims to have an efficient compilation.  
 You can have a code as quickly with higueul as by writing it in full asm.  
 While having a "C-like" syntax.  
 
 SDK is in stable version 0.3   
-To test please download the stable version in release abd launch `higueulc`   
+To test please download the stable version in release and launch `higueulc`   
 For more details please read the wiki.  
 
 You can learn Higueulc, by reading the example source code, but it has some difference with C, so I advise you to read the wiki :  
