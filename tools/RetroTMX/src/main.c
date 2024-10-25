@@ -8,15 +8,12 @@ void output_filename(char *address,char *str);
 void neogeo_map(TMX *tmx,char *out,int compress);
 void snes_map(TMX *tmx,char *out,int compress);
 void bin_map(TMX *tmx,char *out,int compress);
-void pce_map(TMX *tmx,char *out,int compress);
+void pce_map(TMX *tmx,char *out);
 void md_custom_map(TMX *tmx,char *out,int compress);
 
 int main(int argc, char** argv)
 {
 	int i;
-
-	static TAG sttag[0x100000];
-	tag = sttag;
 
     int option[10];
     char address[512];
@@ -40,7 +37,8 @@ int main(int argc, char** argv)
         	if(strcmp(argv[i],"-md")  == 0) option[3] = 7;
 
             if(strcmp(argv[i],"-z") == 0) option[1] = 1;
-            if(strcmp(argv[i],"-mode") == 0) option[1] |= 0x10;
+            if(strcmp(argv[i],"-lz") == 0) option[1] = 2;
+            if(strcmp(argv[i],"-mode") == 0) option[2] = 1;
 
         }else
         {
@@ -52,7 +50,7 @@ int main(int argc, char** argv)
     {
         printf("Enter a tmx format\n");
         printf("option target cible : -nes , -sms , -pce , -sfc , -md , -ng\n");
-        printf("option compress : -z\n");
+        printf("option compress : -z -lz\n");
         printf("option sfc : -mode\n");
 
         printf("\nExemple :\nRetroTMX -sfc -z map.tmx\n");
@@ -71,12 +69,9 @@ int main(int argc, char** argv)
 	if(console == 0)
 		bin_map(&tmx,str,option[1]);
 
-	if(console == 7)
-		md_custom_map(&tmx,str,option[1]);
-
 
 	if(console == 3)
-		pce_map(&tmx,str,option[1]);
+		pce_map(&tmx,str);
 
 
 	if(console == 4)

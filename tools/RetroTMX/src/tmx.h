@@ -33,7 +33,7 @@ typedef struct
 	int encoding;
 	int nmap,ntileset;
 	MAP map;
-	TILESET tileset[4096];
+	TILESET tileset[16];
 	LAYER layer[16];
 }TMX;
 

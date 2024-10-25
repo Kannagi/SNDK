@@ -26,10 +26,12 @@ func sprite_basic:
 	
 	do
 	{
+		call SNDK_PrintHexa16: SNES_ERROR.debug1,1,4,SNDK_FONTPAL0;
+		
 		call SNDK_Sprite:
 		
 		//posx,posy , tile, flag (palette /prio/flip) ,sprite1 0x3 = prio & size 32x32
-		call SNDK_SpriteDraw: px,py,0x00,0x00,0x03
+		call SNDK_SpriteDrawClip: px,py,0x00,0x00,0x03
 		
 		//sprite2 : size 16x16
 		call SNDK_SpriteDrawMeta2x2: 100,140,0x04,0x00,0x00

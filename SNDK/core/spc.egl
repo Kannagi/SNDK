@@ -72,7 +72,7 @@ funclib SNDK_SPC_SetData: uint16 addr, uint16 bank, uint16 isize
 {
 	idx = isize
 	idy = 0
-	asm"
+	asm "
 	
 	rep #$20
 	lda $104

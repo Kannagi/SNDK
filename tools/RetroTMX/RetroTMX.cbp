@@ -27,7 +27,7 @@
 			<Add option="-fomit-frame-pointer" />
 			<Add option="-fexpensive-optimizations" />
 			<Add option="-O1" />
-			<Add option="-w" />
+			<Add option="-Wextra" />
 			<Add option="-Wall" />
 			<Add option="-s" />
 		</Compiler>
@@ -39,9 +39,6 @@
 		</Unit>
 		<Unit filename="src/aura.h" />
 		<Unit filename="src/main.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="src/md_custom.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/ng.c">
