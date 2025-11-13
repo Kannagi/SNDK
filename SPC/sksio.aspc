@@ -1,5 +1,3 @@
-
-
 	
 SKS_IO:
 	
@@ -11,37 +9,28 @@ SKS_IO:
 	
 	cmp a,#LKS_SPC_DATA
 	bne +
-		mov ZPD+0,ADDRL
-		mov ZPD+1,ADDRH
 		mov y,#0
 		-:
 		
 		mov a,PORT_2
-		mov [ZPD]+y,a
+		mov [ADDRL]+y,a
+		incw ADDRL
 		
-		inc y
 		mov a,PORT_3
-		mov [ZPD]+y,a
-
-		clrc
-		adc ZPD+0,#2
-		adc ZPD+1,#0
+		mov [ADDRL]+y,a
+		incw ADDRL
 		
 		inc PORT_0
 		
-		mov PORT_1,#0
-		--:
-			mov a,PORT_1
-			cmp a,#0
-		beq --
-		mov y,#0
-		
+		nop
+		nop
+		nop
+		nop
+		nop
+		mov a,PORT_1
 		cmp a,#LKS_SPC_DATA
 		beq -
-		
-		mov ADDRL,ZPD+0
-		mov ADDRH,ZPD+1
-		
+
 		ret
 	+:
 	
@@ -121,28 +110,6 @@ SKS_IO:
 		mov y,PORT_3
 		mov a,#MVOLR
 		movw REG_ADD,YA
-		
-		inc PORT_0
-		ret
-	+:
-	
-	cmp a,#LKS_SPC_BRR_PLAY_TEST
-	bne +
-		call !clear_voice
-		
-		mov a,PORT_3
-		mov srcn,a
-		call !select_index
-		
-		mov a,PORT_2
-		clrc
-		adc a,relativ
-		call !set_pitch
-		
-		mov x,#0
-		call !set_voice
-		
-		WDSP KON,$01
 		
 		inc PORT_0
 		ret
@@ -230,8 +197,7 @@ brr_on:
 	bne +
 		ret
 	+:
-	clrc
-	adc a,#$20
+	
 	mov arg+0,a
 	
 	mov a,#KOF
@@ -243,8 +209,6 @@ brr_on:
 	mov a,#KOF
 	mov y,#0
 	movw REG_ADD,YA
-	
-	or bkof, tmp
 	
 	mov a,#KON
 	mov y,tmp
@@ -261,8 +225,8 @@ clear_voice:
 	mov arg+4,bvolume
 	mov arg+5,bvolume+1
 	
-	;8000 Hz
+	;4000 Hz
 	mov arg+6,#$00
-	mov arg+7,#$04
+	mov arg+7,#$02
 
 	ret

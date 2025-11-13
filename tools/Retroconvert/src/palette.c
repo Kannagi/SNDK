@@ -150,7 +150,7 @@ int load_palette_ext(unsigned char *palette,char *addresspal)
 {
 	int i;
 	RETRO_Image image ;
-    int ret = load_image(addresspal,&image,3);
+	int ret = load_image(addresspal,&image,3);
 	if(ret == 1)
 	{
 		printf("Image is not valide (palette)\n");

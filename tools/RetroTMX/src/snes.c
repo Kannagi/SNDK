@@ -3,10 +3,9 @@
 #include <string.h>
 #include "tmx.h"
 
-void quickSort2(int n,TAG *tag);
 extern TAG *tag;
-
-void snes_map(TMX *tmx,char *out,int compress)
+static unsigned short sc16_buffer_data[0x10000];
+void snes_map(TMX *tmx,char *out,int compress,int type_map)
 {
 	FILE *file;
 	int i,l,n = 0;
@@ -101,13 +100,16 @@ void snes_map(TMX *tmx,char *out,int compress)
 				{
 					pal += 4;
 					id += 0x200-0x10;
-					if(tile >= 0xE8) pal = 7;
 				}
 
 				if(pal == 6) pal = 5;
 				if(pal >= 7) pal = 6;
 
-				if(tile >= 0xF8) pal = 7;
+				if(type_map == 0)
+				{
+					if(tile >= 0xF8) pal = 7;
+					if( (tile >= 0xE8) && (tile <= 0xEF) ) pal = 7;
+				}
 
 				pal = pal<<10;
 				tmp = 0;
@@ -136,10 +138,22 @@ void snes_map(TMX *tmx,char *out,int compress)
 			if(compress == 1)
 			{
 				pal = 0;
-				size = 0;
+				size = n*2;
+
+				for(l = 0;l < n;l++)
+				{
+					sc16_buffer_data[l] = tmx->layer[i].data[l];
+				}
+
+
+
+				void* buf_data = sc16(sc16_buffer_data,&size);
+				fwrite(buf_data,1,size,file);
+
+				/*
+
 				int rle = 0;
 				unsigned int flag = 0;
-
 				fputc(0,file);
 				fputc(0,file);
 
@@ -245,6 +259,7 @@ void snes_map(TMX *tmx,char *out,int compress)
 
 				float percent = (float)size/(float)(n*2);
 				printf("Compressed %d bytes into %d bytes ==> %.2f%% \n",n*2,size,percent*100);
+				*/
 			}
 			fclose(file);
 		}
@@ -326,7 +341,7 @@ void snes_map(TMX *tmx,char *out,int compress)
 
 			}
 
-			compress = 0;
+			//compress = 0;
 
 			fclose(file);
 		}

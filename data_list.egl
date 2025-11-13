@@ -3,6 +3,29 @@
 SNES_BANK 2
 
 
+
+SPRITE_TILE:
+SNDK_LOADR:
+
+.data.l  MAP1_DATA:
+.data.l  0x7F0000
+
+.data.l  MAP2_DATA:
+.data.l  0x7F4000
+
+SNDK_LOAD:
+.data.l  START_LOGO_SPR:
+.data.w  0x6000,0
+
+.data.l  SNDK_LOGO_SPR:
+.data.w  0x6000,0
+
+.data.l  DATA_FONT_SNDK_S:
+.data.w  0x4000,0
+
+.data.l  MAP1_SPR:
+.data.w  0x0000,0
+
 /*
 .define SNDK_SIZE_8x8     0x20
 .define SNDK_SIZE_16x16 0x80
@@ -16,12 +39,12 @@ SNDK_LIST:
 LIST_SPR1:
 // label   data              anim
 .data.l   HERO_SPR:,HERO_ANIM:
-.data.w 0x6000, 0x80,0x200,         0x0F
-//---------VRAM    size   decalage  , channel
+.data.w 0x6000,0x80,0x200,0x0F
+//------VRAM  ,size,shift,channel
 
 LIST_SPR2:
 .data.l   HERO_SPR:,HERO_ANIM:
-.data.w 0x6040, 0x80,0x200,         0x0F
+.data.w 0x6040, 0x80,0x200,0x0F
 //------------------------
 
 HERO_ANIM:
@@ -38,8 +61,10 @@ SNDK_MAPLIST:
 .data.w 1024, 1024,
 
 //1 (number map)
-.data.l   MAP3_DATA:,MAP4_DATA:,0
+.data.l   MAP3_DATA:,0:,0
 .data.w 1024, 1024,
+
+
 
 
 

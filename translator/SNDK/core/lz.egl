@@ -1,0 +1,790 @@
+
+funclib SNDK_LZ_VRAM: uint16 nlabel
+{
+	lib uint16 adr,adrh
+	lib uint16 buf1,buf2,buf3,buf4
+	lib uint16 index,pal1,pal2,pal3
+	lib uint16 opal1,opal2,opal3,tmp,tmph,i,pal12
+	
+	MODE16
+	nlabel = nlabel<<3
+	idx = nlabel + $SNDK_LOAD:
+	
+	adr = [0x820000,idx]
+	idx += 2
+	
+	adrh = [0x820000,idx]
+	tmph = acc
+	idx += 2
+	
+	VMADD = [0x820000,idx]
+	//idx += 2
+	
+	//tag
+	adr += 6
+	
+	
+	//n command
+	idy = @adr
+	adr += 3
+	
+	
+	pal1 = @adr
+	adr += 1
+
+	pal2 = @adr
+	adr += 1
+
+	pal3 = @adr
+	adr += 1
+	
+	pal1 &= 0xFF
+	pal2 &= 0xFF
+	pal3 &= 0xFF	
+	pal12 = 0
+	MODE8
+	
+	pal12 = pal1+pal2
+	
+	MODE16
+	
+	i = 0
+
+	opal1 = i + adr
+	acc = pal1 << 3
+	i += acc
+	
+	opal2 = i + adr
+	acc = pal2 << 2
+	i += acc
+
+	opal3 = i + adr
+	acc = pal3 << 1
+	i += acc
+
+	adr += i
+	
+	index = 0
+		
+	MODE8
+	
+	do
+	{
+		index = @adr
+		MODE16
+		adr += 1
+		MODE8
+
+		if index >= 0xFB
+		{
+			jump SNDK_LZ_JBEG:
+		}
+		
+		//if index < 0xFB
+		lib uint16 type
+		type = 0
+		
+		if index >= pal1
+		{
+			type += 1
+		}
+		
+		if index >= pal12
+		{
+			type += 1
+		}
+		
+		if type == 0
+		{
+			MODE16
+			acc = index << 3
+			tmp = acc + opal1
+
+			VMDATA = @tmp
+			tmp += 2
+			VMDATA = @tmp
+			tmp += 2
+			VMDATA = @tmp
+			tmp += 2
+			VMDATA = @tmp
+			
+			MODE8
+			jump SNDK_LZ_JEND:
+		}
+		
+		if type == 1
+		{
+			MODE16
+			
+			acc = index - pal1
+			acc = acc << 2
+			tmp = acc + opal2
+			
+			VMDATA = @tmp
+			tmp += 2
+			VMDATA = @tmp
+					
+			MODE8
+			jump SNDK_LZ_JEND:
+		}
+		
+		if type == 2
+		{
+			MODE16
+			acc = index - pal12
+			acc = acc << 1
+			tmp = acc + opal3
+			
+			VMDATA = @tmp
+			
+			MODE8
+		}
+		
+		jump SNDK_LZ_JEND:
+		
+		
+		//else
+		SNDK_LZ_JBEG:
+		
+		if index == 0xFB
+		{
+			acc = @adr 
+			MODE16
+			acc &= 0xFF
+			acc += 1
+			idx = acc
+			adr += 1
+			
+			buf1 = @adr
+			adr += 2
+			buf2 = @adr
+			adr += 2
+			buf3 = @adr
+			adr += 2
+			buf4 = @adr
+			adr += 2
+			
+			do
+			{
+				VMDATA = buf1
+				VMDATA = buf2
+				VMDATA = buf3
+				VMDATA = buf4
+
+			}loop idx == 0
+			
+			MODE8
+			jump SNDK_LZ_JEND:
+		}
+		
+		if index == 0xFC
+		{
+			MODE16
+			VMDATA = @adr
+			adr += 2
+			MODE8
+			jump SNDK_LZ_JEND:
+		}
+		
+		if index == 0xFD
+		{
+			MODE16
+			VMDATA = @adr
+			adr += 2
+			VMDATA = @adr
+			adr += 2
+			MODE8
+			jump SNDK_LZ_JEND:
+		}
+		
+		if index == 0xFE
+		{
+			MODE16
+			VMDATA = @adr
+			adr += 2
+			VMDATA = @adr
+			adr += 2
+			VMDATA = @adr
+			adr += 2
+			VMDATA = @adr
+			adr += 2
+			MODE8
+			jump SNDK_LZ_JEND:
+		}
+		
+		if index == 0xFF
+		{
+			acc = @adr 
+			MODE16
+			idx = acc & 0xFF
+			adr += 1
+			
+			do
+			{
+				VMDATA = @adr
+				adr += 2
+				
+			}loop idx == 0
+			
+			MODE8
+		}
+		
+		
+		
+		SNDK_LZ_JEND:
+		
+		
+		idy -= 1
+		
+		if idy == 0
+		{
+			return
+		}
+	}
+	while 1 == 1
+}
+
+//---------------------------------------------------------------------
+
+funclib SNDK_LZ_RAM: uint16 nlabel
+{
+	lib uint16 opal1,opal2,opal3
+	lib uint16 adr,adrh
+	
+	lib uint16 buf1,buf2,buf3,buf4
+	lib uint16 index,pal1,pal2,pal3
+	lib uint16 tmp,tmph, oadr,oadrh,i,pal12,type
+	
+	MODE16
+	
+	nlabel = nlabel<<3
+	idx = nlabel + $SNDK_LOADR:
+	
+	adr  = [0x820000,idx]
+	adrh = [0x820002,idx]
+	tmph = adrh
+	
+	oadr  = [0x820004,idx]
+	oadrh = [0x820006,idx]
+	
+	
+	//tag
+	adr += 6
+	
+	//n command
+	idy = @adr
+	adr += 3
+	
+	pal1 = @adr
+	adr += 1
+
+	pal2 = @adr
+	adr += 1
+
+	pal3 = @adr
+	adr += 1
+	
+	pal1 &= 0xFF
+	pal2 &= 0xFF
+	pal3 &= 0xFF	
+	pal12 = 0
+	MODE8
+	
+	pal12 = pal1+pal2
+	
+	MODE16
+	
+	i = 0
+
+	opal1 = i + adr
+	acc = pal1 << 3
+	i += acc
+	
+	opal2 = i + adr
+	acc = pal2 << 2
+	i += acc
+
+	opal3 = i + adr
+	acc = pal3 << 1
+	i += acc
+
+	adr += i
+	
+	index = 0
+
+		
+	MODE8
+	
+	do
+	{
+		index = @adr
+		MODE16
+		adr += 1
+		MODE8
+
+		if index >= 0xFB
+		{
+			jump SNDK_LZR_JBEG:
+		}
+		//if
+		type = 0
+		
+		if index >= pal1
+		{
+			type += 1
+		}
+		
+		if index >= pal12
+		{
+			type += 1
+		}
+		
+		if type == 0
+		{
+			MODE16
+			acc = index << 3
+			tmp = acc + opal1
+			
+			@oadr = @tmp
+			oadr += 2
+			tmp += 2
+
+			@oadr = @tmp
+			oadr += 2
+			tmp += 2
+			
+			@oadr = @tmp
+			oadr += 2
+			tmp += 2
+			
+			@oadr = @tmp
+			oadr += 2
+
+			
+			MODE8
+			jump SNDK_LZR_JEND:
+		}
+		
+		if type == 1
+		{
+			MODE16
+			
+			acc = index - pal1
+			acc = acc << 2
+			tmp = acc + opal2
+			
+			@oadr = @tmp
+			oadr += 2
+			tmp += 2
+			
+			@oadr = @tmp
+			oadr += 2
+					
+			MODE8
+			jump SNDK_LZR_JEND:
+			
+			
+		}
+		
+		if type == 2
+		{
+			MODE16
+			acc = index - pal12
+			acc = acc << 1
+			tmp = acc + opal3
+			
+			@oadr = @tmp
+			oadr += 2
+			
+			MODE8
+		}
+		
+		jump SNDK_LZR_JEND:
+		
+		SNDK_LZR_JBEG:
+		
+		//else
+		if index == 0xFB
+		{
+			acc = @adr 
+			MODE16
+			acc &= 0xFF
+			acc += 1
+			idx = acc
+			adr += 1
+			
+			buf1 = @adr
+			adr += 2
+			buf2 = @adr
+			adr += 2
+			buf3 = @adr
+			adr += 2
+			buf4 = @adr
+			adr += 2
+			
+			do
+			{
+				@oadr = buf1
+				oadr += 2
+				@oadr = buf2
+				oadr += 2
+				@oadr = buf3
+				oadr += 2
+				@oadr = buf4
+				oadr += 2
+
+			}loop idx == 0
+			
+			MODE8
+			jump SNDK_LZR_JEND:
+		}
+		
+		if index == 0xFC
+		{
+			MODE16
+			@oadr = @adr
+			oadr += 2
+			adr += 2
+			MODE8
+			jump SNDK_LZR_JEND:
+		}
+		
+		if index == 0xFD
+		{
+			MODE16
+			@oadr = @adr
+			oadr += 2
+			adr += 2
+			
+			@oadr = @adr
+			oadr += 2
+			adr += 2
+			MODE8
+			jump SNDK_LZR_JEND:
+		}
+		
+		if index == 0xFE
+		{
+			MODE16
+			@oadr = @adr
+			oadr += 2
+			adr += 2
+			
+			@oadr = @adr
+			oadr += 2
+			adr += 2
+			
+			@oadr = @adr
+			oadr += 2
+			adr += 2
+			
+			@oadr = @adr
+			oadr += 2
+			adr += 2
+			MODE8
+			jump SNDK_LZR_JEND:
+		}
+		
+		if index == 0xFF
+		{
+			acc = @adr 
+			MODE16
+			idx = acc & 0xFF
+			adr += 1
+			
+			do
+			{
+				@oadr = @adr
+				oadr += 2
+				adr += 2
+				
+			}loop idx == 0
+			
+			MODE8
+		}
+		
+		SNDK_LZR_JEND:
+		
+		
+		idy -= 1
+		
+		if idy == 0
+		{
+			return
+		}
+	}
+	while 1 == 1
+}
+
+//-----------------------------------------------------------------------------------------------------
+funclib SNDK_LZ_BG:
+{
+	lib uint16 opal1,opal2,opal3
+	lib uint16 adr,adrh
+	
+	lib uint16 bg.w,bg.h
+	lib uint16 iadr,iadrh
+	lib uint16 adr2,adrh2
+	lib uint16 adrc,adrhc
+	lib uint16 px,py
+	
+	lib uint16 buf1,buf2,buf3,buf4
+	lib uint16 index,pal1,pal2,pal3
+	lib uint16 tmp,tmph, oadr,oadrh,i,pal12,type
+	
+	MODE16
+	
+	tmph = adrh
+	
+	oadr  = idx
+	oadrh = 0x7F
+	
+	//tag
+	adr += 6
+	
+	//n command
+	idy = @adr
+	adr += 3
+	
+	pal1 = @adr
+	adr += 1
+
+	pal2 = @adr
+	adr += 1
+
+	pal3 = @adr
+	adr += 1
+	
+	pal1 &= 0xFF
+	pal2 &= 0xFF
+	pal3 &= 0xFF	
+	pal12 = 0
+	MODE8
+	
+	pal12 = pal1+pal2
+	
+	MODE16
+	
+	i = 0
+
+	opal1 = i + adr
+	acc = pal1 << 3
+	i += acc
+	
+	opal2 = i + adr
+	acc = pal2 << 2
+	i += acc
+
+	opal3 = i + adr
+	acc = pal3 << 1
+	i += acc
+
+	adr += i
+	
+	index = 0
+	
+	MODE8
+	
+	
+	
+	do
+	{
+		index = @adr
+		MODE16
+		adr += 1
+		MODE8
+
+		if index >= 0xFB
+		{
+			jump SNDK_LZBG_JBEG:
+		}
+		//if
+		type = 0
+		
+		if index >= pal1
+		{
+			type += 1
+		}
+		
+		if index >= pal12
+		{
+			type += 1
+		}
+		
+		if type == 0
+		{
+			MODE16
+			acc = index << 3
+			tmp = acc + opal1
+			
+			@oadr = @tmp
+			oadr += 2
+			tmp += 2
+
+			@oadr = @tmp
+			oadr += 2
+			tmp += 2
+			
+			@oadr = @tmp
+			oadr += 2
+			tmp += 2
+			
+			@oadr = @tmp
+			oadr += 2
+
+			
+			MODE8
+			jump SNDK_LZBG_JEND:
+		}
+		
+		if type == 1
+		{
+			MODE16
+			
+			acc = index - pal1
+			acc = acc << 2
+			tmp = acc + opal2
+			
+			@oadr = @tmp
+			oadr += 2
+			tmp += 2
+			
+			@oadr = @tmp
+			oadr += 2
+					
+			MODE8
+			jump SNDK_LZBG_JEND:
+			
+			
+		}
+		
+		if type == 2
+		{
+			MODE16
+			acc = index - pal12
+			acc = acc << 1
+			tmp = acc + opal3
+			
+			@oadr = @tmp
+			oadr += 2
+			
+			MODE8
+		}
+		
+		jump SNDK_LZBG_JEND:
+		
+		SNDK_LZBG_JBEG:
+		
+		//else
+		if index == 0xFB
+		{
+			acc = @adr 
+			MODE16
+			acc &= 0xFF
+			acc += 1
+			idx = acc
+			adr += 1
+			
+			buf1 = @adr
+			adr += 2
+			buf2 = @adr
+			adr += 2
+			buf3 = @adr
+			adr += 2
+			buf4 = @adr
+			adr += 2
+			
+			do
+			{
+				@oadr = buf1
+				oadr += 2
+				@oadr = buf2
+				oadr += 2
+				@oadr = buf3
+				oadr += 2
+				@oadr = buf4
+				oadr += 2
+
+			}loop idx == 0
+			
+			MODE8
+			jump SNDK_LZBG_JEND:
+		}
+		
+		if index == 0xFC
+		{
+			MODE16
+			@oadr = @adr
+			oadr += 2
+			adr += 2
+			MODE8
+			jump SNDK_LZBG_JEND:
+		}
+		
+		if index == 0xFD
+		{
+			MODE16
+			@oadr = @adr
+			oadr += 2
+			adr += 2
+			
+			@oadr = @adr
+			oadr += 2
+			adr += 2
+			MODE8
+			jump SNDK_LZBG_JEND:
+		}
+		
+		if index == 0xFE
+		{
+			MODE16
+			@oadr = @adr
+			oadr += 2
+			adr += 2
+			
+			@oadr = @adr
+			oadr += 2
+			adr += 2
+			
+			@oadr = @adr
+			oadr += 2
+			adr += 2
+			
+			@oadr = @adr
+			oadr += 2
+			adr += 2
+			MODE8
+			jump SNDK_LZBG_JEND:
+		}
+		
+		if index == 0xFF
+		{
+			acc = @adr 
+			MODE16
+			idx = acc & 0xFF
+			adr += 1
+			
+			do
+			{
+				@oadr = @adr
+				oadr += 2
+				adr += 2
+				
+			}loop idx == 0
+			
+			MODE8
+		}
+		
+		SNDK_LZBG_JEND:
+		
+		
+		idy -= 1
+		
+		if idy == 0
+		{
+			return
+		}
+	}
+	while 1 == 1
+}
+

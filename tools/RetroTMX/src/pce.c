@@ -5,7 +5,7 @@
 #include "tmx.h"
 extern TAG *tag;
 
-void pce_map(TMX *tmx,char *out)
+void pce_map(TMX *tmx,char *out,int type_map)
 {
 	FILE *file;
 	int i,l,n = 0,x,y;
@@ -52,24 +52,30 @@ void pce_map(TMX *tmx,char *out)
 				id = tile = tmx->layer[i].data[l];
 				tile = tile&0xFFFF;
 
-				tmp = 4;
+				tmp = 0;
 
 
 				if(tile > 0) tile -= 1;
 				id = (tile&0x1FF)<<1;
-				id += 0xA0;
+				id += 0x100;
 
 				if(tile&0x08)
 				{
-					tmp = 10;
+					tmp = 6;
 					id += 0x180-0x10;
 				}
+
 
 				if(tile >= 0x20) tmp++;
 				if(tile >= 0x40) tmp++;
 				if(tile >= 0x60) tmp++;
 				if(tile >= 0x80) tmp++;
 				if(tile >= 0xA0) tmp++;
+
+				if(type_map == 1)
+					tmp = tmp>>1;
+
+				tmp += 4;
 
 				data = id + (tmp<<12);
 
@@ -112,7 +118,8 @@ void pce_map(TMX *tmx,char *out)
 					iw += 16;
 				}
 				lenh--;
-				ih += iw;
+				lenw = tmx->layer[i].width>>4;
+				ih += iw*16;
 			}
 
 			fclose(file);

@@ -1,0 +1,243 @@
+
+void SNDK_Init()
+{
+	BGMODE = SNDK_MODE1;
+	MOSAIC = 0x00;
+	BG1SC = 0x54;
+	BG2SC = 0x58;
+	BG3SC = 0x5C;
+	BG4SC = 0x50;
+	BG12NBA = 0x00 ;
+	BG34NBA = 0x44 ;
+	SNDK_BGNBA = 0x00;
+	
+	BG3H0FS = 0;
+	BG3H0FS = 0;
+	
+	BG3V0FS = 0;
+	BG3V0FS = 0;
+	
+	BG4H0FS = 0;
+	BG4H0FS = 0;
+	
+	BG4V0FS = 0;
+	BG4V0FS = 0;
+	
+	VMAINC = 0x80;
+	TM = 0x17 ;
+	COLDATA = 0xE0;
+	WRIO = 0xFF;
+	
+	SETINI = 0;
+		
+	TS = 0x00;
+	CGSWSEL = 0x00;
+	CGADSUB = 0x00;
+	
+	W12SEL = 0;
+	W34SEL = 0;
+	WOBJSEL = 0;
+	M7SEL = 0	;
+	TMW = 0;
+	TSW = 0;
+	
+	WH0 = 0;
+	WH1 = 0;
+	WH2 = 0;
+	WH3 = 0;
+	
+	WBGLOG = 0;
+	WOBJLOG = 0;
+	
+	M7A = 0;
+	M7B = 0;
+	M7C = 0;
+	M7D = 0;
+	M7X = 0;
+	M7Y = 0;
+	
+	
+	idx = 0;
+	HDMA_BANK_0 = 0;
+	HDMA_ADD_0 = idx;
+	HDMA_LINE_0 = idx;
+	
+	HDMA_BANK_1 = 0;
+	HDMA_ADD_1 = idx;
+	HDMA_LINE_1 = idx;
+	
+	HDMA_BANK_2 = 0;
+	HDMA_ADD_2 = idx;
+	HDMA_LINE_2 = idx;
+	
+	HDMA_BANK_3 = 0;
+	HDMA_ADD_3 = idx;
+	HDMA_LINE_3 = idx;
+	
+	HDMA_BANK_4 = 0;
+	HDMA_ADD_4 = idx;
+	HDMA_LINE_4 = idx;
+	
+	HDMA_BANK_5 = 0;
+	HDMA_ADD_5 = idx;
+	HDMA_LINE_5 = idx;
+	
+	HDMA_BANK_6 = 0;
+	HDMA_ADD_6 = idx;
+	HDMA_LINE_6 = idx;
+	
+	HDMA_BANK_7 = 0;
+	HDMA_ADD_7 = idx;
+	HDMA_LINE_7 = idx;
+	 
+	
+	DMA_0 = 0x01;
+	DMA_BADD_0 = 0x18 ;
+	
+	DMA_1 = 0x01;
+	DMA_BADD_1 = 0x18 ;
+	
+	DMA_2 = 0x01;
+	DMA_BADD_2 = 0x18 ;
+	
+	DMA_3 = 0x01;
+	DMA_BADD_3 = 0x18 ;
+	
+	DMA_4 = 0x02;
+	DMA_BADD_4 = 0x04 ;
+	
+	DMA_5 = 0x02;
+	DMA_BADD_5 = 0x22 ;
+	
+	DMA_6 = 0x00;
+	DMA_BADD_6 = 0x80 ;
+	
+	DMA_7 = 0x18;
+	DMA_BADD_7 = 0x80 ;
+	
+	
+	SNDK_memset SNDK_RAM,SNDK_INIT_DATA1,0xFE00;
+	
+	idy =  0;
+	WMADD = idy;
+	WMADDH = 0x7F;
+	
+	DMA_BANK_7 = #SNDK_INIT_DATA1();
+	
+	idy = &SNDK_INIT_DATA1();
+	DMA_ADD_7 = idy;
+	
+	idy = 0xFF00;
+	DMA_SIZE_7 = idy;
+	
+	MDMAEN = 0x80 ;
+	
+	
+	 Load_SKS();
+	[0x104] = 0;
+	
+	
+	
+	
+	idx = 0;
+	acc = 0;
+	VMADD = 0;
+	idy = (0x1000);
+	do
+	{
+		VMDATA =acc;
+		VMDATA =acc;
+		VMDATA =acc;
+		VMDATA =acc;
+		
+		VMDATA =acc;
+		VMDATA =acc;
+		VMDATA =acc;
+		VMDATA =acc;
+	}
+	while(-- idy == 0);
+	
+
+	
+	idy = 16;
+	idx = 0;
+	do
+	{
+		SNDK_SPRITE.x[idx] = (-128);
+		SNDK_SPRITE.y[idx] = (-128);
+
+		idx += 0x20;
+	}
+	while(-- idy == 0);
+	
+		
+	
+	 SNDK_LZ_VRAM( 2);
+
+	
+	
+	SNDK_memcopy( SNDK_PALBG0,DATA_FONT_SNDK_P,0x20);
+	
+	SNDK_SendOAM;
+	
+	OBJSEL = SNDK_SPR_16_32;
+	SNDK_SPR_META 16,32;
+	
+	SNDK_SFX1 = 0xFF;
+	SNDK_SFX2 = 0xFF;
+	SNDK_SFX3 = 0xFF;
+	SNDK_SFX4 = 0xFF;
+	
+	 SNDK_SetVBlank_bg3size( 0x80);
+}
+
+void SNDK_Clear_BG3()
+{
+	DMA_7 = 0x18;
+	DMA_BADD_7 = 0x80 ;
+	SNDK_memset SNDK_BG3.t1,SNDK_INIT_DATA1,0x800;
+}
+	
+SNDK_INIT_DATA1();
+const uint8 * = { 0
+
+void SNDK_ModeAlpha()
+{
+	TS = 0x11;
+	CGSWSEL = 0x02;
+	CGADSUB = 0x42;
+}
+
+
+void SNDK_ModeAlpha2()
+{
+	TS = 0x12;
+	CGSWSEL = 0x02;
+	CGADSUB = 0x41;
+}
+
+
+void SNDK_NoModeAlpha()
+{
+	TS = 0x00;
+	CGSWSEL = 0x00;
+	CGADSUB = 0x00;
+}
+
+
+
+
+DATA_FONT_SNDK_S();
+SNDK_ROM_LOAD()"SNDK/fontm.spr";
+
+DATA_FONT_SNDK_P();
+SNDK_ROM_LOAD()"SNDK/fontm.pal";
+SNDK_ROM_LOAD()"SNDK/fontm2.pal";
+SNDK_ROM_LOAD()"SNDK/fontm3.pal";
+SNDK_ROM_LOAD()"SNDK/fontm5.pal";
+
+
+
+.org 0xFFB0;
+.org 0xFFC0;
+SNES_HEADER;

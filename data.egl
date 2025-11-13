@@ -2,25 +2,10 @@
 
 SNES_BANK 3
 MAP1_PAL:
-.incbin "DATA/map/tile_0.pal"
-.incbin "DATA/map/tile_1.pal"
-.incbin "DATA/map/tile_2.pal"
-.incbin "DATA/map/tile_3.pal"
-.incbin "DATA/map/tile_4.pal"
-.incbin "DATA/map/tile_5.pal"
-.incbin "DATA/map/tile_6.pal"
-
-SNES_BANK 4
+.incbin "DATA/map/tile.pal"
 MAP1_SPR:
-.incbin "DATA/map/tile_0.spr"
-.incbin "DATA/map/tile_1.spr"
-.incbin "DATA/map/tile_2.spr"
-.incbin "DATA/map/tile_3.spr"
-.incbin "DATA/map/tile_4.spr"
-.incbin "DATA/map/tile_5.spr"
-.incbin "DATA/map/tile_6.spr"
+.incbin "DATA/map/tile.spr"
 
-SNES_BANK 5
 MAP1_DATA:
 .incbin "DATA/map/map_A.ktm"
 
@@ -29,6 +14,16 @@ MAP2_DATA:
 
 MAPC_DATA:
 .incbin "DATA/map/map_C.ktm"
+
+MAP3_DATA:
+.incbin "DATA/map2/map_A.ktm"
+
+SNES_BANK 4
+
+
+SNES_BANK 5
+
+
 
 SNES_BANK 6
 SPRITE1_SPR:
@@ -39,6 +34,7 @@ SPRITE1_PAL:
 .incbin "DATA/sprite/car.pal"
 .incbin "DATA/sprite/shmup.pal"
 
+
 SNES_BANK 7
 SFX_BRR:
 .incbin "DATA/sound/SFX.brr"
@@ -48,10 +44,10 @@ SFX_DIR:
 
 
 MUSIC_BRR:
-.incbin "DATA/sound/Chrono_Trigger.brr"
+.incbin "DATA/sound/SAMPLE_PACK.brr"
 
 MUSIC_TRACK1:
-.incbin "DATA/sound/Chrono_Trigger.sks"
+.incbin "DATA/sound/snes.vgmx"
 
 SNES_BANK 8
 HERO_SPR:
@@ -60,6 +56,7 @@ HERO_SPR:
 HERO_PAL:
 .incbin "DATA/sprite/rpg_hero.pal"
 .incbin "DATA/sprite/rpg_hero2.pal"
+
 SNES_BANK 9
 
 SNES_BANK 10

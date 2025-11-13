@@ -211,7 +211,5 @@ funclib SNDK_ScrollMultiBG:uint8 flagbg
 	
 	MODE8
 	
-	SNDK_VBlank.bg =flagbg;
+	SNDK_VBlank.bg = flagbg;
 }
-
-

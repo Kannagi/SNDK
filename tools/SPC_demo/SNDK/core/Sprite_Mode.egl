@@ -1,0 +1,259 @@
+
+//---------------------------------------MODE--------------------------------------------------
+.macro MC_SNDK_SpriteEngineDrawMode0
+	
+	[SNDK_SPRITE.visible,idx]  = 0
+	
+	posx += [SNDK_SPRITE.offsetx,idx]
+	posy += [SNDK_SPRITE.offsety,idx]
+	
+	acc = posy + 0xC020;
+	if acc & 0x3F00
+	{
+		SNDK_Sprite.oam += 0x4;	
+		asm "rts"
+	}
+	
+	acc = posx + 0xC000;
+	acc += tmp
+	if acc ?= 0
+	{
+		acc = SNDK_Sprite.oam>>2
+		tmp = acc&3
+		
+		if tmp == 0
+		{
+			posxh |= 0x01;
+		}
+		
+		if tmp == 1
+		{
+			posxh |= 0x04;
+		}
+		
+		if tmp == 2
+		{
+			posxh |= 0x10;
+		}
+		
+		if tmp == 3
+		{
+			posxh |= 0x40;
+		}
+		
+
+	}else
+	{
+		acc -= tmp;
+		if acc & 0x3F00
+		{
+			SNDK_Sprite.oam += 0x4;	
+			asm "rts"
+		}
+	}	
+	draw = [SNDK_SPRITE.draw,idx] 
+	[SNDK_SPRITE.visible,idx]  = 1
+	acc = SNDK_Sprite.oam;
+	idx = acc
+	indexh = acc>>4;
+	
+	
+	MODE8
+	
+	if draw != 0
+	{
+		MODE16
+		SNDK_Sprite.oam += 0x4;
+		asm "rts"
+		MODE8
+	}
+	
+	
+	[SNDK_OAM0.x,idx] = posx;
+	[SNDK_OAM0.y,idx] = posy;
+	[SNDK_OAM0.t,idx] = tile;
+	[SNDK_OAM0.a,idx] = attribute;
+	
+	
+	[SNDK_OAMH,indexh] |= posxh;
+.endmacro
+
+
+proc SNDK_SpriteEngineDrawMode0:;
+{
+	lib uint16 posx,posy;
+	lib uint8 tile,attribute,draw,draw2;
+	lib uint16 posxh,indexh;
+	lib uint16 tmp,oldx;
+	
+	MODE16
+	
+	tmp = SNDK_SPR_SIZE&0xFF
+	idx = oldx
+	
+	posxh = [SNDK_SPRITE.flag,idx]
+	
+	MC_SNDK_SpriteEngineDrawMode0
+	
+	MODE16
+	SNDK_Sprite.oam += 0x4;	
+	asm "rts"
+}
+
+proc SNDK_SpriteEngineDrawMode0z:;
+{
+	lib uint16 posx,posy;
+	lib uint8 tile,attribute,draw,draw2;
+	lib uint16 posxh,indexh;
+	lib uint16 tmp,oldx;
+	
+	MODE16
+	
+	tmp = SNDK_SPR_SIZE2&0xFF
+	idx = oldx
+	
+	posxh = [SNDK_SPRITE.flag,idx]
+	
+	MC_SNDK_SpriteEngineDrawMode0
+	
+	MODE16
+	SNDK_Sprite.oam += 0x4;	
+	asm "rts"
+}
+
+
+
+//-------------------------------------------------------
+funclib SNDK_SpriteEngineDraw:;
+{
+	lib uint16 posx,posy;
+	lib uint8 tile,attribute;
+	lib uint16 posxh,indexh;
+	lib uint16 fptr,oldx;
+	
+	MODE16
+	
+	idx = oldx
+	
+	[SNDK_SPRITE.visible,idx]  = 0
+	acc = posy + 0xC020;
+	if acc & 0x3F00
+	{
+		return;
+	}
+	
+	posxh = 0;
+
+	acc = posx + 0xC010;
+	if acc ?= 0
+	{
+		posxh = 0x11;
+	}else
+	{
+		acc += 0x10;
+		if acc ?= 0
+		{
+			posxh = 0x55;
+		}else
+		{
+			acc -= 0x20;
+			if acc & 0x3F00
+			{
+				return;
+			}
+			
+		}
+
+	}
+	
+	[SNDK_SPRITE.visible,idx]  = 1
+	idx = SNDK_Sprite.oam;
+	indexh = idx>>4;
+	
+	SNDK_Sprite.oam += 0x10;	
+
+	MODE8
+	
+	
+	[SNDK_OAM0.x,idx] = posx;
+	[SNDK_OAM0.y,idx] = posy;
+	[SNDK_OAM0.t,idx] = tile;
+	[SNDK_OAM0.a,idx] = attribute;
+	
+	
+	/*
+	[SNDK_OAM0.y,idx] = posy;
+	[SNDK_OAM1.y,idx] = acc;
+	[SNDK_OAM2.y,idx] = acc+SNDK_SPR_SIZE;
+	[SNDK_OAM3.y,idx] = acc;
+	
+	
+	
+	[SNDK_OAM0.x,idx] = posx;
+	[SNDK_OAM2.x,idx] = acc;
+	
+	
+	acc += SNDK_SPR_SIZE;
+	if acc ?! 0
+	{
+		[SNDK_OAM1.x,idx] = acc;
+		[SNDK_OAM3.x,idx] = acc;
+	}else
+	{
+		if posxh == 0x11
+		{
+			[SNDK_OAM1.x,idx] = posx + SNDK_SPR_SIZE;
+			[SNDK_OAM3.x,idx] = acc;
+		}else
+		{
+			[SNDK_OAM1.y,idx] = 0xE0;
+			[SNDK_OAM3.y,idx] = 0xE0;
+		}
+	}
+	
+	
+	if attribute & OAM_YFLIP
+	{
+		if attribute & OAM_XFLIP
+		{
+			[SNDK_OAM3.t,idx] = tile;
+			[SNDK_OAM2.t,idx] = acc+SNDK_SPR_SIZET;
+			[SNDK_OAM1.t,idx] = tile+SNDK_SPR_DEC;
+			[SNDK_OAM0.t,idx] = acc+SNDK_SPR_SIZET;
+		}else
+		{
+			[SNDK_OAM2.t,idx] = tile;
+			[SNDK_OAM3.t,idx] = acc+SNDK_SPR_SIZET;
+			[SNDK_OAM0.t,idx] = tile+SNDK_SPR_DEC;
+			[SNDK_OAM1.t,idx] = acc+SNDK_SPR_SIZET;
+		}
+	}else
+	{
+		if attribute & OAM_XFLIP
+		{
+			[SNDK_OAM1.t,idx] = tile;
+			[SNDK_OAM0.t,idx] = acc+SNDK_SPR_SIZET;
+			[SNDK_OAM3.t,idx] = tile+SNDK_SPR_DEC;
+			[SNDK_OAM2.t,idx] = acc+SNDK_SPR_SIZET;
+		}else
+		{
+			[SNDK_OAM0.t,idx] = tile;
+			[SNDK_OAM1.t,idx] = acc+SNDK_SPR_SIZET;
+			[SNDK_OAM2.t,idx] = tile+SNDK_SPR_DEC;
+			[SNDK_OAM3.t,idx] = acc+SNDK_SPR_SIZET;
+		}
+	}
+
+	[SNDK_OAM0.a,idx] = attribute;
+	[SNDK_OAM1.a,idx] = acc;
+	[SNDK_OAM2.a,idx] = acc;
+	[SNDK_OAM3.a,idx] = acc;
+	*/
+	
+	[SNDK_OAMH,indexh] = posxh;
+	
+	MODE16
+	
+}
+
+MODE8

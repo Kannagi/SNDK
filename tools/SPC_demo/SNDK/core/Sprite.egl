@@ -1,0 +1,326 @@
+
+funclib SNDK_Sprite_SetOAM: uint16 oam
+{
+	MODE16
+	SNDK_Sprite.oam = oam<<2;
+	MODE8
+}
+
+//---------------------------------------Engine--------------------------------------------------
+
+funclib SNDK_SpriteEngine:uint16 oam,uint16 n,uint8 ndma;
+{
+
+	lib uint16 posx,posy
+	lib uint8 tile,attribute,draw,draw2;
+	lib uint16 posxh,indexh;
+	
+	uint16 dma_count;
+	lib uint16 fptr,oldx;
+	
+	MODE16
+	if n >= 16
+	{
+		n = 16;
+	}
+	
+	if n == 0
+	{
+		return;
+	}
+
+
+	//--------------
+	
+	idy = n;
+	idx = 0;
+	SNDK_Sprite.oam = oam<<2;
+	
+	do
+	{			
+		[SNDK_SPRITE.x,idx]  +=  [SNDK_SPRITE.vx,idx];
+		posx = acc>>2;
+		
+		[SNDK_SPRITE.y,idx]  +=  [SNDK_SPRITE.vy,idx];
+		posy = acc>>2;
+		
+		tile = [SNDK_SPRITE.t,idx] ;
+		
+		fptr = [SNDK_SPRITE.mode,idx]
+		oldx = idx
+		call fptr
+		
+		
+		idx+= 0x20;
+	}
+	loop idy == 0
+
+	
+	//DMA auto
+	lib uint16 list,add,ianim,lista;
+	lib uint8 nanim,index;
+	
+	
+	//DMA1
+	idx = dma_count << 5;
+	oldx = idx;
+	
+	index = [SNDK_SPRITE.index,idx];
+	ianim = [SNDK_SPRITE.ianim,idx];
+	[SNDK_SPRITE.ianim,idx] = ianim + 2;
+	list = [SNDK_SPRITE.list,idx];
+	lista = [0x820004,list] + index
+	nanim = [0x820000,lista];
+	idx = lista + ianim;
+	add = [0x820002,idx]
+	
+	idx = list;
+	SNDK_VBlank.dma_spr1.addr = [0x820000,idx] + add;
+	SNDK_VBlank.dma_spr1.size = [0x82000A,idx];
+	SNDK_VBlank.dma_spr1.add = [0x82000C,idx];
+	SNDK_VBlank.dma_spr1.vmaddr = [0x820008,idx];
+	MODE8
+	
+	if ndma == 0
+	{
+		return;
+	}
+	
+	
+	SNDK_VBlank.dma_spr1.bank = [0x820002,idx];
+	SNDK_VBlank.dma_spr1.channel = [0x82000E,idx];
+
+	[SNDK_SPRITE.eanim,oldx] = 0;
+	if ianim == nanim
+	{
+		[SNDK_SPRITE.ianim,oldx] = 0;
+		[SNDK_SPRITE.eanim,oldx] = 1;
+	}
+
+	//DMA2
+	MODE16
+	oldx += 0x20;
+	idx = oldx;
+		
+	acc = ndma&3;
+	if acc == 2
+	{
+		index = [SNDK_SPRITE.index,idx];
+		ianim = [SNDK_SPRITE.ianim,idx];
+		[SNDK_SPRITE.ianim,idx] = ianim + 2;
+		list = [SNDK_SPRITE.list,idx];
+		lista = [0x820004,list] + index
+		nanim = [0x820000,lista];
+		idx = lista + ianim;
+		add = [0x820002,idx]
+		
+		idx = list;
+		SNDK_VBlank.dma_spr2.addr = [0x820000,idx] + add;
+		SNDK_VBlank.dma_spr2.size = [0x82000A,idx];
+		SNDK_VBlank.dma_spr2.add = [0x82000C,idx];
+		SNDK_VBlank.dma_spr2.vmaddr = [0x820008,idx];
+	}
+	
+	MODE8
+
+	if ndma == 2
+	{
+		SNDK_VBlank.dma_spr2.bank = [0x820002,idx];
+		SNDK_VBlank.dma_spr2.channel = [0x82000E,idx];
+		
+		[SNDK_SPRITE.eanim,oldx] = 0;
+		if ianim == nanim
+		{
+			[SNDK_SPRITE.ianim,oldx] = 0;
+			[SNDK_SPRITE.eanim,oldx] = 1;
+		}
+	}
+	
+	
+	//DMA end
+	dma_count +=ndma;
+	if dma_count >= n
+	{
+		dma_count = 0;
+	}
+}
+
+//--------------------------------------------------------------------------------------------------------
+
+
+//---------------------------------------Draw--------------------------------------------------
+
+
+funclib SNDK_SpriteDraw:uint16 position.x,uint8 position.y,uint8 tile,uint8 attribute,uint8 flag;
+{
+	idx = SNDK_Sprite.oam;
+	
+	[SNDK_OAM0.x,idx] = position.x;
+	[SNDK_OAM0.y,idx] = position.y;
+	[SNDK_OAM0.t,idx] = tile;
+	[SNDK_OAM0.a,idx] = attribute;
+	
+	lib uint16 indexh
+	
+	MODE16
+	SNDK_Sprite.oam = idx + 4;
+	indexh = acc>>4;
+	
+	if position.x &! 0xFF00
+	{
+		flag = flag&0xAA
+	}
+	
+	MODE8
+	[SNDK_OAMH,indexh] |= flag ;
+}
+
+
+
+funclib SNDK_SpriteDrawMeta2x2:uint16 position.x,uint8 position.y,uint8 tile,uint8 attribute,uint8 flag;
+{
+	
+	idx = SNDK_Sprite.oam;
+	
+	[SNDK_OAM0.x,idx] = position.x;
+	[SNDK_OAM2.x,idx] = acc;
+	[SNDK_OAM1.x,idx] = acc+SNDK_SPR_SIZE;
+	[SNDK_OAM3.x,idx] = acc;
+	
+	[SNDK_OAM0.y,idx] = position.y;
+	[SNDK_OAM1.y,idx] = acc;
+	[SNDK_OAM2.y,idx] = acc+SNDK_SPR_SIZE;
+	[SNDK_OAM3.y,idx] = acc;
+	
+	[SNDK_OAM0.t,idx] = tile;
+	[SNDK_OAM1.t,idx] = acc+SNDK_SPR_SIZET;
+	[SNDK_OAM2.t,idx] = tile+SNDK_SPR_DEC;
+	[SNDK_OAM3.t,idx] = acc+SNDK_SPR_SIZET;
+	
+	if attribute & OAM_YFLIP
+	{
+		if attribute & OAM_XFLIP
+		{
+			[SNDK_OAM3.t,idx] = tile;
+			[SNDK_OAM2.t,idx] = acc+SNDK_SPR_SIZET;
+			[SNDK_OAM1.t,idx] = tile+SNDK_SPR_DEC;
+			[SNDK_OAM0.t,idx] = acc+SNDK_SPR_SIZET;
+		}else
+		{
+			[SNDK_OAM2.t,idx] = tile;
+			[SNDK_OAM3.t,idx] = acc+SNDK_SPR_SIZET;
+			[SNDK_OAM0.t,idx] = tile+SNDK_SPR_DEC;
+			[SNDK_OAM1.t,idx] = acc+SNDK_SPR_SIZET;
+		}
+	}else
+	{
+		if attribute & OAM_XFLIP
+		{
+			[SNDK_OAM1.t,idx] = tile;
+			[SNDK_OAM0.t,idx] = acc+SNDK_SPR_SIZET;
+			[SNDK_OAM3.t,idx] = tile+SNDK_SPR_DEC;
+			[SNDK_OAM2.t,idx] = acc+SNDK_SPR_SIZET;
+		}else
+		{
+			[SNDK_OAM0.t,idx] = tile;
+			[SNDK_OAM1.t,idx] = acc+SNDK_SPR_SIZET;
+			[SNDK_OAM2.t,idx] = tile+SNDK_SPR_DEC;
+			[SNDK_OAM3.t,idx] = acc+SNDK_SPR_SIZET;
+		}
+	}
+	
+	[SNDK_OAM0.a,idx] = attribute;
+	[SNDK_OAM1.a,idx] = acc;
+	[SNDK_OAM2.a,idx] = acc;
+	[SNDK_OAM3.a,idx] = acc;
+	
+	lib uint16 indexh
+	MODE16
+	SNDK_Sprite.oam = idx + 16;
+	
+	indexh = acc>>4;
+	
+	if position.x &! 0xFF00
+	{
+		flag = flag&0xAA
+	}
+	
+	MODE8
+	[SNDK_OAMH,indexh] = flag
+}
+
+funclib SNDK_SpriteDrawMeta2x2H:uint16 position.x,uint8 position.y,uint8 tile,uint8 attribute,uint8 flag;
+{
+	
+	idx = SNDK_Sprite.oam;
+	
+	[SNDK_OAM0.x,idx] = position.x;
+	[SNDK_OAM2.x,idx] = acc;
+	[SNDK_OAM1.x,idx] = acc+SNDK_SPR_SIZE2;
+	[SNDK_OAM3.x,idx] = acc;
+	
+	[SNDK_OAM0.y,idx] = position.y;
+	[SNDK_OAM1.y,idx] = acc;
+	[SNDK_OAM2.y,idx] = acc+SNDK_SPR_SIZE2;
+	[SNDK_OAM3.y,idx] = acc;
+	
+	[SNDK_OAM0.t,idx] = tile;
+	[SNDK_OAM1.t,idx] = acc+SNDK_SPR_SIZET2;
+	[SNDK_OAM2.t,idx] = tile+SNDK_SPR_DEC2;
+	[SNDK_OAM3.t,idx] = acc+SNDK_SPR_SIZET2;
+	
+	if attribute & OAM_YFLIP
+	{
+		if attribute & OAM_XFLIP
+		{
+			[SNDK_OAM3.t,idx] = tile;
+			[SNDK_OAM2.t,idx] = acc+SNDK_SPR_SIZET2;
+			[SNDK_OAM1.t,idx] = tile+SNDK_SPR_DEC2;
+			[SNDK_OAM0.t,idx] = acc+SNDK_SPR_SIZET2;
+		}else
+		{
+			[SNDK_OAM2.t,idx] = tile;
+			[SNDK_OAM3.t,idx] = acc+SNDK_SPR_SIZET2;
+			[SNDK_OAM0.t,idx] = tile+SNDK_SPR_DEC2;
+			[SNDK_OAM1.t,idx] = acc+SNDK_SPR_SIZET2;
+		}
+	}else
+	{
+		if attribute & OAM_XFLIP
+		{
+			[SNDK_OAM1.t,idx] = tile;
+			[SNDK_OAM0.t,idx] = acc+SNDK_SPR_SIZET2;
+			[SNDK_OAM3.t,idx] = tile+SNDK_SPR_DEC2;
+			[SNDK_OAM2.t,idx] = acc+SNDK_SPR_SIZET2;
+		}else
+		{
+			[SNDK_OAM0.t,idx] = tile;
+			[SNDK_OAM1.t,idx] = acc+SNDK_SPR_SIZET2;
+			[SNDK_OAM2.t,idx] = tile+SNDK_SPR_DEC2;
+			[SNDK_OAM3.t,idx] = acc+SNDK_SPR_SIZET2;
+		}
+	}
+	
+	[SNDK_OAM0.a,idx] = attribute;
+	[SNDK_OAM1.a,idx] = acc;
+	[SNDK_OAM2.a,idx] = acc;
+	[SNDK_OAM3.a,idx] = acc;
+	
+	lib uint16 indexh
+	MODE16
+	SNDK_Sprite.oam = idx + 16;
+	
+	indexh = acc>>4;
+	
+	if position.x &! 0xFF00
+	{
+		flag = flag&0xAA
+	}
+	
+	MODE8
+	[SNDK_OAMH,indexh] = flag
+}
+
+//----
+
+

@@ -214,6 +214,15 @@ uint16 HDMA_ADD_7;
 uint8 HDMA_LINE_7;
 
 //------------------------------------------------------------
+
+.bss 0x7E4000
+uint8 SNDK_BufferSPR3 0x2000;
+uint8 SNDK_BufferSPR4 0x2000;
+
+uint8 SNDK_BufferSPR5 0x2000;
+uint8 SNDK_BufferSPR6 0x2000;
+uint8 SNDK_BufferSPR7 0x2000;
+
 .bss 0x7EE000
 uint8 SNDK_OAM0.x;
 uint8 SNDK_OAM0.y;
@@ -241,14 +250,16 @@ uint8 SNDK_OAMH 0x20;
 uint8  SNDK.cpu,SNDK.mcpu,SNDK.pcpu;
 uint8  SNDK.clockf,SNDK.clocks,SNDK.clockm,SNDK.clockh;
 uint8 SNDK_SFX_TIMER;
-uint16 SNDK_vrand;
-uint8 SNDK_Light;
+uint16 SNDK_vrand,SNDK.count_pal;
+uint8 SNDK_Light,SNDK_TM,SNDK_AlphaMode,SNDK_BGNBA,SNDK_TIMER,SNDK_BGMODE;
+
+uint16 SNDK_ZBUFFER 0x18
+uint16 SNDK_ZBUFFER_OUT 0x18
 
 uint8 SNDK_SFX1;
 uint8 SNDK_SFX2;
 uint8 SNDK_SFX3;
 uint8 SNDK_SFX4;
-
 
 uint8 SNDK_BG1_Scroll.x;
 uint8 SNDK_BG1_Scroll.x2;
@@ -273,7 +284,7 @@ uint16 SNDK_SPRITE.vy;
 
 uint8 SNDK_SPRITE.t;
 uint8 SNDK_SPRITE.a;
-uint16  SNDK_SPRITE.list;
+uint16 SNDK_SPRITE.list;
 uint16 SNDK_SPRITE.visible;
 uint16 SNDK_SPRITE.index;
 
@@ -283,11 +294,13 @@ uint16 SNDK_SPRITE.ianim;
 uint16 SNDK_SPRITE.offsetx
 uint16 SNDK_SPRITE.offsety
 
-uint8 SNDK_SPRITE.oam;
+uint16 SNDK_SPRITE.oam;
 uint8 SNDK_SPRITE.flag
 uint8 SNDK_SPRITE.eanim
-uint8 SNDK_SPRITE.draw
 
+uint8 SNDK_SPRITE.draw
+uint8 SNDK_SPRITE.bank
+uint8 SNDK_SPRITE.add
 
 uint8 SNDK_SPRITE (0x400);
 
@@ -348,11 +361,15 @@ uint8 SNDK_PALSPR7 0x20;
 uint8 SNDK_BufferBG2 0x4000;
 uint8 SNDK_BufferBG1 0x4000;
 uint8 SNDK_BufferBGC 0x2000;
-uint8 SNDK_BufferSPR 0x6000;
-
+uint8 SNDK_BufferSPR1 0x3000;
+uint8 SNDK_BufferSPR2 0x3000;
 
 .bss 0x100
 uint8 SNDK_MEMSET;
+uint8 SNDK_UNK1;
+uint8 SNDK_UNK2;
+uint8 SNDK_SPC_SYNC;
+
 .bss 0xD0
 uint8 SNDK_SPR_SIZE;
 uint8 SNDK_SPR_SIZET;
@@ -363,9 +380,8 @@ uint8 SNDK_SPR_DEC;
 uint8 SNDK_SPR_DEC2;
 .bss 0x7E0200
 uint8 SNDK_RAM;
-.bss 0x1000
 
-.bss 0x7E2000
+
 
 //--------------
 
@@ -396,19 +412,17 @@ uint8 SNDK_RAM;
 	SNDK_SPR_DEC2 = (.arg2<<1);
 .endmacro
 
+
+.define SNDK_BG1SV 0x04
+.define SNDK_BG1SH 0x08
+.define SNDK_BG2SV 0x01
+.define SNDK_BG2SH 0x02
+
 .define SNDK_BG1 0x01
 .define SNDK_BG2 0x02
 .define SNDK_BG3 0x04
 .define SNDK_BG4 0x08
-
 .define SNDK_OBJ 0x10
-
-
-.define SNDK_BG1SH 0x01
-.define SNDK_BG1SV 0x02
-.define SNDK_BG2SH 0x04
-.define SNDK_BG2SV 0x08
-
 
 .define OAM_YFLIP 0x80
 .define OAM_XFLIP 0x40
@@ -464,8 +478,8 @@ uint8 SNDK_RAM;
 .define SAVEX   asm "phx";
 .define RESTOREX asm "plx";
 
-.define SAVEY   asm "phx";
-.define RESTOREY asm "plx";
+.define SAVEY   asm "phy";
+.define RESTOREY asm "ply";
 
 .define SPR_INDEX_0 0x00
 .define SPR_INDEX_1 0x20
@@ -509,24 +523,29 @@ uint8 SNDK_RAM;
 .define SPR_INDEX_S15 0x3E0
 
 //------------------SPC---------------
-.define LKS_SPC_VOLUME	0x10
-.define LKS_SPC_PLAY  	0x12
-.define LKS_SPC_ADDR	0x14
-.define LKS_SPC_DATA	0x16
+.define SNDK_SPC_VOLUME	0x10
+.define SNDK_SPC_PLAY  	0x12
+.define SNDK_SPC_ADDR	0x14
+.define SNDK_SPC_DATA	0x16
 
-.define LKS_SPC_RDATA	0x18
-.define LKS_SPC_TICKS	0x1A
-.define LKS_SPC_DEBUG	0x1C
-.define LKS_SPC_RADDR	0x1E
+.define SNDK_SPC_RDATA	0x18
+.define SNDK_SPC_TICKS	0x1A
+.define SNDK_SPC_DEBUG	0x1C
+.define SNDK_SPC_RADDR	0x1E
 
-.define LKS_SPC_BRR_VOLUME	0x20
-.define LKS_SPC_BRR_PLAY		0x22
-.define LKS_SPC_BRR_PLAY_TEST 	0x24
-.define LKS_SPC_BRR_PLAY76	0x26
-.define LKS_SPC_BRR_PLAY54	0x28
-.define LKS_SPC_SVOLUME	0x30
+.define SNDK_SPC_BRR_VOLUME	0x20
+.define SNDK_SPC_BRR_PLAY		0x22
+.define SNDK_SPC_BRR_PLAY_TEST 	0x24
+.define SNDK_SPC_BRR_PLAY76	0x26
+.define SNDK_SPC_BRR_PLAY54	0x28
+.define SNDK_SPC_SVOLUME	0x30
 
-.define LKS_SPC_STOP 	0xFF
-.define LKS_SPC_ON 	0x01
-.define LKS_SPC_REPLAY	0x02
-.define LKS_SPC_PAUSE 0x00
+.define SNDK_SPC_STOP 	0xFF
+.define SNDK_SPC_ON 	0x01
+.define SNDK_SPC_REPLAY	0x02
+.define SNDK_SPC_PAUSE 0x00
+
+
+
+
+.bss 0x7E2000

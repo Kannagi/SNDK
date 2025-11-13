@@ -3,17 +3,18 @@ func demo_bg:
 {
 	FORCED_BLANK
 	
-	//upload map VRAM
-	SNDK_SendVRAM 0x0000,MAP1_SPR,0x8000
-	
 	//update pal
 	SNDK_memcopy SNDK_PALBG1,MAP1_PAL,0xE0
+		
+	//upload map VRAM
+	call SNDK_LZ_VRAM: 3
 	
-	SNDK_SendCGRAM 0x00,SNDK_PALBG0,0x200
+	
 	
 	//Load BG
-	call SNDK_LoadBG:0,200,150
+	call SNDK_LoadBG:0,150,200
 	
+
 	spm uint8 fade
 	fade = 0
 	

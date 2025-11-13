@@ -4,10 +4,9 @@
 #include <stdlib.h>
 #include "retro.h"
 
-unsigned char buffer_pixels[0x10000];
-
 void init_image(RETRO_Image* image,int w,int h)
 {
+    static unsigned char buffer_pixels[0x80000];
     image->w = w;
     image->h = h;
     image->pixels = buffer_pixels;
@@ -36,5 +35,28 @@ void blit_32b(RETRO_Image *in_image,RETRO_Image* out_image,int py,int px,int w,i
         i += out_image->w;
         l += in_image->w;
     }
+}
 
+void blit_32b_buffer(RETRO_Image* out_image,void* pixels ,int px,int py,int w,int h)
+{
+    int i = px + (py*out_image->w);
+    int ix,lx;
+    int l = 0;
+
+    unsigned int *in_pixels  = pixels;
+    unsigned int *out_pixels = out_image->pixels;
+
+    for(int y = 0; y < h;y++)
+    {
+        lx = l;
+        ix = i;
+        for(int x = 0; x < w;x++)
+        {
+            out_pixels[ix] = in_pixels[lx];
+            lx++;
+            ix++;
+        }
+        i += out_image->w;
+        l += w;
+    }
 }

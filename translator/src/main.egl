@@ -1,0 +1,149 @@
+
+proc main:
+{
+	FORCED_BLANK
+	TM = (SNDK_BG3)
+	
+	//arg: adress , bank , position x, position y , PAL	
+	call SNDK_PrintLine: $STR_SELECT:,#STR_SELECT:,8,25,SNDK_FONTPAL0;	
+	
+	uint8 select,positiony
+	select = 0
+	
+	uint8 fade
+	fade = 0
+	
+	
+	
+	do
+	{
+		call erase_bg3:
+		
+		call SNDK_PrintLine: $STR_DEMO0:,#STR_DEMO0:,7,4,SNDK_FONTPAL0;
+		call SNDK_PrintLine: $STR_DEMO1:,#STR_DEMO0:,7,6,SNDK_FONTPAL0;
+		call SNDK_PrintLine: $STR_DEMO2:,#STR_DEMO0:,7,8,SNDK_FONTPAL0;
+		call SNDK_PrintLine: $STR_DEMO3:,#STR_DEMO0:,7,10,SNDK_FONTPAL0;
+		call SNDK_PrintLine: $STR_DEMO4:,#STR_DEMO0:,7,12,SNDK_FONTPAL0;
+		call SNDK_PrintLine: $STR_DEMO5:,#STR_DEMO0:,7,14,SNDK_FONTPAL0;
+		call SNDK_PrintLine: $STR_DEMO6:,#STR_DEMO0:,7,16,SNDK_FONTPAL0;
+		call SNDK_PrintLine: $STR_DEMO7:,#STR_DEMO0:,7,18,SNDK_FONTPAL0;
+
+		
+		if SNDK_Joypad.npad1h & SNDK_PAD_UP
+		{
+			select -=1
+		}
+		
+		if SNDK_Joypad.npad1h & SNDK_PAD_DOWN
+		{
+			select +=1
+		}
+		
+		select &=7
+		
+		acc = select<<1
+		positiony = acc + 4
+		call SNDK_PrintLine: $STR_SELECT2:,#STR_SELECT2:,4,positiony,SNDK_FONTPAL1;
+		
+		if SNDK_Joypad.npad1h & SNDK_PAD_START
+		{
+			fade = 1
+		}
+		
+		call SNDK_Fade: 6,fade
+		if acc == 1
+		{
+			if fade == 1
+			{
+				call erase_bg3:
+				fade = 0
+				
+				if select == 0
+				{
+					call hello:
+				}
+				if select == 1
+				{
+					call sprite_basic:
+				}
+				
+				if select == 2
+				{
+					call sprite_engine:
+				}
+				
+				if select == 3
+				{
+					call demo_bg:
+				}
+				
+				if select == 4
+				{
+					call joypad_test:
+				}
+				if select == 5
+				{
+					call sound_test:
+				}
+				
+				if select == 6
+				{
+					call music_test:
+				}
+				
+				if select == 7
+				{
+					call hitbox_test:
+				}
+			}
+			
+		}
+		
+		call SNDK_WaitVBlank:
+	}
+	while 1 == 1
+	
+}
+
+STR_SELECT:
+.data.s "SELECT FOR QUIT"
+
+STR_SELECT2:
+.data.s "-->"
+
+STR_DEMO0:
+.data.s "TEXT"
+
+STR_DEMO1:
+.data.s "SPRITE"
+
+STR_DEMO2:
+.data.s "SPRITE ENGINE"
+
+STR_DEMO3:
+.data.s "BACKGROUND"
+
+STR_DEMO4:
+.data.s "JOYPAD"
+
+STR_DEMO5:
+.data.s "SOUND"
+
+STR_DEMO6:
+.data.s "MUSIC"
+
+STR_DEMO7:
+.data.s "HITBOX"
+
+
+func erase_bg3:
+{
+	call SNDK_PrintLineErase: 4,4,20
+	call SNDK_PrintLineErase: 4,6,20
+	call SNDK_PrintLineErase: 4,8,26
+	call SNDK_PrintLineErase: 4,10,20
+	call SNDK_PrintLineErase: 4,12,20
+	call SNDK_PrintLineErase: 4,14,20
+	call SNDK_PrintLineErase: 4,16,20
+	call SNDK_PrintLineErase: 4,18,20
+}

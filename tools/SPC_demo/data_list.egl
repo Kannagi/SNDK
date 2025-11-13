@@ -1,0 +1,43 @@
+
+
+SNES_BANK 2
+
+
+/*
+.define SNDK_SIZE_8x8     0x20
+.define SNDK_SIZE_16x16 0x80
+.define SNDK_SIZE_32x32 0x200
+.define SNDK_SIZE_48x48 0x300
+.define SNDK_SIZE_64x64 0x400
+*/
+SNDK_LOADR:
+
+
+SNDK_LOAD:
+.data.l  DATA_FONT_SNDK_S:
+.data.w  0x6000,0
+
+.data.l  DATA_FONT_SNDK_S:
+.data.w  0x6000,0
+
+.data.l  DATA_FONT_SNDK_S:
+.data.w  0x4000,0
+
+
+//list
+SNDK_LIST:
+LIST_SPR2:
+// label   data              anim
+
+
+
+
+ENNEMY_ANIM:
+
+
+//--------------
+
+SNDK_MAPLIST:
+
+
+

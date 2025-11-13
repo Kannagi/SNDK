@@ -3,5 +3,6 @@
     "old/": true,
     "obj/": true,
     "bin/": true,
+    "ob2/": true,
   }
 }

@@ -10,7 +10,14 @@
                 "command": ""
               },
         },
-
+        {
+            "label": "Compile Windows",
+            "type": "shell",
+            "command": "rmake rmakew64.sh && bash .vscode/compile.sh",
+            "windows": {
+                "command": ""
+              },
+        },
         {
             "label": "Execute",
             "type": "shell",

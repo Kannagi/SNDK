@@ -2,7 +2,7 @@
 SNES_BANK 0
 //error
 
-proc SNES_ERROR:;
+proc SNES_ERROR:
 {
 	spm uint16 tdebug1,tdebug2,tdebug3,tdebug4;
 	spm uint16 reg1,reg2,reg3;
@@ -32,8 +32,19 @@ proc SNES_ERROR:;
 
 
 
-proc SNES_IRQHV:;
+proc SNES_IRQHV:
 {
+	uint8 bgmode
+	asm "php"
+	asm "pha"
+	
+	if bgmode != 0
+	{
+		BGMODE = bgmode
+	}
+	
+	asm "pla"
+	asm "plp"
 	asm "rti";
 }
 
@@ -60,20 +71,15 @@ proc _start:;
 	jml _start_jump
 	_start_jump:
 ";
-
-
-_startA:
 	NMITIMEN  = 0x00; //Disable all
 	INIDISP = 0x80; //Forced Blank
 	MEMSEL = 1; //mode 3.58 MHz
 	
-	
-
 	call SNDK_Init:;
 	
 	jump main:
 	
-	jump _startA:
+	jump _start:
 }
 
 func SNDK_Joypad:;
@@ -146,7 +152,7 @@ func SNDK_Joypad:;
 	*/
 }
 
-proc VBlank:;
+proc VBlank:
 {
 	asm "
 		jml FastVBlank
@@ -158,14 +164,14 @@ FastVBlank:
 	acc  = RDNMI;
 	
 	INIDISP = 0x80 | SNDK_Light;
-	call SNDK_VBlank:;
+	call SNDK_VBlank:
 	
 	do
 	{
 		
 	}
 	while HVBJOY & 0x01
-	call SNDK_Joypad:;
+	call SNDK_Joypad:
 	
 	idy = 0;
 	if wait == 0

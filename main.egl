@@ -2,6 +2,8 @@
 proc main:
 {
 	FORCED_BLANK
+	call start_logo_sndk:
+	FORCED_BLANK
 	TM = (SNDK_BG3)
 	
 	//arg: adress , bank , position x, position y , PAL	
@@ -12,6 +14,8 @@ proc main:
 	
 	uint8 fade
 	fade = 0
+	
+	
 	
 	do
 	{

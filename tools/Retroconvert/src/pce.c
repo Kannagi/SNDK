@@ -4,7 +4,7 @@
 #include "retro.h"
 
 
-int pce_write_rom(unsigned char *outpixels,RETRO_Image *image,unsigned char *palette,int ncolor,int type)
+int pce_write_rom(unsigned char *outpixels,RETRO_Image *image,unsigned char *palette,int ncolor,int type,int w,int h)
 {
 	int casex,casey;
 	int tiles[64];
@@ -12,6 +12,9 @@ int pce_write_rom(unsigned char *outpixels,RETRO_Image *image,unsigned char *pal
 	int x,y,size = 0;
 	int bin[128];
 	int bx,by,bn;
+	int ih,iw;
+	ih = 0;
+	iw = 0;
 
 	int nl = 4,ns = 128,casez = 16;
 	unsigned char *pixel = image->pixels;
@@ -26,8 +29,39 @@ int pce_write_rom(unsigned char *outpixels,RETRO_Image *image,unsigned char *pal
 	casex = 0;
 	casey = 0;
 
+	if(h > 0) iw = -1;
+	
 	while(1)
 	{
+		if(iw >= w)
+		{
+			if(h > 0)
+			{
+				casex -= 16;
+				casey += 16;
+				if(w > 0) casex -= (w*16);
+			}
+			ih++;
+			iw = 0;
+		}
+		else
+		{
+			iw++;
+		}
+
+		if(ih > h)
+		{
+			if(h > 0)
+			{
+				casex += 16;
+				casey -= (h*16) + 16;
+				if(w > 0) casex += (w*16);
+			}
+			ih = 0;
+		}
+
+		//printf("%d/%d: %d %d\n",iw,ih,casex,casey);
+
 		for(i = 0;i < 128;i++)
 			bin[i] = 0;
 
@@ -94,17 +128,30 @@ int pce_write_rom(unsigned char *outpixels,RETRO_Image *image,unsigned char *pal
 
 		for(i = 0;i < ns;i++)
 		{
-            outpixels[k] = bin[i];
-            k++;
+			outpixels[k] = bin[i];
+			k++;
 		}
 
 		size += ns;
 
+		//-----------
 		casex += casez;
-		if(casex+casez >image->w)
+		if(casex+casez > image->w)
 		{
-			casex = 0;
-			casey += casez;
+			if(h == 0)
+			{
+				casex = 0;
+				casey += casez;
+			}else
+			{
+				if(ih == h)
+				{
+					casex = 0;
+					casey += casez;
+					casey += casez*h;
+				}
+			}
+			
 		}
 
 		if(casey+casez > image->h) break;
@@ -153,14 +200,14 @@ int pce_write_pal(unsigned char *outpixels,RETRO_Image *image,unsigned char *pal
 
 		color = (pal[1]<<6) + (pal[0]<<3) +pal[2];
 
-        outpixels[psize+0] = color;
-        outpixels[psize+1] = (color>>8);
+		outpixels[psize+0] = color;
+		outpixels[psize+1] = (color>>8);
 
 		psize += 2;
 	}
 
-    outpixels[0] = 0;
-    outpixels[1] = 0;
+	outpixels[0] = 0;
+	outpixels[1] = 0;
 
 	return psize;
 }

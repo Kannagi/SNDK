@@ -31,17 +31,26 @@ int snes_write_pal(unsigned char *data,RETRO_Image *image,unsigned char *palette
 int snes_write_rom(unsigned char *data,RETRO_Image *image,unsigned char *palette,int ncolor,int type);
 
 int pce_write_pal(unsigned char *data,RETRO_Image *image,unsigned char *palette,int ncolor,int mode);
-int pce_write_rom(unsigned char *data,RETRO_Image *image,unsigned char *palette,int ncolor,int type);
+int pce_write_rom(unsigned char *data,RETRO_Image *image,unsigned char *palette,int ncolor,int type,int w,int h);
 
 int neogeo_write_pal(unsigned char *outpixels,RETRO_Image *image,unsigned char *palette,int ncolor,int mode);
 int neogeo_write_rom(unsigned char *outpixels,RETRO_Image *image,unsigned char *palette,int ncolor,int type);
 
+int neogeofix_write_pal(unsigned char *outpixels,RETRO_Image *image,unsigned char *palette,int ncolor,int mode);
+int neogeofix_write_rom(unsigned char *outpixels,RETRO_Image *image,unsigned char *palette,int ncolor,int type);
+
 void *tileset_spr(unsigned int* pixels ,int width ,int *in_height,int tilew, int tileh,int tile_sz);
 RETRO_Image  tile_spr(char *address,int tilew,int tileh,int type);
 
+void blit_32b_buffer(RETRO_Image* out_image,void* pixels ,int px,int py,int w,int h);
 void blit_32b(RETRO_Image *in_image,RETRO_Image* out_image,int px,int py,int w,int h);
 void init_image(RETRO_Image* image,int w,int h);
 
+void neogeo_extract_fix(const char *filename);
+void neogeo_extract(const char *filename);
+
+void * sc16(void *datas,int *sz);
+void * sc16x(void *datas,int *sz);
 
 #define MAP 0
 #define TILE 1
@@ -52,10 +61,18 @@ void init_image(RETRO_Image* image,int w,int h);
 #define HEIGHT 6
 #define WIDTH 7
 #define MODE 8
+#define LZ 9
+
+#define LZ_COMPRESSION 1
+#define LZ_EXTRACT 2
 
 #define TARGET_SNES 1
 #define TARGET_PCE 2
 #define TARGET_NEOGEO 3
+#define TARGET_NEOGEO_FIX 4
+
+#define TARGET_NEOGEOX_FIX 10
+#define TARGET_NEOGEOX_SPR 11
 
 #define MODE_PAL 0
 #define MODE_PAL_OUT 1

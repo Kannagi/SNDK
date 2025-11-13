@@ -1,0 +1,489 @@
+
+.org 0x7FB0
+.org 0x7FC0
+SNES_HEADER
+
+SNES_BANK 1
+
+Super_Kannagi_Sound:
+.incbin "SPC/Super_Kannagi_Sound.spc"
+
+	
+func SNDK_VBlank:
+{
+	uint16 adrbg3,adrpal;
+	uint8 bg;
+	uint16 tmp1,tmp2,tmp3,tmp4;
+	
+	BG12NBA = SNDK_BGNBA
+	
+	if SNDK_BGMODE != 0
+	{
+		BGMODE = SNDK_BGMODE
+	}
+	
+	if SNDK_TM != 0
+	{
+		TM = SNDK_TM
+	}
+	
+	if SNDK_AlphaMode == 1
+	{
+		call SNDK_NoModeAlpha:
+	}
+	
+	if SNDK_AlphaMode == 2
+	{
+		call SNDK_ModeAlpha:
+	}
+	
+	if SNDK_AlphaMode == 3
+	{
+		call SNDK_ModeAlpha2:
+	}
+
+	SNDK_SendOAM
+	
+	//-----------------BG 1&2 Scroll-----------------
+	BG1H0FS = SNDK_BG1_Scroll.x;
+	BG1H0FS = SNDK_BG1_Scroll.x2;
+	
+	BG1V0FS = SNDK_BG1_Scroll.y;
+	BG1V0FS = SNDK_BG1_Scroll.y2;
+	
+	BG2H0FS = SNDK_BG2_Scroll.x;
+	BG2H0FS = SNDK_BG2_Scroll.x2;
+	
+	BG2V0FS = SNDK_BG2_Scroll.y;
+	BG2V0FS = SNDK_BG2_Scroll.y2;
+	
+
+	//-----------------BG line/col-----------------
+	uint16 bg1.h,bg1.v,bg2.h,bg2.v;
+
+	MODE16
+	DMA_ADD_0 = SNDK_BUF_BG1.h1;
+	DMA_ADD_1 = SNDK_BUF_BG1.h2;
+	DMA_ADD_2 = SNDK_BUF_BG2.h1;
+	DMA_ADD_3 = SNDK_BUF_BG2.h2;
+	
+	DMA_SIZE_0 = 0x20;
+	DMA_SIZE_1 = acc;
+	DMA_SIZE_2 = acc;
+	DMA_SIZE_3 = acc;
+	
+	MODE8
+	DMA_BANK_0 = 0x7F;
+	DMA_BANK_1 = acc;
+	DMA_BANK_2 = acc;
+	DMA_BANK_3 = acc;
+	
+	//BG1 H
+	if bg & 0x01
+	{
+		idy = bg1.h;
+		VMADD = idy;
+		MDMAEN = 0x03;
+	}
+	
+	//BG2 H
+	if bg & 0x04
+	{
+		idy = bg2.h;
+		VMADD = idy;
+		MDMAEN = 0x0C;
+	}
+	
+	
+	VMAINC = 0x81;
+	
+	MODE16
+	DMA_ADD_0 = $SNDK_BUF_BG1.v;
+	DMA_ADD_1 = $SNDK_BUF_BG2.v;
+	
+	DMA_SIZE_0 = 0x40;
+	DMA_SIZE_1 = acc;
+
+	MODE8
+	DMA_BANK_0 = 0x7E;
+	DMA_BANK_1 = acc;
+	
+	//BG1 V
+	if bg & 0x02
+	{
+		idy = bg1.v;
+		VMADD = idy;
+		MDMAEN = 0x01;
+	}
+	
+	//BG2 V
+	if bg & 0x08
+	{
+		idy = bg2.v;
+		VMADD = idy;
+		MDMAEN = 0x02;
+	}
+	VMAINC = 0x80;
+	//-----------------SPRITE ENGINE DMA0-----------------
+	uint16 dma_spr0.addr,dma_spr0.add,dma_spr0.size,dma_spr0.bank,dma_spr0.vmaddr,dma_spr0.channel;
+	MODE16
+	 
+	DMA_ADD_0 = dma_spr0.addr;
+	DMA_ADD_1 = acc + dma_spr0.add;
+	DMA_ADD_2 = acc + dma_spr0.add;
+	DMA_ADD_3 = acc + dma_spr0.add;
+	
+	DMA_SIZE_0 = dma_spr0.size;
+	DMA_SIZE_1 = acc;
+	DMA_SIZE_2 = acc;
+	DMA_SIZE_3 = acc;
+	
+	tmp1 = dma_spr0.vmaddr;
+	tmp2 = acc + 0x100;
+	tmp3 = acc + 0x100;
+	tmp4 = acc + 0x100;
+	MODE8
+	
+	DMA_BANK_0 = dma_spr0.bank;
+	DMA_BANK_1 = acc;
+	DMA_BANK_2 = acc;
+	DMA_BANK_3 = acc;
+	
+	if dma_spr0.channel & 0x01
+	{
+		VMADD =? tmp1;
+		MDMAEN = 0x01;
+	}
+	
+	if dma_spr0.channel & 0x02
+	{
+		idx = tmp2;
+		VMADD = idx;
+		MDMAEN = 0x02;
+	}
+	
+	if dma_spr0.channel & 0x04
+	{
+		idx = tmp3;
+		VMADD = idx;
+		MDMAEN = 0x4;
+	}
+	
+	if dma_spr0.channel & 0x08
+	{
+		idx = tmp4;
+		VMADD = idx;
+		MDMAEN = 0x8;
+	}
+	dma_spr0.channel = 0;
+
+
+	//-----------------SPRITE ENGINE DMA1-----------------
+	uint16 dma_spr1.addr,dma_spr1.add,dma_spr1.size,dma_spr1.bank,dma_spr1.vmaddr,dma_spr1.channel;
+	MODE16
+	
+	DMA_ADD_0 = dma_spr1.addr;
+	DMA_ADD_1 = acc + dma_spr1.add;
+	DMA_ADD_2 = acc + dma_spr1.add;
+	DMA_ADD_3 = acc + dma_spr1.add;
+	
+	DMA_SIZE_0 = dma_spr1.size;
+	DMA_SIZE_1 = acc;
+	DMA_SIZE_2 = acc;
+	DMA_SIZE_3 = acc;
+	
+	tmp1 = dma_spr1.vmaddr;
+	tmp2 = acc + 0x100;
+	tmp3 = acc + 0x100;
+	tmp4 = acc + 0x100;
+	MODE8
+	
+	DMA_BANK_0 = dma_spr1.bank;
+	DMA_BANK_1 = acc;
+	DMA_BANK_2 = acc;
+	DMA_BANK_3 = acc;
+	
+	
+	if dma_spr1.channel & 0x01
+	{
+		VMADD =? tmp1;
+		MDMAEN = 0x01;
+	}
+	
+	if dma_spr1.channel & 0x02
+	{
+		VMADD =? tmp2;
+		MDMAEN = 0x02;
+	}
+	
+	if dma_spr1.channel & 0x04
+	{
+		VMADD =? tmp3;
+		MDMAEN = 0x4;
+	}
+	
+	if dma_spr1.channel & 0x08
+	{
+		VMADD =? tmp4;
+		MDMAEN = 0x8;
+	}
+	dma_spr1.channel = 0;
+	
+	//-----------------SPRITE ENGINE DMA2-----------------
+	uint16 dma_spr2.addr,dma_spr2.add,dma_spr2.size,dma_spr2.bank,dma_spr2.vmaddr,dma_spr2.channel;
+	MODE16
+	
+	DMA_ADD_0 = dma_spr2.addr;
+	DMA_ADD_1 = acc + dma_spr2.add;
+	DMA_ADD_2 = acc + dma_spr2.add;
+	DMA_ADD_3 = acc + dma_spr2.add;
+	
+	DMA_SIZE_0 = dma_spr2.size;
+	DMA_SIZE_1 = acc;
+	DMA_SIZE_2 = acc;
+	DMA_SIZE_3 = acc;
+	
+	tmp1 = dma_spr2.vmaddr;
+	tmp2 = acc + 0x100;
+	tmp3 = acc + 0x100;
+	tmp4 = acc + 0x100;
+	MODE8
+	
+	DMA_BANK_0 = dma_spr2.bank;
+	DMA_BANK_1 = acc;
+	DMA_BANK_2 = acc;
+	DMA_BANK_3 = acc;
+	
+	if dma_spr2.channel & 0x01
+	{
+		idx = tmp1;
+		VMADD = idx;
+		MDMAEN = 0x01;
+	}
+	
+	if dma_spr2.channel & 0x02
+	{
+		idx = tmp2;
+		VMADD = idx;
+		MDMAEN = 0x02;
+	}
+	
+	if dma_spr2.channel & 0x04
+	{
+		idx = tmp3;
+		VMADD = idx;
+		MDMAEN = 0x4;
+	}
+	
+	if dma_spr2.channel & 0x08
+	{
+		idx = tmp4;
+		VMADD = idx;
+		MDMAEN = 0x8;
+	}
+	dma_spr2.channel = 0;
+	
+	//-----------------SPRITE ENGINE DMA TILE-----------------
+	uint16 dma_tile.addr,dma_tile.add,dma_tile.size,dma_tile.bank,dma_tile.vmaddr,dma_tile.channel;
+	MODE16
+	
+	DMA_ADD_0 = dma_tile.addr;
+	DMA_ADD_1 = acc + dma_tile.add;
+	
+	DMA_SIZE_0 = dma_tile.size;
+	DMA_SIZE_1 = acc;
+
+	tmp1 = dma_tile.vmaddr;
+	tmp2 = acc + 0x100;
+	MODE8
+	
+	DMA_BANK_0 = dma_tile.bank;
+	DMA_BANK_1 = acc;
+	
+	if dma_tile.channel & 0x01
+	{
+		VMADD =? tmp1;
+		MDMAEN = 0x01;
+	}
+	
+	if dma_tile.channel & 0x02
+	{
+		VMADD =? tmp2;
+		MDMAEN = 0x02;
+	}
+	
+	dma_tile.channel = 0;
+	
+	//-----------------PAL-----------------
+	MODE16
+	acc = adrpal>>1;
+	MODE8
+	CGADD = acc;
+	
+	MODE16
+	DMA_ADD_5 = $SNDK_PALBG0 + adrpal;
+	DMA_SIZE_5 = 0x40;
+	
+	adrpal += 0x40;
+	if acc == 0x200
+	{
+		acc = 0;
+	}
+	adrpal = acc;
+	SNDK.count_pal = acc
+	MODE8
+	
+	DMA_BANK_5 =  #SNDK_PALBG0;
+	
+	MDMAEN = 0x20;
+	//-----------------BG3 -----------------
+	uint16 bg3size
+
+	MODE16
+	acc = adrbg3>>1;
+	VMADD = acc + 0x5C00;
+	
+	DMA_ADD_0 = $SNDK_BG3.t1 + adrbg3;
+	
+	acc = adrbg3;
+	acc += bg3size
+	if acc == 0x700
+	{
+		acc = 0;
+	}
+	adrbg3 = acc;
+	 
+	DMA_SIZE_0 = bg3size
+	MODE8
+	
+	DMA_BANK_0 =  #SNDK_BG3.t1;
+	
+	MDMAEN = 1;
+	
+	//Line
+	uint16 tileset.vaddr,tileset.addr,tileset.size,tileset.bank,tileset.channel
+	
+	MODE16
+	VMADD = tileset.vaddr
+	DMA_ADD_0 = tileset.addr;	
+	DMA_SIZE_0 = tileset.size;
+	MODE8
+	
+	DMA_BANK_0 = tileset.bank
+	
+	if tileset.channel & 0x01
+	{
+		MDMAEN = 0x01
+		tileset.channel = 0
+	}
+	
+	//-----------------end------------------
+	
+	bg = 0;
+	
+}
+
+func SNDK_GetVBlank_adrbg3:
+{
+	MODE16
+	acc = SNDK_VBlank.adrbg3>>7
+	MODE8
+}
+
+funclib SNDK_SetVBlank_adrbg3: uint16 val
+{
+	MODE16
+	SNDK_VBlank.adrbg3 = val
+	MODE8
+}
+
+funclib SNDK_SetVBlank_bg3size: uint16 val
+{
+	MODE16
+	SNDK_VBlank.bg3size = val
+	MODE8
+}
+
+func SNDK_WaitVBlank:;
+{
+	acc = SNDK.clockf + 1;
+	if acc == 60 //60 frames
+	{
+		acc = SNDK.clocks + 1;
+		if acc == 60 //60 secondes
+		{
+			acc = SNDK.clockm + 1;
+			if acc == 60 //60 minutes
+			{
+				SNDK.clockh += 1;
+				acc = 0;
+			}
+			SNDK.clockm = acc;
+			acc = 0;
+		}
+		SNDK.clocks = acc;
+		SNDK.pcpu  = 0
+		acc = 0;
+	}
+	SNDK.clockf = acc;
+	
+	acc = SLHV;
+	acc = OPVCT;
+	
+	MODE16
+	acc = acc & 0xFF;
+	WRDIVL = acc << 6;
+	MODE8
+	WRDIVB = 143;
+	if SNDK.mcpu < SNDK.cpu
+	{
+		SNDK.mcpu  = SNDK.cpu;
+	}
+	
+	if SNDK.pcpu < SNDK.cpu
+	{
+		SNDK.pcpu  = SNDK.cpu;
+	}
+	
+	
+	
+	SNDK.cpu = RDDIVL;
+	NMITIMEN = 0x81;
+	acc = 1;
+	do
+	{ }
+	while acc == 1
+	NMITIMEN = 0x00;
+}
+
+func SNDK_Sprite:
+{
+	uint16 oam;
+	
+	DMA_7 = 0x18;
+	DMA_BADD_7 = 0x80; 
+	
+	oam =? 0;
+	
+	SNDK_memset SNDK_OAM0.x,SNDK_OAM_INIT_DATA,0x200	
+	
+	SNDK_memset SNDK_OAMH,SNDK_OAM_INIT_DATA2,0x20
+}
+
+func debug_stop2:
+{
+	NMITIMEN = 0x00;
+	do
+	{
+		
+	}
+	while 1 == 1
+}
+
+
+SNDK_OAM_INIT_DATA:
+.data.b 0xE0;
+
+SNDK_OAM_INIT_DATA2:
+.data.b 0x00;
+

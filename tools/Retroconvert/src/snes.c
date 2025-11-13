@@ -12,7 +12,7 @@ int snes_write_pal(unsigned char *outpixels,RETRO_Image *image,unsigned char *pa
 
 	int size = image->w*image->h*image->BytesPerPixel;
 	unsigned char *pixel = image->pixels;
-    int l = 0;
+	int l = 0;
 
 	palette[0] = 0;
 	palette[1] = 0;
@@ -49,11 +49,11 @@ int snes_write_pal(unsigned char *outpixels,RETRO_Image *image,unsigned char *pa
 		color = palette[n+2]/8;
 		snespal2 += color << 2;
 
-        outpixels[l] = snespal1;
-        l++;
+		outpixels[l] = snespal1;
+		l++;
 
-        outpixels[l] = snespal2;
-        l++;
+		outpixels[l] = snespal2;
+		l++;
 
 		psize += 2;
 	}
@@ -63,10 +63,10 @@ int snes_write_pal(unsigned char *outpixels,RETRO_Image *image,unsigned char *pa
 		for(i = ncolor;i < 4;i++)
 		{
 			outpixels[l] = 0;
-            l++;
+			l++;
 
-            outpixels[l] = 0;
-            l++;
+			outpixels[l] = 0;
+			l++;
 		}
 	}else
 	if( (ncolor < 16) && (ncolor != 4) )
@@ -74,10 +74,10 @@ int snes_write_pal(unsigned char *outpixels,RETRO_Image *image,unsigned char *pa
 		for(i = ncolor;i < 16;i++)
 		{
 			outpixels[l] = 0;
-            l++;
+			l++;
 
-            outpixels[l] = 0;
-            l++;
+			outpixels[l] = 0;
+			l++;
 		}
 	}
 
@@ -132,7 +132,7 @@ int snes_write_rom(unsigned char *outpixels,RETRO_Image *image,unsigned char *pa
 			}
 
 
-            memcpy(&outpixels[size],binpixel,16);
+			memcpy(&outpixels[size],binpixel,16);
 			if(npal > 4)  memcpy(&outpixels[size+16],&binpixel[8],16);
 			if(npal > 16) memcpy(&outpixels[size+32],&binpixel[16],32);
 
@@ -152,7 +152,7 @@ int snes_write_rom(unsigned char *outpixels,RETRO_Image *image,unsigned char *pa
 				}
 			}
 
-            memcpy(&outpixels[size],cbinpixel,64);
+			memcpy(&outpixels[size],cbinpixel,64);
 
 			size += 64;
 		}
@@ -166,6 +166,6 @@ int snes_write_rom(unsigned char *outpixels,RETRO_Image *image,unsigned char *pa
 
 		if(blocy+8 >image->h) break;
 	}
-    
+	
 	return size;
 }

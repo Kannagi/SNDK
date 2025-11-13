@@ -1,0 +1,163 @@
+
+func Load_SKS:
+{
+	asm "
+	rep #$20
+	lda #$BBAA
+	.Load_SKS_b0:   
+		cmp $2140
+	bne .Load_SKS_b0
+	
+	; Initialize transfer
+	lda #$200 
+	sta $2142
+
+	lda #$1CC
+	sta $2140
+	sep #$20
+	
+	.Load_SKS_b1:	
+		cmp $2140 
+	bne .Load_SKS_b1
+
+	; Send data
+	ldx #0
+	ldy #$580
+	.Load_SKS_b2:	
+		lda Super_Kannagi_Sound,X
+		sta $2141
+		txa
+		sta $2140
+		.Load_SKS_b3:	
+			cmp $2140
+		bne .Load_SKS_b3
+		inx
+		dey
+	bne .Load_SKS_b2
+
+	;Begin execution
+	rep #$20 
+	lda #$200
+	sta $2142
+	sep #$20
+	
+	lda #0
+	sta $2141
+
+	lda $2140
+	adc #2
+	sta $2140
+	
+	";
+	
+}
+
+
+.macro LKS_SPC_Wait
+
+	
+	
+.endmacro
+
+funclib LKS_SPC_SetData: uint16 addr, uint16 bank, uint16 isize
+{
+	idy = isize
+	idx = 0
+	do
+	{
+		APUIO1 = LKS_SPC_DATA
+	
+		MODE16
+		APUIO2 = @addr
+		addr += 2
+		MODE8
+		asm "
+		lda $104
+		sta $2140
+		.LKS_SPC_Wait1:
+			cmp $2140
+		beq .LKS_SPC_Wait1
+		stz $2141
+		lda $2140
+		sta $104
+		";
+		idy -= 1
+	}
+	loop idy == 0
+	APUIO1 = 0
+}
+
+funclib LKS_SPC_Get: uint8 cmd1
+{
+	APUIO1 = cmd1
+	asm "
+	lda $104
+	sta $2140
+	.LKS_SPC_Wait2:
+		cmp $2140
+	beq .LKS_SPC_Wait2
+	stz $2141
+	lda $2140
+	sta $104
+	";
+}
+
+funclib LKS_SPC_Set2: uint8 cmd1, uint16 cmd2
+{
+	APUIO1 = cmd1
+	APUIO2 =? cmd2
+	asm "
+	lda $104
+	sta $2140
+	.LKS_SPC_Wait3:
+		cmp $2140
+	beq .LKS_SPC_Wait3
+	stz $2141
+	lda $2140
+	sta $104
+	";
+}
+funclib LKS_SPC_Set: uint8 cmd1, uint8 cmd2, uint8 cmd3
+{
+	APUIO1 = cmd1
+	APUIO2 = cmd2
+	APUIO3 = cmd3
+	asm "
+	lda $104
+	sta $2140
+	.LKS_SPC_Wait4:
+		cmp $2140
+	beq .LKS_SPC_Wait4
+	stz $2141
+	lda $2140
+	sta $104
+	";
+}
+
+//------------------------------------
+
+funclib SNDK_SFX_Engine: uint8 ntimer
+{
+	lib uint8 sfx1,sfx2,sfx3,sfx4
+	
+	sfx1 = SNDK_SFX1
+	sfx2 = SNDK_SFX2
+	sfx3 = SNDK_SFX3
+	sfx4 = SNDK_SFX4
+	
+	if SNDK_SFX_TIMER == 1
+	{
+		call LKS_SPC_Set: LKS_SPC_BRR_PLAY76,sfx1,sfx2
+		SNDK_SFX1 = 0xFF
+		SNDK_SFX2 = 0xFF
+	}
+	
+	if SNDK_SFX_TIMER >= ntimer
+	{
+		call LKS_SPC_Set: LKS_SPC_BRR_PLAY54,sfx3,sfx4
+		SNDK_SFX3 = 0xFF
+		SNDK_SFX4 = 0xFF
+		SNDK_SFX_TIMER = 0
+	}
+	SNDK_SFX_TIMER += 1
+}

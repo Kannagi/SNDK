@@ -12,7 +12,7 @@ LD = g++
 WINDRES = windres
 
 INC = 
-CFLAGS = -fomit-frame-pointer -fexpensive-optimizations -O1 -w -Wall -s
+CFLAGS = -fomit-frame-pointer -fexpensive-optimizations -O1 -Wextra -Wall -s
 RESINC = 
 LIBDIR = 
 LIB = 
@@ -29,7 +29,7 @@ OBJDIR_BIN = obj
 DEP_BIN = 
 OUT_BIN = bin/retrotmx
 
-OBJ_BIN = $(OBJDIR_BIN)/src/aura.o $(OBJDIR_BIN)/src/main.o $(OBJDIR_BIN)/src/md_custom.o $(OBJDIR_BIN)/src/ng.o $(OBJDIR_BIN)/src/pc.o $(OBJDIR_BIN)/src/pce.o $(OBJDIR_BIN)/src/snes.o $(OBJDIR_BIN)/src/tmx.o
+OBJ_BIN = $(OBJDIR_BIN)/src/aura.o $(OBJDIR_BIN)/src/main.o $(OBJDIR_BIN)/src/ng.o $(OBJDIR_BIN)/src/pc.o $(OBJDIR_BIN)/src/pce.o $(OBJDIR_BIN)/src/sc16.o $(OBJDIR_BIN)/src/snes.o $(OBJDIR_BIN)/src/tmx.o
 
 all: bin bin__windows_
 
@@ -52,9 +52,6 @@ $(OBJDIR_BIN)/src/aura.o: src/aura.c
 $(OBJDIR_BIN)/src/main.o: src/main.c
 	$(CC) $(CFLAGS_BIN) $(INC_BIN) -c src/main.c -o $(OBJDIR_BIN)/src/main.o
 
-$(OBJDIR_BIN)/src/md_custom.o: src/md_custom.c
-	$(CC) $(CFLAGS_BIN) $(INC_BIN) -c src/md_custom.c -o $(OBJDIR_BIN)/src/md_custom.o
-
 $(OBJDIR_BIN)/src/ng.o: src/ng.c
 	$(CC) $(CFLAGS_BIN) $(INC_BIN) -c src/ng.c -o $(OBJDIR_BIN)/src/ng.o
 
@@ -63,6 +60,9 @@ $(OBJDIR_BIN)/src/pc.o: src/pc.c
 
 $(OBJDIR_BIN)/src/pce.o: src/pce.c
 	$(CC) $(CFLAGS_BIN) $(INC_BIN) -c src/pce.c -o $(OBJDIR_BIN)/src/pce.o
+
+$(OBJDIR_BIN)/src/sc16.o: src/sc16.c
+	$(CC) $(CFLAGS_BIN) $(INC_BIN) -c src/sc16.c -o $(OBJDIR_BIN)/src/sc16.o
 
 $(OBJDIR_BIN)/src/snes.o: src/snes.c
 	$(CC) $(CFLAGS_BIN) $(INC_BIN) -c src/snes.c -o $(OBJDIR_BIN)/src/snes.o

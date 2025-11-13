@@ -5,7 +5,7 @@
 
 int select_option(int argc, char** argv,int *option,char *address,char *addresspal)
 {
-    int i,arg = 0;
+	int i,arg = 0;
 
 	for(i = 0; i < 10;i++)
 		option[i] = 0;
@@ -21,7 +21,11 @@ int select_option(int argc, char** argv,int *option,char *address,char *addressp
 			if(strcmp(argv[i],"-pce") == 0) option[TARGET] = TARGET_PCE;
 			if(strcmp(argv[i],"-sfc") == 0) option[TARGET] = TARGET_SNES;
 			if(strcmp(argv[i],"-ng")  == 0) option[TARGET] = TARGET_NEOGEO;
+			if(strcmp(argv[i],"-ngfix")  == 0) option[TARGET] = TARGET_NEOGEO_FIX;
 
+			//Neo Geo option
+			if(strcmp(argv[i],"-ngxspr")  == 0) option[TARGET] = TARGET_NEOGEOX_SPR;
+			if(strcmp(argv[i],"-ngxfix")  == 0) option[TARGET] = TARGET_NEOGEOX_FIX;
 			//Palette option
 			if(strcmp(argv[i],"-noalpha") == 0) option[ALPHA] = 1;
 
@@ -33,6 +37,7 @@ int select_option(int argc, char** argv,int *option,char *address,char *addressp
 			if(strcmp(argv[i],"-map2")   == 0) option[MAP] = 2;
 			if(strcmp(argv[i],"-map3")   == 0) option[MAP] = 3;
 			if(strcmp(argv[i],"-map4")   == 0) option[MAP] = 4;
+			if(strcmp(argv[i],"-mapfix")   == 0) option[MAP] = 0x25;
 			if(strcmp(argv[i],"-bundle") == 0) option[MAP] |= 0x10;
 
 			//SNES option
@@ -60,6 +65,11 @@ int select_option(int argc, char** argv,int *option,char *address,char *addressp
 				arg = 1;
 			}
 
+			if(strcmp(argv[i],"-o") == 0)
+			{
+				arg = 1;
+			}
+
 			//h option
 			if(strcmp(argv[i],"-h") == 0)
 				arg = 2;
@@ -67,6 +77,9 @@ int select_option(int argc, char** argv,int *option,char *address,char *addressp
 			//v option
 			if(strcmp(argv[i],"-w") == 0)
 				arg = 3;
+
+			if(strcmp(argv[i],"-lz") == 0) option[LZ] = LZ_COMPRESSION;
+			if(strcmp(argv[i],"-lzx") == 0) option[LZ] = LZ_EXTRACT;
 
 		}else
 		{
@@ -85,19 +98,25 @@ int select_option(int argc, char** argv,int *option,char *address,char *addressp
 		printf("option palette : -only-palette (output palette only) , -palettesp (special palette)\n");
 		printf("-loadpalette + arg , (load palette extern)\n");
 		printf("option tile spr : -tile8 -tile16 -tile32 -tile64\n");
-		printf("option -w -h : size w/h , use for -tile\n");
-		printf("\noption sfc : -2bpp,-4bpp ,-8bpp,-mode7\n");
+		printf("option -w -h : size w/h , use for -tile\n\n");
+
+		printf("option sfc : -2bpp,-4bpp ,-8bpp,-mode7\n");
 		printf("option pce : -bg,-spr\n");
+
+		printf("option neo geo extract : -ngxfix,-ngxspr\n");
+		printf("option neo geo fix : -ngfix\n");
+		printf("option neo geo : -ng\n");
 		
 		printf("option -map1 : 256x256/7pal\n");
 		printf("option -map2 : 256x256/6pal\n");
 		printf("option -map3 : 256x192/12pal\n");
 		printf("option -map4 : 256x192/6pal\n");
+		printf("option -mapfix : 256x1024/12pal\n");
 
 		printf("\nExemple :\nretroconvert -sfc -4bpp myimage.png\n");
 		return 0;
 	}
 
-    return 1;
+	return 1;
 
 }

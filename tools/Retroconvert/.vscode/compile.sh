@@ -1,18 +1,21 @@
 #!/bin/sh
 
-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/main.c -o obj/src/main.o
-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/option.c -o obj/src/option.o
-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/tile.c -o obj/src/tile.o
-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/load_write.c -o obj/src/load_write.o
-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/other.c -o obj/src/other.o
-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/palette.c -o obj/src/palette.o
-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/snes.c -o obj/src/snes.o
-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/pce.c -o obj/src/pce.o
-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/neogeo.c -o obj/src/neogeo.o
-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/blit.c -o obj/src/blit.o
-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/sc16.c -o obj/src/sc16.o
-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/sc16x.c -o obj/src/sc16x.o
+#x86_64-w64-mingw32-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/main.c -o ob2/src/main.o
+#x86_64-w64-mingw32-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/option.c -o ob2/src/option.o
+#x86_64-w64-mingw32-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/tile.c -o ob2/src/tile.o
+#x86_64-w64-mingw32-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/load_write.c -o ob2/src/load_write.o
+#x86_64-w64-mingw32-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/other.c -o ob2/src/other.o
+#x86_64-w64-mingw32-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/palette.c -o ob2/src/palette.o
+#x86_64-w64-mingw32-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/snes.c -o ob2/src/snes.o
+#x86_64-w64-mingw32-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/pce.c -o ob2/src/pce.o
+#x86_64-w64-mingw32-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/neogeo.c -o ob2/src/neogeo.o
+#x86_64-w64-mingw32-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/blit.c -o ob2/src/blit.o
+#x86_64-w64-mingw32-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/sc16.c -o ob2/src/sc16.o
+#x86_64-w64-mingw32-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/sc16x.c -o ob2/src/sc16x.o
+#x86_64-w64-mingw32-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/neogeo_extract_fix.c -o ob2/src/neogeo_extract_fix.o
+#x86_64-w64-mingw32-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/neogeo_extract.c -o ob2/src/neogeo_extract.o
+#x86_64-w64-mingw32-gcc -O1 -fomit-frame-pointer -Wall -Wextra -pedantic -Wno-unused-parameter -Iinclude -c src/neogeo_fix.c -o ob2/src/neogeo_fix.o
 
-g++ -s   obj/src/main.o obj/src/option.o obj/src/tile.o obj/src/load_write.o obj/src/other.o obj/src/palette.o obj/src/snes.o obj/src/pce.o obj/src/neogeo.o obj/src/blit.o obj/src/sc16.o obj/src/sc16x.o  -o bin/retroconvert 
+x86_64-w64-mingw32-g++ -s   ob2/src/main.o ob2/src/option.o ob2/src/tile.o ob2/src/load_write.o ob2/src/other.o ob2/src/palette.o ob2/src/snes.o ob2/src/pce.o ob2/src/neogeo.o ob2/src/blit.o ob2/src/sc16.o ob2/src/sc16x.o ob2/src/neogeo_extract_fix.o ob2/src/neogeo_extract.o ob2/src/neogeo_fix.o  -o bin/retroconvert  --static
 
 

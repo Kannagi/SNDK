@@ -1,0 +1,29 @@
+
+
+#options:-debug -asm
+#options:-cycle
+#cmd_execute: pwd
+options:-65816 -snes-checksum -mesen -asm
+
+#file crt SDK
+add_file: SNDK/bss_define.egl; SNDK/header.egl; SNDK/macro.egl;
+add_file: SNDK/crt0.egl;
+
+
+#file game
+add_file:main.egl;
+
+
+#file SNDK
+add_file: SNDK/VBlank.egl;
+add_folder:SNDK/core;
+add_file:data1.egl;
+add_file: SNDK/Init.egl;
+
+#DATA
+
+add_file:data_list.egl;
+add_file:data.egl;
+
+compiler_run:demo.smc
+

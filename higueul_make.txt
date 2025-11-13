@@ -3,7 +3,7 @@
 #options:-debug -asm
 #options:-cycle
 #cmd_execute: pwd
-options:-65816 -mesen
+options:-65816 -snes-checksum -mesen -asm
 
 #file crt SDK
 add_file: SNDK/bss_define.egl; SNDK/header.egl; SNDK/macro.egl;
@@ -26,8 +26,11 @@ add_file: SNDK/Init.egl;
 
 #DATA
 
+
 add_file:data_list.egl;
 add_file:data.egl;
+
+
 
 compiler_run:demo.smc
 

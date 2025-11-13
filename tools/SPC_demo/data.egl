@@ -1,0 +1,26 @@
+
+
+
+
+
+SNES_BANK 3
+MUSIC_TRACK1:
+.incbin "ssb_opening.vgmx"
+.data.b 0x00
+
+SNES_BANK 4
+//SAMPLE
+MUSIC_BRR1:
+.incbin "SAMPLE_PACK.brr"
+.data.b 0xFF
+
+SNES_BANK 5
+//PARTITION
+
+
+
+SNES_BANK 6
+
+
+
+.org 0x40000

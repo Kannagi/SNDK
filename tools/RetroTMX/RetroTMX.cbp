@@ -51,6 +51,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/retro.h" />
+		<Unit filename="src/sc16.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/snes.c">
 			<Option compilerVar="CC" />
 		</Unit>

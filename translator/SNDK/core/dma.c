@@ -1,0 +1,40 @@
+
+void SNDK_DMA_Sprite(uint16 adr,uint8 bank,uint16 size,uint16 vmaddr,uint16 add,uint8 channel)
+{
+	
+	SNDK_VBlank.dma_spr0.addr = adr;
+	SNDK_VBlank.dma_spr0.add = add;
+	SNDK_VBlank.dma_spr0.vmaddr = vmaddr;
+	SNDK_VBlank.dma_spr0.size = size;
+	
+	
+	SNDK_VBlank.dma_spr0.bank = bank;
+	SNDK_VBlank.dma_spr0.channel = channel;
+}
+
+void SNDK_DMA_Tile(uint16 adr,uint8 bank,uint16 size,uint16 vmaddr,uint16 add,uint8 channel)
+{
+	
+	SNDK_VBlank.dma_tile.addr = adr;
+	SNDK_VBlank.dma_tile.add = add;
+	SNDK_VBlank.dma_tile.vmaddr = vmaddr;
+	SNDK_VBlank.dma_tile.size = size;
+	
+	
+	SNDK_VBlank.dma_tile.bank = bank;
+	SNDK_VBlank.dma_tile.channel = channel;
+}
+
+
+void SNDK_DMA_TileLine(uint16 adr,uint8 bank,uint16 size,uint16 vmaddr)
+{
+	
+	
+	SNDK_VBlank.tileset.addr = adr;
+	SNDK_VBlank.tileset.vaddr = vmaddr;
+	SNDK_VBlank.tileset.size = size;
+	
+	
+	SNDK_VBlank.tileset.bank = bank;
+	SNDK_VBlank.tileset.channel = 1;
+}

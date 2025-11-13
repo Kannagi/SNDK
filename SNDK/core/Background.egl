@@ -1,131 +1,4 @@
 
-funclib SNDK_UnpackBG:
-{
-	lib uint16 data,rle,data2
-	lib uint16 adr,adrh
-	
-	MODE16
-	idy = @adr
-	adr +=2
-	do
-	{
-		acc = @adr		
-		adr += 2
-		if acc &1
-		{
-			data = acc&0xFFFE
-			rle = @adr
-			adr += 1
-			idy -=1
-			
-			asm "phy"
-
-			idy = rle&0x3F
-			idy +=1
-			
-			if rle & 0x80  //rle2
-			{
-				data2 = data + 2
-				idy -=1
-				do
-				{
-					[0x7F0000,idx] = data
-					idx += 2
-					[0x7F0000,idx] = data2
-					idx += 2
-				}
-				loop idy == 0
-				
-			}else
-			{
-				if rle & 0x40  //rle inc
-				{
-					acc = data
-					do
-					{
-						[0x7F0000,idx] = acc
-						idx += 2
-						acc += 2
-					}
-					loop idy == 0
-					
-				}else
-				{
-					//rle
-					acc = data
-					do
-					{
-						[0x7F0000,idx] = acc
-						idx += 2
-					}
-					loop idy == 0
-					
-				}
-			}
-			asm "ply"
-		}else
-		{
-			[0x7F0000,idx] = acc
-			idx += 2
-		}	
-		
-		idy -=1	
-		
-	}
-	loop idy == 0
-}
-
-funclib SNDK_UnpackBGC:
-{
-	lib uint16 data,rle,data2
-	lib uint16 adr,adrh
-	
-	MODE16
-	idy = @adr
-	adr +=2
-	rle = 0
-	MODE8
-	do
-	{
-		acc = @adr		
-		adr += 1
-		if acc & 0x80
-		{
-			data = acc&0x7F
-			rle = @adr
-			adr += 1
-			idy -= 1
-			
-			asm "phy"
-			idy = rle
-			idy += 1
-			
-			//rle
-			acc = data
-			do
-			{
-				[0x7F0000,idx] = acc
-				idx += 1
-				
-			}
-			loop idy == 0
-					
-			asm "ply"
-		}else
-		{
-			[0x7F0000,idx] = acc
-			idx += 1
-			
-		}	
-			
-		
-	}
-	loop idy == 0
-	
-	
-}
-
-
 
 funclib SNDK_LoadBG:uint16 ilist,uint16 ipx,uint16 ipy
 {
@@ -136,6 +9,7 @@ funclib SNDK_LoadBG:uint16 ilist,uint16 ipx,uint16 ipy
 	lib uint16 adr2,adrh2
 	lib uint16 adrc,adrhc
 	lib uint16 px,py
+	lib uint16 pos,add;
 	
 	MODE16
 	idx = ilist <<4
@@ -191,7 +65,9 @@ funclib SNDK_LoadBG:uint16 ilist,uint16 ipx,uint16 ipy
 	iadrh = adrh
 	if adrh != 0
 	{
-		call SNDK_UnpackBG:
+		call SNDK_LZ_BG:
+		//call SNDK_UnpackBG:
+		MODE16
 	}
 	
 	idx = $SNDK_BufferBG1
@@ -200,7 +76,9 @@ funclib SNDK_LoadBG:uint16 ilist,uint16 ipx,uint16 ipy
 	
 	if adrh2 != 0
 	{
-		call SNDK_UnpackBG:
+		call SNDK_LZ_BG:
+		//call SNDK_UnpackBG:
+		MODE16
 	}
 	
 	idx = $SNDK_BufferBGC
@@ -212,9 +90,6 @@ funclib SNDK_LoadBG:uint16 ilist,uint16 ipx,uint16 ipy
 	{
 		call SNDK_UnpackBGC:
 	}
-
-	lib uint16 pos,add;
-	
 	
 	MODE16
 	
@@ -326,13 +201,13 @@ funclib SNDK_LimitBG1:
 	
 	
 	tmp = SNDK_BG1_Scroll.x +256
-	if tmp >= SNDK_BG.w
+	if tmp >= 1024
 	{
 		SNDK_BG1_Scroll.x = SNDK_BG.w-256
 	}
 	
 	tmp = SNDK_BG1_Scroll.y +225
-	if tmp >= SNDK_BG.h
+	if tmp >= 1024
 	{
 		SNDK_BG1_Scroll.y = SNDK_BG.h-225
 	}

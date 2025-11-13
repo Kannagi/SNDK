@@ -42,4 +42,6 @@ typedef struct
 	unsigned short type,x, y;
 }TAG;
 
+void *sc16(void *data,int *size);
+
 void Load_TMX(TMX *tmx,char *address);

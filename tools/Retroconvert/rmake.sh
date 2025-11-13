@@ -6,6 +6,8 @@ exe_name:bin/retroconvert
 #command execute
 cmd_execute:cd bin && ./retroconvert ship.png -sfc
 
+#folder obj
+
 #file .c or .cpp or folder : main.c;test.c , src;core;
 add_folder:src
 
