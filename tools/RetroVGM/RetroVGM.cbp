@@ -24,7 +24,7 @@
 				<Option working_dir="bin/" />
 				<Option object_output="obj/mingw/" />
 				<Option type="0" />
-				<Option compiler="gcc" />
+				<Option compiler="mingw64__compiler" />
 			</Target>
 		</Build>
 		<Compiler>

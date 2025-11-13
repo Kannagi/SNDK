@@ -1,0 +1,268 @@
+
+
+	
+SKS_IO:
+	
+	mov a,PORT_1
+	cmp a,#0
+	bne +
+		ret
+	+:
+	
+	cmp a,#LKS_SPC_DATA
+	bne +
+		mov ZPD+0,ADDRL
+		mov ZPD+1,ADDRH
+		mov y,#0
+		-:
+		
+		mov a,PORT_2
+		mov [ZPD]+y,a
+		
+		inc y
+		mov a,PORT_3
+		mov [ZPD]+y,a
+
+		clrc
+		adc ZPD+0,#2
+		adc ZPD+1,#0
+		
+		inc PORT_0
+		
+		mov PORT_1,#0
+		--:
+			mov a,PORT_1
+			cmp a,#0
+		beq --
+		mov y,#0
+		
+		cmp a,#LKS_SPC_DATA
+		beq -
+		
+		mov ADDRL,ZPD+0
+		mov ADDRH,ZPD+1
+		
+		ret
+	+:
+	
+	cmp a,#LKS_SPC_ADDR
+	bne +
+		mov ADDRL,PORT_2
+		mov ADDRH,PORT_3
+		
+		inc PORT_0
+		ret
+	+:
+	
+	cmp a,#LKS_SPC_BRR_VOLUME
+	bne +
+		mov bvolume+0,PORT_2
+		mov bvolume+1,PORT_3
+
+		inc PORT_0
+		ret
+	+:
+	
+	cmp a,#LKS_SPC_PLAY
+	bne +
+		mov play,PORT_2
+		
+		inc PORT_0
+		ret
+	+:
+
+	cmp a,#LKS_SPC_BRR_PLAY78
+	bne +
+		
+		call !clear_voice
+		
+		mov x,#7
+		mov tmp,#$80
+		
+		mov a,PORT_2
+		call !brr_on
+		
+		mov x,#6
+		mov tmp,#$40
+		
+		mov a,PORT_3
+		call !brr_on
+		
+		inc PORT_0
+		ret
+	+:
+	
+	cmp a,#LKS_SPC_BRR_PLAY56
+	bne +
+		call !clear_voice
+		
+		mov x,#5
+		mov tmp,#$20
+		
+		mov a,PORT_2
+		call !brr_on
+		
+		mov x,#4
+		mov tmp,#$10
+		
+		mov a,PORT_3
+		call !brr_on
+
+		inc PORT_0
+		ret
+	+:
+
+	cmp a,#LKS_SPC_VOLUME
+	bne +
+		mov y,PORT_2
+		mov a,#MVOLL
+		movw REG_ADD,YA
+		
+		mov y,PORT_3
+		mov a,#MVOLR
+		movw REG_ADD,YA
+		
+		inc PORT_0
+		ret
+	+:
+	
+	cmp a,#LKS_SPC_BRR_PLAY_TEST
+	bne +
+		call !clear_voice
+		
+		mov a,PORT_3
+		mov srcn,a
+		call !select_index
+		
+		mov a,PORT_2
+		clrc
+		adc a,relativ
+		call !set_pitch
+		
+		mov x,#0
+		call !set_voice
+		
+		WDSP KON,$01
+		
+		inc PORT_0
+		ret
+	+:
+
+	cmp a,#LKS_SPC_BRR_PLAY
+	bne +
+		
+		call !clear_voice
+		
+		mov a,PORT_3
+		mov arg+0,a
+		
+		mov a,PORT_2
+		mov y,#$40
+		mul ya
+		
+		mov arg+6,a
+		mov arg+7,y
+		
+		mov x,#0
+		call !set_voice
+		
+		WDSP KON,$01
+		
+		inc PORT_0
+		ret
+	+:
+	
+	
+	;Read
+	cmp a,#LKS_SPC_TICKS
+	bne +
+		mov PORT_2,ticks
+		mov PORT_3,ticks+1
+		
+		inc PORT_0
+		ret
+	+:
+	
+	cmp a,#LKS_SPC_DEBUG
+	bne +
+		mov PORT_2,debug
+		mov PORT_3,debug+1
+		
+		inc PORT_0
+		ret
+	+:
+	
+	;Read
+	cmp a,#LKS_SPC_RADDR
+	bne +
+		mov PORT_2,ADDRL
+		mov PORT_3,ADDRH
+		
+		inc PORT_0
+		ret
+	+:
+	
+	cmp a,#LKS_SPC_RDATA
+	bne +
+		mov ZPD+0,ADDRL
+		mov ZPD+1,ADDRH
+		
+		mov y,#0
+		mov a,[ZPD]+y
+		mov PORT_2,a
+		
+		inc y
+		mov a,[ZPD]+y
+		mov PORT_3,a
+		
+		clrc
+		adc ADDRL,#1
+		adc ADDRH,#0
+		
+		inc PORT_0
+		ret
+	+:
+	
+	ret
+	
+brr_on:
+	cmp a,#$FF
+	bne +
+		ret
+	+:
+	clrc
+	adc a,#$20
+	mov arg+0,a
+	
+	mov a,#KOF
+	mov y,tmp
+	movw REG_ADD,YA
+	
+	call !set_voice
+	
+	mov a,#KOF
+	mov y,#0
+	movw REG_ADD,YA
+	
+	or bkof, tmp
+	
+	mov a,#KON
+	mov y,tmp
+	movw REG_ADD,YA
+		
+
+	ret
+	
+clear_voice:
+	mov arg+1,#$7F
+	mov arg+2,#$E0
+	mov arg+3,#$7F
+	
+	mov arg+4,bvolume
+	mov arg+5,bvolume+1
+	
+	;8000 Hz
+	mov arg+6,#$00
+	mov arg+7,#$04
+
+	ret

@@ -1,0 +1,100 @@
+
+
+SPC_RAM_Clear:
+
+	mov a,#$EF
+	mov y,a
+	mov a,#$00 
+	-:
+		mov !0+Y,a
+	dbnz y,-
+	mov 0,a
+	
+	mov time,#$40
+	
+	ret
+	
+
+SPC_Init:
+
+	mov y,#$0A
+	mov a,#TESTSPC
+	movw REG_ADD,YA
+	
+	mov y,#$F7
+	mov a,#ESA
+	movw REG_ADD,YA
+	
+	mov y,#$1
+	mov a,#EDL
+	movw REG_ADD,YA
+	
+	mov y,#$00
+	mov a,#FLG
+	movw REG_ADD,YA
+		
+	mov y,#0
+	mov a,#KON
+	movw REG_ADD,YA
+	
+	mov a,#PMON
+	movw REG_ADD,YA
+	
+	mov a,#NON
+	movw REG_ADD,YA
+	
+	mov a,#KOF
+	movw REG_ADD,YA
+	
+	
+	;echo
+	mov a,#EON
+	movw REG_ADD,YA
+	
+	mov a,#EFB
+	movw REG_ADD,YA
+	
+	mov a,#EVOLL
+	movw REG_ADD,YA
+	mov a,#EVOLR
+	movw REG_ADD,YA
+	
+	mov a,#FIRC0
+	movw REG_ADD,YA
+	mov a,#FIRC1
+	movw REG_ADD,YA
+	mov a,#FIRC2
+	movw REG_ADD,YA
+	mov a,#FIRC3
+	movw REG_ADD,YA
+	mov a,#FIRC4
+	movw REG_ADD,YA
+	mov a,#FIRC5
+	movw REG_ADD,YA
+	mov a,#FIRC6
+	movw REG_ADD,YA
+	mov a,#FIRC7
+	movw REG_ADD,YA
+	
+	mov y,#$7F
+	mov a,#MVOLL
+	movw REG_ADD,YA
+	mov a,#MVOLR
+	movw REG_ADD,YA
+	
+	;INIT
+	mov a,#0
+	mov PORT_0,a
+	mov PORT_1,a
+	mov PORT_2,a
+	mov PORT_3,a
+	
+
+	
+	WDSP DIR,(LKS_SPC_SPLDIR >> 8)
+
+	ret
+	
+	
+
+	
