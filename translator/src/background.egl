@@ -71,7 +71,7 @@ func demo_bg:
 		call SNDK_ScrollMultiBG: (SNDK_BG1SV | SNDK_BG1SH | SNDK_BG2SV | SNDK_BG2SH)
 		
 		
-		call: SNDK_Pause: 0xFF,0xFF
+		call SNDK_Pause: 0xFF,0xFF
 		
 		call SNDK_Fade: 6,fade
 		if acc == 1

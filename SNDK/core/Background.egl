@@ -244,3 +244,81 @@ funclib SNDK_LimitBG2:
 	
 	MODE8
 }
+
+
+
+funclib SNDK_UnpackBG:
+{
+	lib uint16 data,rle,data2
+	lib uint16 adr,adrh
+	
+	MODE16
+	idy = @adr
+	adr +=2
+	do
+	{
+		acc = @adr		
+		adr += 2
+		if acc &1
+		{
+			data = acc&0xFFFE
+			rle = @adr
+			adr += 1
+			idy -=1
+			
+			asm "phy"
+
+			idy = rle&0x3F
+			idy +=1
+			
+			if rle & 0x80  //rle2
+			{
+				data2 = data + 2
+				idy -=1
+				do
+				{
+					[0x7F0000,idx] = data
+					idx += 2
+					[0x7F0000,idx] = data2
+					idx += 2
+				}
+				loop idy == 0
+				
+			}else
+			{
+				if rle & 0x40  //rle inc
+				{
+					acc = data
+					do
+					{
+						[0x7F0000,idx] = acc
+						idx += 2
+						acc += 2
+					}
+					loop idy == 0
+					
+				}else
+				{
+					//rle
+					acc = data
+					do
+					{
+						[0x7F0000,idx] = acc
+						idx += 2
+					}
+					loop idy == 0
+					
+				}
+			}
+			asm "ply"
+		}else
+		{
+			[0x7F0000,idx] = acc
+			idx += 2
+		}	
+		
+		idy -=1	
+		
+	}
+	loop idy == 0
+}
