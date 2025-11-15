@@ -191,9 +191,15 @@ void VGM_Read_RICOH1(VGM vgm,unsigned char *buffer,char *outname,int pcm)
 				for(l = 0;l < 8;l++)
 				{
 					write = 0;
+					int old_inst = 0;
 					if(ricoh[l].inst != 0)
 					{
 						inst = ricoh[l].inst&0xFF;
+						//printf("%x,",inst);
+						old_inst = ricoh[l].inst;
+
+
+
 						write = 1;
 						ricoh[l].inst = 0;
 					}
@@ -221,7 +227,14 @@ void VGM_Read_RICOH1(VGM vgm,unsigned char *buffer,char *outname,int pcm)
 					{
 						vgm.size+=1;
 
-						command[nsize] = (write<<5) + (vgm.inst[inst]&0x1F);
+						int itmp = vgm.inst[inst]&0x1F;
+						command[nsize] = (write<<5) + itmp;
+
+						if(vgm.loop_start[itmp] == -1)
+						{
+							vgm.loop_start[itmp] = (old_inst>>8) - ( (old_inst&0xFF)<<8 );
+						}
+
 						//printf("%x,",command[nsize]&0x1F);
 						nsize += 1;
 
@@ -239,15 +252,18 @@ void VGM_Read_RICOH1(VGM vgm,unsigned char *buffer,char *outname,int pcm)
 
 						if(write & 0x4)
 						{
-							//int tmp = (float)(ricoh[l].pitch) * 1.01725f;
-							int tmp = ricoh[l].pitch<<1;
+							int tmp = (float)(ricoh[l].pitch) * 2.01725f;
 							command[nsize+0] = tmp;
 							command[nsize+1] = tmp>>8;
 							nsize += 2;
 							vgm.size+=2;
 						}
 
-						if(write & 0x01) ricoh[l].kon = 0;
+						if(write & 0x01)
+						{
+							ricoh[l].kon = 0;
+
+						}
 
 
 						command[0] |= 1<<l;
@@ -335,6 +351,45 @@ void VGM_Read_RICOH1(VGM vgm,unsigned char *buffer,char *outname,int pcm)
 
 	VGM_Print_size2(&vgm);
 
+	int offset = 0x4000;
+
+	fseek(file, 0, SEEK_SET);
+	for(i = 0;i < 32;i++) //loop
+	{
+
+
+		double ratio = (double)vgm.loop_start[i]/(double)vgm.lenght[i];
+		//----------------
+		int length = vgm.lenghtbrr[i];
+		int loop_start = (double)vgm.lenghtbrr[i]*ratio;
+
+		int padding = loop_start%9;
+
+		loop_start = loop_start-padding;
+		if(loop_start < 9) loop_start = 0;
+
+		fputc(offset,file);
+		fputc(offset>>8,file);
+
+
+
+
+		if(loop_start >= length)
+		{
+			fputc(2,file);
+			fputc(2,file);
+		}else
+		{
+			fputc(offset+loop_start,file);
+			fputc(offset+loop_start>>8,file);
+		}
+
+
+		offset += length;
+
+		//printf("%d :: (%f) vl:%d , vls:%d , l:%d ls:%d\n",i ,ratio,vgm.lenght[i],vgm.loop_start[i],length,loop_start);
+
+	}
 	fseek(file, 0x80+0x1E, SEEK_SET);
 	fputc(vgm.sizet[10],file);
 	fputc(vgm.sizet[10]>>8,file);

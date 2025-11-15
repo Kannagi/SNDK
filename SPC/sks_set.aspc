@@ -4,8 +4,8 @@
 set_inst:
 	cmp a,#$1F
 	bne +
-		mov REG_ADD, #KOF
-		or REG_DATA,ckon
+		;mov REG_ADD, #KOF
+		;or REG_DATA,ckon
 		
 		mov a,tkof
 		or a,schannel

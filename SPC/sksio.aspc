@@ -7,6 +7,47 @@ SKS_IO:
 		ret
 	+:
 	
+	cmp a,#LKS_SPC_BRR_PLAY78
+	bne +
+		
+		call !clear_voice
+		
+		mov x,#7
+		mov tmp,#$80
+		
+		mov a,PORT_2
+		call !brr_on
+		
+		mov x,#6
+		mov tmp,#$40
+		
+		mov a,PORT_3
+		call !brr_on
+		
+		inc PORT_0
+		ret
+	+:
+	
+	cmp a,#LKS_SPC_BRR_PLAY56
+	bne +
+		call !clear_voice
+		
+		mov x,#5
+		mov tmp,#$20
+		
+		mov a,PORT_2
+		call !brr_on
+		
+		mov x,#4
+		mov tmp,#$10
+		
+		mov a,PORT_3
+		call !brr_on
+
+		inc PORT_0
+		ret
+	+:
+	
 	cmp a,#LKS_SPC_DATA
 	bne +
 		mov y,#0
@@ -56,47 +97,6 @@ SKS_IO:
 	bne +
 		mov play,PORT_2
 		
-		inc PORT_0
-		ret
-	+:
-
-	cmp a,#LKS_SPC_BRR_PLAY78
-	bne +
-		
-		call !clear_voice
-		
-		mov x,#7
-		mov tmp,#$80
-		
-		mov a,PORT_2
-		call !brr_on
-		
-		mov x,#6
-		mov tmp,#$40
-		
-		mov a,PORT_3
-		call !brr_on
-		
-		inc PORT_0
-		ret
-	+:
-	
-	cmp a,#LKS_SPC_BRR_PLAY56
-	bne +
-		call !clear_voice
-		
-		mov x,#5
-		mov tmp,#$20
-		
-		mov a,PORT_2
-		call !brr_on
-		
-		mov x,#4
-		mov tmp,#$10
-		
-		mov a,PORT_3
-		call !brr_on
-
 		inc PORT_0
 		ret
 	+:

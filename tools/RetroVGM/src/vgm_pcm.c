@@ -33,7 +33,7 @@ int VGM_data_pcm_ricoh(int i,unsigned char *buffer,VGM *vgm,int wr,FILE *file)
 	i+=2;
 	size = buffer[i] + (buffer[i+1]<<8)  + (buffer[i+2]<<16)  + (buffer[i+3]<<24);
 
-	int offset = 0x4000,tsize = 0,len,isample = 1,n = 0;
+	int offset = 0x4000,tsize = 0,len,isample = 0,n = 0;
 	vgm->inst[0] = 0;
 
 	size_pcm = 0;
@@ -54,10 +54,8 @@ int VGM_data_pcm_ricoh(int i,unsigned char *buffer,VGM *vgm,int wr,FILE *file)
 			else
 				buffer_pcm[tsize] = 0x80-tmp;
 
-
-
-			size_pcm++;
 			tsize++;
+			size_pcm++;
 		}
 		else
 		{
@@ -65,14 +63,14 @@ int VGM_data_pcm_ricoh(int i,unsigned char *buffer,VGM *vgm,int wr,FILE *file)
 			{
 				//    savebrr( str    ,data      ,sleng,s,0,0,2);
 				len = savebrr("SP.brr",buffer_pcm,tsize,0,0,0,2);
-				fputc(offset,file);
-				fputc(offset>>8,file);
-				fputc(offset,file);
-				fputc(offset>>8,file);
 				offset += len;
 				tsize = 0;
 
-				vgm->inst[l>>8] = isample;
+				vgm->lenghtbrr[isample] = len;
+				vgm->inst[l>>8] = isample+1;
+				vgm->lenght[isample] = size_pcm;
+				size_pcm = 0;
+
 				isample++;
 				n++;
 
@@ -80,29 +78,26 @@ int VGM_data_pcm_ricoh(int i,unsigned char *buffer,VGM *vgm,int wr,FILE *file)
 			}
 			begin = 1;
 		}
+
+
 	}
 
 	if(tsize > 0)
 	{
 		len = savebrr("SP.brr",buffer_pcm,tsize,0,0,0,2);
-		fputc(offset,file);
-		fputc(offset>>8,file);
-		fputc(offset,file);
-		fputc(offset>>8,file);
+
 		offset += len;
 		tsize = 0;
+
+		vgm->lenghtbrr[isample] = len;
+		vgm->inst[size>>8] = isample+1;
+		vgm->lenght[isample] = size_pcm;
+
+		isample++;
 		n++;
 	}
 
-	n = 32 - n;
-	for(i = 0;i < n;i++) //padding
-	{
-		fputc(2,file);
-		fputc(2,file);
-		fputc(2,file);
-		fputc(2,file);
-	}
-
+	fseek(file, 0x80, SEEK_SET);
 
 	//Header :
 	for(i = 0;i < 16;i++) //flg,non,efb,eon,evoll,evollr ,firc0-c7

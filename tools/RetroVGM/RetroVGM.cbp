@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="RetroVGM" />
+		<Option title="VGM" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
@@ -23,8 +23,14 @@
 				<Option output="bin/retrovgm" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin/" />
 				<Option object_output="obj/mingw/" />
-				<Option type="0" />
-				<Option compiler="mingw64__compiler" />
+				<Option type="1" />
+				<Option compiler="mingw64" />
+				<Compiler>
+					<Add option="-O3" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
 			</Target>
 		</Build>
 		<Compiler>

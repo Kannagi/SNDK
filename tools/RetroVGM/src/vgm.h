@@ -27,7 +27,10 @@ typedef struct
 	int loopsample,rate,data,YM2608,YM2610,RF5C68,RF5C164;
 	int size;
 	int sizet[12];
-	int inst[0xFF];
+	int inst[0x100];
+	int lenght[0x100];
+	int loop_start[0x100];
+	int lenghtbrr[0x100];
 
 	int port0[0x100],port1[0x100];
 	unsigned char spc700[17],adsr1[32],adsr2[32],gain[32];

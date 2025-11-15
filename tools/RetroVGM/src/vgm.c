@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 	}
 
 	//RICOH (SNES)
-	if( (vgm.RF5C68 != 0) | (vgm.RF5C164 != 0) )
+	if(vgm.RF5C68 != 0)
 	{
 
 		VGM_Read_RICOH1(vgm,buffer,outname,sizepcm);
@@ -151,6 +151,13 @@ void VGM_Init(VGM *vgm)
 		vgm->adsr1[l] = 0x7F;
 		vgm->adsr2[l] = 0xE0;
 		vgm->gain[l]  = 0x3F;
+	}
+
+	for(l = 0;l < 0x100;l++)
+	{
+		vgm->lenght[l] = 0;
+		vgm->lenghtbrr[l] = 0;
+		vgm->loop_start[l]  = -1;
 	}
 }
 

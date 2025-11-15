@@ -309,7 +309,7 @@ ldx #MUSIC_TRACK1
 stx @LKS_SPC_SetData..arg0
 ldx #:MUSIC_TRACK1
 stx @LKS_SPC_SetData..arg1
-ldx #8192
+ldx #14336
 stx @LKS_SPC_SetData..arg2
 jsr LKS_SPC_SetData
 ;call LKS_SPC_Set2

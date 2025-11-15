@@ -27,13 +27,13 @@ LIB_BIN = $(LIB)
 LDFLAGS_BIN = $(LDFLAGS) -s
 OBJDIR_BIN = obj
 DEP_BIN = 
-OUT_BIN = bin/VGM
+OUT_BIN = bin/retrovgm
 
 OBJ_BIN = $(OBJDIR_BIN)/src/brr.o $(OBJDIR_BIN)/src/load_file.o $(OBJDIR_BIN)/src/vgm.o $(OBJDIR_BIN)/src/vgm_cmd.o $(OBJDIR_BIN)/src/vgm_delay.o $(OBJDIR_BIN)/src/vgm_pcm.o $(OBJDIR_BIN)/src/vgm_read.o $(OBJDIR_BIN)/src/vgm_read_ricoh_v1.o
 
-all: bin
+all: bin bin__windows_
 
-clean: clean_bin
+clean: clean_bin clean_bin__windows_
 
 before_bin: 
 	test -d bin || mkdir -p bin
