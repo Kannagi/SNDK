@@ -323,19 +323,30 @@ rts
 main:
 	jsr	CSNDK_FORCED_BLANK
 	jsr	CSNDK_Init
-	ldx	#100
-	stx @_sndk_arg1
-	ldx	#2
-	stx @_sndk_arg2
-	ldy	#0
-	sty @_sndk_arg3
-	stx @_sndk_arg4
-	sty @_sndk_arg5
-	sty @_sndk_arg6
-	jsr	SNDK_PrintNumber8
+	ldx	#0
+	stx	20
+	jmp	.LBB0_3
 .LBB0_1:
+	ldx	20
+	inx
+.LBB0_2:
+	stx	20
+	stx @_sndk_arg1
+	ldy	#2
+	sty @_sndk_arg2
+	ldx	#0
+	stx @_sndk_arg3
+	sty @_sndk_arg4
+	stx @_sndk_arg5
+	stx @_sndk_arg6
+	jsr	SNDK_PrintNumber8
 	jsr	SNDK_WaitVBlank
-	jmp	.LBB0_1
+.LBB0_3:
+	jsr	CSNDK_JOYPAD1A
+	tax
+	bne	.LBB0_1
+	ldx	20
+	jmp	.LBB0_2
 .Lfunc_end0:
 
 .org  $7FB0

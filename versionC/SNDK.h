@@ -9,3 +9,8 @@ void SNDK_PrintNumber8(void);
 
 void CSNDK_FORCED_BLANK(void);
 void CSNDK_Init(void);
+
+uint8_t CSNDK_JOYPAD1A(void);
+uint8_t CSNDK_JOYPAD1B(void);
+uint8_t CSNDK_JOYPAD1AN(void);
+uint8_t CSNDK_JOYPAD1BN(void);
