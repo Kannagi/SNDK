@@ -1,0 +1,129 @@
+.include "header.aspc"
+
+
+Main:
+
+	bra +
+	.db $00,$00,$00,$00,$00,$00,$00,$00,$00
+	.db "Super Kannagi Sound 1.0.0"
+	+:
+	
+	mov x,#$FC
+	mov sp,x
+	;di
+	
+	call !SPC_Init
+	call !SPC_RAM_Clear
+	
+	Loop:
+		mov TIMER_0,$F0 ; $8 = 1 ms / $F0 = 30 ms
+		mov CONTROL,#$01 ; TIMER0 Start
+				
+		call !sks_play
+		
+		;Ticks SNES (30ms)
+		-:			
+			call !SKS_IO
+			
+			mov a,COUNTER_0
+		beq -
+		
+	jmp !Loop
+
+	.include "init.aspc" 
+	.include "sksio.aspc"
+
+	.include "sks_set.aspc"
+	.include "sks_play.aspc"
+
+
+;----------------------------------------------------------
+.org $500
+
+;SFX
+.dw  $8000
+.dw  $0200
+.dw  $8400
+.dw  $0200
+.dw  $8800
+.dw  $0200
+.dw  $8C00
+.dw  $0200
+
+.dw  $9000
+.dw  $0200
+.dw  $9400
+.dw  $0200
+.dw  $9800
+.dw  $0200
+.dw  $9C00
+.dw  $0200
+
+.dw  $A000
+.dw  $0200
+.dw  $A400
+.dw  $0200
+.dw  $A800
+.dw  $0200
+.dw  $AC00
+.dw  $0200
+
+.dw  $B000
+.dw  $0200
+.dw  $B400
+.dw  $0200
+.dw  $B800
+.dw  $0200
+.dw  $BC00
+.dw  $0200
+
+.dw  $C000
+.dw  $0200
+.dw  $C400
+.dw  $0200
+.dw  $C800
+.dw  $0200
+.dw  $CC00
+.dw  $0200
+
+.dw  $D000
+.dw  $0200
+.dw  $D400
+.dw  $0200
+.dw  $D800
+.dw  $0200
+.dw  $DC00
+.dw  $0200
+
+.dw  $E000
+.dw  $0200
+.dw  $E400
+.dw  $0200
+.dw  $E800
+.dw  $0200
+.dw  $EC00
+.dw  $0200
+
+.dw  $F000
+.dw  $0200
+.dw  $F400
+.dw  $0200
+.dw  $F800
+.dw  $0200
+.dw  $FC00
+.dw  $0200
+
+;directory sample
+
+/*
+RAM/IO : 0x000 - 0x200
+PRG : 0x0200 - 0x0700
+DIR : 0x0700 - 0x087F
+header : 0x0880 - 0x08FF
+track : 0x900 - 0x3FFF
+Sample : 0x4000 - 0xFFBF
+
+64 sfx
+32 sample for music
+
+*/

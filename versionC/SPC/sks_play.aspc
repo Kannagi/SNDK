@@ -1,0 +1,273 @@
+
+sks_play_track:
+
+	mov schannel,a
+
+	and a,kon
+	cmp a,schannel
+	beq +
+		ret
+	+:
+	
+	mov a,[track]+y
+	mov key,a
+	inc y
+	
+	;Volume
+	mov a,key
+	and a,#$40
+	cmp a,#$40
+	bne +
+		mov a,[track]+y
+		mov tmp+0,a
+		inc y
+		
+		mov a,[track]+y
+		mov tmp+1,a
+		inc y
+		
+		call !set_volume
+	+:
+	
+	;Pitch
+	mov a,key
+	and a,#$80
+	cmp a,#$80
+	bne +
+		mov a,[track]+y
+		mov tmp+0,a
+		inc y
+		
+		mov a,[track]+y
+		mov tmp+1,a
+		inc y
+		
+		call !set_pitch
+	+:
+	
+	;Inst
+	mov a,key
+	and a,#$20
+	cmp a,#$20
+	bne +
+		mov a,key
+		and a,#$1F
+		
+		call !set_inst
+	+:
+	
+	ret
+
+.MACRO SKS_TRACK_PLAY
+
+	;KON
+	mov a,#0
+	mov tkon,a
+	mov tkof,a
+	
+	mov y,#0
+	mov a,[track]+y
+	mov kon,a
+	inc y
+	
+	;Channel 1
+	mov schannelx,#$00
+	mov a,#$01
+	call !sks_play_track
+
+	;Channel 2
+	mov schannelx,#$10
+	mov a,#$02
+	call !sks_play_track
+
+	;Channel 3
+	mov schannelx,#$20
+	mov a,#$04
+	call !sks_play_track
+
+	;Channel 4
+	mov schannelx,#$30
+	mov a,#$08
+	call !sks_play_track
+	
+	;Channel 5
+	mov schannelx,#$40
+	mov a,#$10
+	call !sks_play_track
+	
+	;Channel 6
+	mov schannelx,#$50
+	mov a,#$20
+	call !sks_play_track
+	
+	;Channel 7
+	mov schannelx,#$60
+	mov a,#$40
+	call !sks_play_track
+	
+	;Channel 8
+	mov schannelx,#$70
+	mov a,#$80
+	call !sks_play_track
+
+	;inc track
+	mov tmp+0,y
+	clrc
+	adc track+0,tmp+0
+	adc track+1,#0
+	
+	mov a,tkon
+	cmp a,#$0
+	beq +
+		SPC700 KON,tkon
+	+:
+	
+	;mov a,tkof
+	;cmp a,#$0
+	;beq +
+		
+	;+:
+	
+	
+	
+	
+.ENDM
+
+sks_play:
+
+	;STOP
+	mov a,play
+	cmp a,#$FF
+	bne +
+		WDSP KOF,$FF
+		
+		mov play,#0
+	+:
+	
+	;PAUSE
+	mov a,play
+	bne +
+		ret
+	+:
+	
+	;REPLAY
+	cmp a,#$02
+	bne +
+		
+		mov a,#0
+		mov ticks,a
+		mov ticks+1,a
+		
+		mov first,a
+		mov play,#1
+		
+	+:
+	
+	cmp first,#0
+	bne +
+		mov first,#1
+		call !sks_header
+	+:
+
+	;WDSP KOF,$00
+	SPC700 KOF,tkof
+	;------------------
+	SKS_TRACK_PLAY
+	
+	;-------------
+	incw ticks
+	
+	movw ya,emusic+0
+	cmpw ya,ticks+0
+	bne +
+		mov play,#2
+	+:
+	
+	ret
+
+sks_header:
+	
+	
+	mov y,!SKSHEADER+0
+	mov a,#FLG
+	movw REG_ADD,YA
+	
+	;ECHO
+	mov y,!SKSHEADER+1
+	mov a,#EFB
+	movw REG_ADD,YA
+	
+	mov y,!SKSHEADER+2
+	mov a,#EON
+	movw REG_ADD,YA
+	
+	mov y,!SKSHEADER+3
+	mov a,#NON
+	movw REG_ADD,YA
+	
+	mov y,!SKSHEADER+4
+	mov a,#PMON
+	movw REG_ADD,YA
+	
+	mov y,!SKSHEADER+5
+	mov a,#EVOLR
+	movw REG_ADD,YA
+	
+	mov y,!SKSHEADER+6
+	mov a,#EVOLL
+	movw REG_ADD,YA
+	
+	mov y,!SKSHEADER+7
+	mov a,#FIRC0
+	movw REG_ADD,YA
+	
+	mov y,!SKSHEADER+8
+	mov a,#FIRC1
+	movw REG_ADD,YA
+	
+	mov y,!SKSHEADER+9
+	mov a,#FIRC2
+	movw REG_ADD,YA
+	
+	mov y,!SKSHEADER+10
+	mov a,#FIRC3
+	movw REG_ADD,YA
+	
+	mov y,!SKSHEADER+11
+	mov a,#FIRC4
+	movw REG_ADD,YA
+	
+	mov y,!SKSHEADER+12
+	mov a,#FIRC5
+	movw REG_ADD,YA
+	
+	mov y,!SKSHEADER+13
+	mov a,#FIRC6
+	movw REG_ADD,YA
+	
+	mov y,!SKSHEADER+14
+	mov a,#FIRC7
+	movw REG_ADD,YA
+	
+	mov y,!SKSHEADER+15
+	mov a,#ESA
+	movw REG_ADD,YA
+	
+	mov y,!SKSHEADER+16
+	mov a,#EDL
+	movw REG_ADD,YA
+	
+	mov a,!SKSHEADER+30
+	mov emusic+0,a
+	mov a,!SKSHEADER+31
+	mov emusic+1,a
+	
+	
+	
+	mov a,#$0
+	mov track+0,a
+	mov a,#$9
+	mov track+1,a
+	
+	ret
+	

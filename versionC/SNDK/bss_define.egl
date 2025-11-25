@@ -1,0 +1,566 @@
+
+.bss 0x2100
+//SNES PPU
+uint8 INIDISP;
+uint8 OBJSEL;
+uint16 OAMADD;
+uint8 OAMDATA;
+uint8 BGMODE;
+uint8 MOSAIC;
+uint8 BG1SC;
+uint8 BG2SC;
+uint8 BG3SC;
+uint8 BG4SC;
+uint8 BG12NBA;
+uint8 BG34NBA;
+uint8 BG1H0FS;
+uint8 BG1V0FS;
+uint8 BG2H0FS;
+uint8 BG2V0FS;
+uint8 BG3H0FS;
+uint8 BG3V0FS;
+uint8 BG4H0FS;
+uint8 BG4V0FS;
+uint8 VMAINC;
+uint16 VMADD;
+uint16 VMDATA;
+uint8 M7SEL;
+uint8 M7A;
+uint8 M7B;
+uint8 M7C;
+uint8 M7D;
+uint8 M7X;
+uint8 M7Y;
+uint8 CGADD;
+uint8 CGDATA;
+uint8 W12SEL;
+uint8 W34SEL;
+uint8 WOBJSEL;
+uint8 WH0;
+uint8 WH1;
+uint8 WH2;
+uint8 WH3;
+uint8 WBGLOG;
+uint8 WOBJLOG;
+uint8 TM;
+uint8 TS;
+uint8 TMW;
+uint8 TSW;
+uint8 CGSWSEL;
+uint8 CGADSUB;
+uint8 COLDATA;
+uint8 SETINI;
+uint8 MPYL;
+uint8 MPYM;
+uint8 MPYH;
+uint8 SLHV;
+
+uint8 OAMDATAREAD;
+uint8 VMDATALREAD;
+uint8 VMDATAHREAD;
+uint8 CGDATAREAD;
+
+uint8 OPHCT;
+uint8 OPVCT;
+uint8 STAT77;
+uint8 STAT78;
+
+uint8 APUIO0;
+uint8 APUIO1;
+uint8 APUIO2;
+uint8 APUIO3;
+
+//WRAM
+.bss 0x2180
+uint8 WMDATA;
+uint16 WMADD;
+uint8 WMADDH;
+
+.bss 0x4016
+uint8 JOYSER0;
+uint8 JOYSER1;
+
+.bss 0x4200
+//SNES IO
+uint8 NMITIMEN;
+uint8 WRIO;
+uint8 WRMPYA;
+uint8 WRMPYB;
+
+uint8 WRDIVL;
+uint8 WRDIVH;
+uint8 WRDIVB;
+uint8 HTIMEL;
+
+uint8 HTIMEH;
+uint8 VTIMEL;
+uint8 VTIMEH;
+uint8 MDMAEN;
+
+uint8 HDMAEN;
+uint8 MEMSEL;
+
+uint8 MEMSEL1;
+uint8 MEMSEL2;
+
+uint8 RDNMI;
+uint8 TIMEUP;
+uint8 HVBJOY;
+uint8 RDIO;
+
+uint8 RDDIVL;
+uint8 RDDIVH;
+uint8 RDMPYL;
+uint8 RDMPYH;
+uint8 STDCONTROL1L;
+uint8 STDCONTROL1H;
+uint8 STDCONTROL2L;
+uint8 STDCONTROL2H;
+uint8 STDCONTROL3L;
+uint8 STDCONTROL3H;
+uint8 STDCONTROL4L;
+uint8 STDCONTROL4H;
+
+//DMA 0
+.bss 0x4300
+uint8 DMA_0;
+uint8 DMA_BADD_0; //1
+uint16 DMA_ADD_0; //2-3
+uint8 DMA_BANK_0; //4
+uint16 DMA_SIZE_0; //5-6
+
+uint8 HDMA_BANK_0; //7
+uint16 HDMA_ADD_0; //8-9
+uint8 HDMA_LINE_0; //A
+
+//DMA 1
+.bss 0x4310
+uint8 DMA_1;
+uint8 DMA_BADD_1;
+uint16 DMA_ADD_1;
+uint8 DMA_BANK_1;
+uint16 DMA_SIZE_1;
+
+uint8 HDMA_BANK_1;
+uint16 HDMA_ADD_1;
+uint8 HDMA_LINE_1;
+
+
+//DMA 2
+.bss 0x4320
+uint8 DMA_2;
+uint8 DMA_BADD_2;
+uint16 DMA_ADD_2;
+uint8 DMA_BANK_2;
+uint16 DMA_SIZE_2;
+
+uint8 HDMA_BANK_2;
+uint16 HDMA_ADD_2;
+uint8 HDMA_LINE_2;
+
+.bss 0x4330
+uint8 DMA_3;
+uint8 DMA_BADD_3;
+uint16 DMA_ADD_3;
+uint8 DMA_BANK_3;
+uint16 DMA_SIZE_3;
+
+uint8 HDMA_BANK_3;
+uint16 HDMA_ADD_3;
+uint8 HDMA_LINE_3;
+
+.bss 0x4340
+uint8 DMA_4;
+uint8 DMA_BADD_4;
+uint16 DMA_ADD_4;
+uint8 DMA_BANK_4;
+uint16 DMA_SIZE_4;
+
+uint8 HDMA_BANK_4;
+uint16 HDMA_ADD_4;
+uint8 HDMA_LINE_4;
+
+.bss 0x4350
+uint8 DMA_5;
+uint8 DMA_BADD_5;
+uint16 DMA_ADD_5;
+uint8 DMA_BANK_5;
+uint16 DMA_SIZE_5;
+
+uint8 HDMA_BANK_5;
+uint16 HDMA_ADD_5;
+uint8 HDMA_LINE_5;
+
+.bss 0x4360
+uint8 DMA_6;
+uint8 DMA_BADD_6;
+uint16 DMA_ADD_6;
+uint8 DMA_BANK_6;
+uint16 DMA_SIZE_6;
+
+uint8 HDMA_BANK_6;
+uint16 HDMA_ADD_6;
+uint8 HDMA_LINE_6;
+
+.bss 0x4370
+uint8 DMA_7;
+uint8 DMA_BADD_7;
+uint16 DMA_ADD_7;
+uint8 DMA_BANK_7;
+uint16 DMA_SIZE_7;
+
+uint8 HDMA_BANK_7;
+uint16 HDMA_ADD_7;
+uint8 HDMA_LINE_7;
+
+//------------------------------------------------------------
+
+.bss 0x7E4000
+uint8 SNDK_BufferSPR3 0x2000;
+uint8 SNDK_BufferSPR4 0x2000;
+
+uint8 SNDK_BufferSPR5 0x2000;
+uint8 SNDK_BufferSPR6 0x2000;
+uint8 SNDK_BufferSPR7 0x2000;
+
+.bss 0x7EE000
+uint8 SNDK_OAM0.x;
+uint8 SNDK_OAM0.y;
+uint8 SNDK_OAM0.t;
+uint8 SNDK_OAM0.a;
+
+uint8 SNDK_OAM1.x;
+uint8 SNDK_OAM1.y;
+uint8 SNDK_OAM1.t;
+uint8 SNDK_OAM1.a;
+
+uint8 SNDK_OAM2.x;
+uint8 SNDK_OAM2.y;
+uint8 SNDK_OAM2.t;
+uint8 SNDK_OAM2.a;
+
+uint8 SNDK_OAM3.x;
+uint8 SNDK_OAM3.y;
+uint8 SNDK_OAM3.t;
+uint8 SNDK_OAM3.a;
+
+uint8 SNDK_OAML 0x1F0;
+uint8 SNDK_OAMH 0x20;
+
+uint8  SNDK.cpu,SNDK.mcpu,SNDK.pcpu;
+uint8  SNDK.clockf,SNDK.clocks,SNDK.clockm,SNDK.clockh;
+uint8 SNDK_SFX_TIMER;
+uint16 SNDK_vrand,SNDK.count_pal;
+uint8 SNDK_Light,SNDK_TM,SNDK_AlphaMode,SNDK_BGNBA,SNDK_TIMER,SNDK_BGMODE;
+
+uint16 SNDK_ZBUFFER 0x18
+uint16 SNDK_ZBUFFER_OUT 0x18
+
+uint8 SNDK_SFX1;
+uint8 SNDK_SFX2;
+uint8 SNDK_SFX3;
+uint8 SNDK_SFX4;
+
+uint8 SNDK_BG1_Scroll.x;
+uint8 SNDK_BG1_Scroll.x2;
+	
+uint8 SNDK_BG1_Scroll.y;
+uint8 SNDK_BG1_Scroll.y2;
+	
+uint8 SNDK_BG2_Scroll.x;
+uint8 SNDK_BG2_Scroll.x2;
+	
+uint8 SNDK_BG2_Scroll.y;
+uint8 SNDK_BG2_Scroll.y2;
+
+uint16 SNDK_BG_Scroll.addy;
+uint16 SNDK_BG_Scroll.addx;
+
+//---------------------SPRITE ENGINE----------------------------
+uint16 SNDK_SPRITE.x;
+uint16 SNDK_SPRITE.y;
+uint16 SNDK_SPRITE.vx;
+uint16 SNDK_SPRITE.vy;
+
+uint8 SNDK_SPRITE.t;
+uint8 SNDK_SPRITE.a;
+uint16 SNDK_SPRITE.list;
+uint16 SNDK_SPRITE.visible;
+uint16 SNDK_SPRITE.index;
+
+//0x10
+uint16 SNDK_SPRITE.mode
+uint16 SNDK_SPRITE.ianim;
+uint16 SNDK_SPRITE.offsetx
+uint16 SNDK_SPRITE.offsety
+
+uint16 SNDK_SPRITE.oam;
+uint8 SNDK_SPRITE.flag
+uint8 SNDK_SPRITE.eanim
+
+uint8 SNDK_SPRITE.draw
+uint8 SNDK_SPRITE.bank
+uint8 SNDK_SPRITE.add
+
+uint8 SNDK_SPRITE (0x400);
+
+
+
+uint8 SNDK_ZORDER 0x80
+//--------------------------------------
+uint8 SNDK_BUF_BG1.v 0x40;
+uint8 SNDK_BUF_BG2.v 0x40;
+
+uint16 SNDK_BUF_BG1.h1;
+uint16 SNDK_BUF_BG1.h2;
+
+uint16 SNDK_BUF_BG2.h1;
+uint16 SNDK_BUF_BG2.h2;
+
+uint16 SNDK_BG.w;
+uint16 SNDK_BG.h;
+
+
+uint16 SNDK_Bullet.x 0x80;
+uint16 SNDK_Bullet.y 0x80;
+uint16 SNDK_Bullet.vx 0x80;
+uint16 SNDK_Bullet.vy 0x80;
+uint8 SNDK_Bullet.t;
+uint8 SNDK_Bullet.a 0x100;
+uint16 SNDK_Bullet.id 0x80;
+
+uint16 SNDK_Bullet.usable1  0x80;
+uint16 SNDK_Bullet.usable2  0x80;
+
+
+uint8 SNDK_BG3.t1;
+uint8 SNDK_BG3.t2 0x800;
+
+uint8 SNDK_PALBG0 0x20;
+uint8 SNDK_PALBG1 0x20;
+uint8 SNDK_PALBG2 0x20;
+uint8 SNDK_PALBG3 0x20;
+
+uint8 SNDK_PALBG4 0x20;
+uint8 SNDK_PALBG5 0x20;
+uint8 SNDK_PALBG6 0x20;
+uint8 SNDK_PALBG7 0x20;
+
+uint8 SNDK_PALSPR0 0x20;
+uint8 SNDK_PALSPR1 0x20;
+uint8 SNDK_PALSPR2 0x20;
+uint8 SNDK_PALSPR3 0x20;
+
+uint8 SNDK_PALSPR4 0x20;
+uint8 SNDK_PALSPR5 0x20;
+uint8 SNDK_PALSPR6 0x20;
+uint8 SNDK_PALSPR7 0x20;
+
+
+.bss 0x7F0000
+uint8 SNDK_BufferBG2 0x4000;
+uint8 SNDK_BufferBG1 0x4000;
+uint8 SNDK_BufferBGC 0x2000;
+uint8 SNDK_BufferSPR1 0x3000;
+uint8 SNDK_BufferSPR2 0x3000;
+
+.bss 0x100
+uint8 SNDK_MEMSET;
+uint8 SNDK_UNK1;
+uint8 SNDK_UNK2;
+uint8 SNDK_SPC_SYNC;
+
+.bss 0xD0
+uint8 SNDK_SPR_SIZE;
+uint8 SNDK_SPR_SIZET;
+uint8 SNDK_SPR_SIZE2;
+uint8 SNDK_SPR_SIZET2;
+
+uint8 SNDK_SPR_DEC;
+uint8 SNDK_SPR_DEC2;
+.bss 0x7E0200
+uint8 SNDK_RAM;
+
+.bss 0xE0
+uint8 _sndk_arg1
+uint8 _sndk_arg2
+uint8 _sndk_arg3
+uint8 _sndk_arg4
+uint8 _sndk_arg5
+uint8 _sndk_arg6
+uint8 _sndk_arg7
+
+uint8 _sndk_arg8
+uint8 _sndk_arg9
+uint8 _sndk_arg10
+uint8 _sndk_arg11
+uint8 _sndk_arg12
+uint8 _sndk_arg13
+uint8 _sndk_arg14
+//--------------
+
+.define SNDK_BG_SCROLL_UP 0x00
+.define SNDK_BG_SCROLL_DOWN 0x1C0
+.define SNDK_BG_SCROLL_LEFT 0x00
+.define SNDK_BG_SCROLL_RIGHT 0x10
+
+
+.macro SNDK_SpriteEngineSetList
+	idx= .arg1;
+	
+	asm "rep #$20"
+	[SNDK_SPRITE.list,idx] = $.arg2:;
+	asm "sep #$20"
+	
+	[SNDK_SPRITE.t,idx] = .arg3;
+	[SNDK_SPRITE.a,idx] = .arg4 | 0x20;
+.endmacro
+
+.macro SNDK_SPR_META
+	SNDK_SPR_SIZE = .arg1;
+	SNDK_SPR_SIZET = (.arg1>>3);
+	SNDK_SPR_SIZE2 = .arg2;
+	SNDK_SPR_SIZET2 = (.arg2>>3);
+	
+	SNDK_SPR_DEC   = (.arg1<<1);
+	SNDK_SPR_DEC2 = (.arg2<<1);
+.endmacro
+
+
+.define SNDK_BG1SV 0x04
+.define SNDK_BG1SH 0x08
+.define SNDK_BG2SV 0x01
+.define SNDK_BG2SH 0x02
+
+.define SNDK_BG1 0x01
+.define SNDK_BG2 0x02
+.define SNDK_BG3 0x04
+.define SNDK_BG4 0x08
+.define SNDK_OBJ 0x10
+
+.define OAM_YFLIP 0x80
+.define OAM_XFLIP 0x40
+.define OAM_PRIO0 0x00
+.define OAM_PRIO1 0x10
+.define OAM_PRIO2 0x20
+.define OAM_PRIO3 0x30
+.define OAM_PAL0 0x00
+.define OAM_PAL1 0x02
+.define OAM_PAL2 0x04
+.define OAM_PAL3 0x06
+.define OAM_PAL4 0x08
+.define OAM_PAL5 0x0A
+.define OAM_PAL6 0x0C
+.define OAM_PAL7 0x0E
+.define OAM_TILE 0x01
+
+.define OAM_SIZE 0xAA
+
+.define SNDK_PAD_B 0x80
+.define SNDK_PAD_Y 0x40
+.define SNDK_PAD_START 0x10
+.define SNDK_PAD_SELECT 0x20
+.define SNDK_PAD_UP 0x08
+.define SNDK_PAD_DOWN 0x04
+.define SNDK_PAD_LEFT 0x02
+.define SNDK_PAD_RIGHT 0x01
+
+.define SNDK_PAD_A 0x80
+.define SNDK_PAD_X 0x40
+.define SNDK_PAD_L 0x20
+.define SNDK_PAD_R 0x10
+
+.define SNDK_MODE1  0x39 // BG 1 & 2 16x16, BG 3 8x8,mode 1 , BG 3 pri
+.define SNDK_MODE7  0x07
+
+.define SNDK_FONTPAL0 0x20
+.define SNDK_FONTPAL1 0x24
+.define SNDK_FONTPAL2 0x28
+.define SNDK_FONTPAL3 0x2C
+
+//0,2,6, $6000 address Sprite
+.define SNDK_SPR_8_16    0x03 
+.define SNDK_SPR_8_32    0x23
+.define SNDK_SPR_16_32  0x63
+
+.define FORCED_BLANK INIDISP = 0x80
+
+.define MODE8   asm "sep #$20";
+.define MODE16 asm "rep #$20";
+
+
+.define SAVEX   asm "phx";
+.define RESTOREX asm "plx";
+
+.define SAVEY   asm "phy";
+.define RESTOREY asm "ply";
+
+.define SPR_INDEX_0 0x00
+.define SPR_INDEX_1 0x20
+.define SPR_INDEX_2 0x40
+.define SPR_INDEX_3 0x60
+
+.define SPR_INDEX_4 0x80
+.define SPR_INDEX_5 0xA0
+.define SPR_INDEX_6 0xC0
+.define SPR_INDEX_7 0xE0
+
+.define SPR_INDEX_8 0x100
+.define SPR_INDEX_9 0x120
+.define SPR_INDEX_10 0x140
+.define SPR_INDEX_11 0x160
+
+.define SPR_INDEX_12 0x180
+.define SPR_INDEX_13 0x1A0
+.define SPR_INDEX_14 0x1C0
+.define SPR_INDEX_15 0x1E0
+
+
+.define SPR_INDEX_S0 0x200
+.define SPR_INDEX_S1 0x220
+.define SPR_INDEX_S2 0x240
+.define SPR_INDEX_S3 0x260
+
+.define SPR_INDEX_S4 0x280
+.define SPR_INDEX_S5 0x2A0
+.define SPR_INDEX_S6 0x2C0
+.define SPR_INDEX_S7 0x2E0
+
+.define SPR_INDEX_S8 0x300
+.define SPR_INDEX_S9 0x320
+.define SPR_INDEX_S10 0x340
+.define SPR_INDEX_S11 0x360
+
+.define SPR_INDEX_S12 0x380
+.define SPR_INDEX_S13 0x3A0
+.define SPR_INDEX_S14 0x3C0
+.define SPR_INDEX_S15 0x3E0
+
+//------------------SPC---------------
+.define SNDK_SPC_VOLUME	0x10
+.define SNDK_SPC_PLAY  	0x12
+.define SNDK_SPC_ADDR	0x14
+.define SNDK_SPC_DATA	0x16
+
+.define SNDK_SPC_RDATA	0x18
+.define SNDK_SPC_TICKS	0x1A
+.define SNDK_SPC_DEBUG	0x1C
+.define SNDK_SPC_RADDR	0x1E
+
+.define SNDK_SPC_BRR_VOLUME	0x20
+.define SNDK_SPC_BRR_PLAY		0x22
+.define SNDK_SPC_BRR_PLAY_TEST 	0x24
+.define SNDK_SPC_BRR_PLAY76	0x26
+.define SNDK_SPC_BRR_PLAY54	0x28
+.define SNDK_SPC_SVOLUME	0x30
+
+.define SNDK_SPC_STOP 	0xFF
+.define SNDK_SPC_ON 	0x01
+.define SNDK_SPC_REPLAY	0x02
+.define SNDK_SPC_PAUSE 0x00
+
+
+
+
+
+.bss 0x7E2000

@@ -1,0 +1,19 @@
+asm "
+main:
+	jsr	CSNDK_FORCED_BLANK
+	jsr	CSNDK_Init
+	ldx	#100
+	stx @_sndk_arg1
+	ldx	#2
+	stx @_sndk_arg2
+	ldy	#0
+	sty @_sndk_arg3
+	stx @_sndk_arg4
+	sty @_sndk_arg5
+	sty @_sndk_arg6
+	jsr	SNDK_PrintNumber8
+.LBB0_1:
+	jsr	SNDK_WaitVBlank
+	jmp	.LBB0_1
+.Lfunc_end0:
+";

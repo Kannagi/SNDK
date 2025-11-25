@@ -1,0 +1,49 @@
+
+.macro SNES_HEADER
+//ROM Header
+.data.s "SUPER STORM BUSTER  ";
+//      "12345678901234567890"
+.data.b 0x30; //0x20 2.68 MHz / 0x30 3.58 MHz
+.data.b 0x00; //ROM only . 1 : ROM+RAM / 2 ROM+RAM+battery / 0x30 SA1
+.data.b 0x09; //ROM size 1<<x kio  / 9 : 512 KB / A :1MB / B : 2MB / C : 4MB
+.data.b 0x00; //RAM size 16<<(x-1) kio
+.data.b 0x01; //0 = japan, 1 = usa , 2 = europe
+.data.b 0x00; //ID extension
+.data.b 0x00; //VERSION
+.data.w 0x00; //checksum+
+.data.w 0x00; //checksum-
+
+
+//65816 vector
+.data.l 0x00; //unused
+.data.w SNES_ERROR; //COP
+.data.w SNES_ERROR; //BRK
+.data.w SNES_ERROR; //ABORT
+.data.w VBlank; //NMI
+.data.w 0x00; //RESET
+.data.w SNES_IRQHV; //IRQ
+
+//6502 vector
+.data.l 0x00; //unused
+.data.w SNES_ERROR; //COP
+.data.w 0x00; //
+.data.w SNES_ERROR; //ABORT
+.data.w VBlank; //NMI
+.data.w _start; //RESET
+.data.w SNES_IRQHV; //IRQBRK
+.endmacro
+
+.macro SNES_BANK
+
+.org (0x8000*.arg1)
+.rodata  ( 0x808000 +  0x10000*.arg1 )
+
+.endmacro
+
+//config
+.map.func 0x200
+.map.funcspm 0xF0
+.map.funclib 0xE0
+.map.spm 0x00
+.map.lib 0x80
+//0xD0 Register no use

@@ -1,0 +1,128 @@
+
+funclib SNDK_wramcopy: uint16 dstl, uint8 dstb, uint16 srcl, uint8 srcb, uint16 size
+{
+	MODE16
+	WMADD = dstl
+	DMA_ADD_6 = srcl
+	DMA_SIZE_6 = size
+	MODE8
+	
+	WMADDH = dstb
+	DMA_BANK_6 = srcb
+	
+	MDMAEN = 0x40
+}
+
+
+SNDK_str_pause:
+.data.s "PAUSE"
+
+func SNDK_Pause:uint8 sfx1,uint8 sfx2
+{
+	if SNDK_Joypad.npad1h & SNDK_PAD_START
+	{
+
+		SNDK_Joypad.npad1h = 0
+		SNDK_SFX1 = sfx1
+	}else
+	{
+		if SNDK_Joypad.npad2h & SNDK_PAD_START
+		{
+
+			SNDK_Joypad.npad2h = 0
+			SNDK_SFX1 = sfx1
+		}else
+		{
+			return
+		}
+	}
+	
+	call SNDK_PrintLine: $SNDK_str_pause:,#SNDK_str_pause:,14,13,SNDK_FONTPAL0;
+	do
+	{
+		
+		if SNDK_Joypad.npad1h & SNDK_PAD_START
+		{
+			SNDK_SFX1 = sfx2
+			call SNDK_PrintLineErase: 14,13,5
+			return
+		}
+		
+		if SNDK_Joypad.npad2h & SNDK_PAD_START
+		{
+			SNDK_SFX1 = sfx2
+			call SNDK_PrintLineErase: 13,13,5
+			return
+		}
+		
+		call SNDK_SFX_Engine: 3
+		call SNDK_WaitVBlank:
+	}
+	while 1
+
+}
+
+funclib SNDK_Fade: uint8 ncount , uint8 dirf 
+{
+	uint8 count
+	
+	if dirf == 0xFF
+	{
+		return 2
+	}
+	
+	if dirf != 0
+	{
+		//Fade 15 --> 0
+		if SNDK_Light == 0
+		{
+			return 1
+		}
+	}else
+	{
+		//Fade 0 --> 15
+		if SNDK_Light == 0xF
+		{
+			return 1
+		}
+	}
+	
+	count += 1
+	
+	if count == ncount
+	{
+		if dirf == 0
+		{
+			SNDK_Light += 1
+		}else
+		{
+			SNDK_Light -= 1
+		}
+		
+		count = 0
+	}
+	
+	return 0
+}
+
+funclib rand:
+{
+	MODE16
+	acc = SNDK_vrand
+	
+	acc = acc << 5
+	acc ^= acc
+	
+	acc = acc >> 6
+	acc ^= acc
+	
+	acc = acc << 2
+	acc ^= acc
+	
+	SNDK_vrand = acc
+	MODE8
+
+	
+}
+	
+

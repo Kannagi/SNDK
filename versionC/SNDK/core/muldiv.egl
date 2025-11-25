@@ -1,0 +1,94 @@
+/*
+ *  codebase64.org
+ *  by White Flame 2003-02-07
+ */
+
+func higueul_mul:
+{
+	asm "
+	
+	;lda #0
+	beq .higueul_stdlib_mul_enterLoop
+
+	.higueul_stdlib_mul_doAdd:
+	clc
+	adc 214
+
+	.higueul_stdlib_mul_loop:
+	asl 214
+	.higueul_stdlib_mul_enterLoop:
+	lsr 216
+	bcs .higueul_stdlib_mul_doAdd
+	bne .higueul_stdlib_mul_loop
+
+	";
+}
+
+// div by Kannagi
+func higueul_div:
+{
+    lib uint8 tmp 0x20
+    lib uint8 result,a,b,b1,b2,b3,b4,b5,b6,b7
+    result = 0
+	a = [214]
+	b = [216]
+	
+    acc = b
+    b1 = acc << 1
+    b2 = acc << 1
+    b3 = acc << 1
+    b4 = acc << 1
+    b5 = acc << 1
+    b6 = acc << 1
+    b7 = acc << 1
+
+    if a >=  b7 
+    {
+        a -=  b7
+        result += 128
+    }
+    
+    if a >=  b6 
+    {
+        a -=  b6
+        result += 64
+    }
+    
+    if a >=  b5 
+    {
+        a -=  b5
+        result += 32
+    }
+    
+    if a >=  b4 
+    {
+        a -=  b4
+        result += 16
+    }
+    
+    if a >=  b3 
+    {
+        a -=  b3
+        result += 8
+    }
+    
+    if a >=  b2 
+    {
+        a -=  b2
+        result += 4
+    }
+    
+    if a >=  b1 
+    {
+        a -=  b1
+        result += 2
+    }
+    
+    if a >=  b 
+    {
+        a -=  b
+        result += 1
+    }
+    return result
+}
+

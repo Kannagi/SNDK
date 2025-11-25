@@ -1,0 +1,184 @@
+
+
+.macro SNDK_PRINT
+
+	MODE16
+	idx = .arg2 << 6
+	acc = .arg1 <<1
+	idx += acc;
+	MODE8
+	
+	[SNDK_BG3.t1,idx] = .arg3
+	[SNDK_BG3.t2,idx] = .arg4
+
+.endmacro
+
+.macro SNDK_memcopy
+
+	idy =  $.arg1; 
+	WMADD = idy;
+	WMADDH = #.arg1;
+	
+	DMA_BANK_6 = #.arg2:;
+	
+	idy = $.arg2:;
+	DMA_ADD_6 = idy;
+	
+	idy = .arg3;
+	DMA_SIZE_6 = idy;
+	
+	MDMAEN = 0x40;
+
+.endmacro
+
+.macro SNDK_memcopy_offset
+
+	asm "rep #$20"
+	WMADD = $.arg1
+	DMA_SIZE_6 = .arg3
+	
+	DMA_ADD_6 = $.arg2: + .arg4
+	asm "sep #$20"
+	
+	
+	
+	WMADDH = #.arg1
+	DMA_BANK_6 = #.arg2:
+	
+	MDMAEN = 0x40;
+
+.endmacro
+
+.macro SNDK_memset
+
+	idy =  $.arg1;
+	WMADD = idy;
+	WMADDH = #.arg1;
+	
+	DMA_BANK_7 = #.arg2:;
+	
+	idy = $.arg2:;
+	DMA_ADD_7 = idy;
+	
+	idy = .arg3;
+	DMA_SIZE_7 = idy;
+	
+	MDMAEN = 0x80; 
+
+.endmacro
+
+.macro  SNDK_SendOAM
+
+	idy = 0;
+	OAMADD = idy;
+	
+	DMA_BANK_4 =  0x7E;
+	
+	idy = $SNDK_OAM0.x;
+	DMA_ADD_4 = idy;
+	
+	idy =  0x220;
+	DMA_SIZE_4 = idy;
+	
+	MDMAEN = 0x10;
+.endmacro
+
+.macro  SNDK_SendVRAM
+
+	idy =  .arg1;
+	VMADD = idy;
+	
+	DMA_BANK_0 =  #.arg2:;
+	
+	idy =  $.arg2:;
+	DMA_ADD_0 = idy;
+	
+	idy =  .arg3;
+	DMA_SIZE_0 = idy;
+	
+	MDMAEN = 1;
+.endmacro
+
+.macro SNDK_SendCGRAM
+
+	CGADD = .arg1;
+	
+	DMA_BANK_5 = #.arg2:;
+	
+	idy = $.arg2:;
+	DMA_ADD_5 = idy;
+	
+	idy = .arg3;
+	DMA_SIZE_5 = idy;
+	
+	MDMAEN = 0x20;
+
+.endmacro
+
+
+.macro SNDK_AddDec
+	asm "sed"
+	acc = .arg1 + .arg2
+	asm "cld"
+.endmacro
+
+
+.macro SNDK_SubDec
+	asm "sed"
+	acc = .arg1 - .arg2
+	asm "cld"
+.endmacro
+
+
+.macro SNDK_AddDec2
+
+	[0x106] = .arg3
+	asm "sed"
+	.arg1 = .arg1 + .arg2
+	asm "
+	lda $106
+	adc #0
+	cld"
+.endmacro
+
+
+.macro SNDK_SubDec2
+
+	[0x106] = .arg3
+	asm "sed"
+	.arg1 = .arg1 - .arg2
+	asm "
+	sbc $106
+	cld"
+.endmacro
+
+.macro SNDK_MUL
+	WRMPYA = .arg1
+	WRMPYB = .arg2
+	
+	asm "
+	nop
+	nop
+	nop
+	nop
+	"
+	idx = RDMPYL
+.endmacro
+
+.macro SNDK_DIV
+	idx = .arg1
+	WRDIVL = idx
+	WRDIVB = .arg2
+	
+	asm "
+	nop
+	nop
+	nop
+	nop
+	
+	nop
+	nop
+	nop
+	"
+	idx = RDDIVL
+.endmacro

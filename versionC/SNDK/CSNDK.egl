@@ -1,0 +1,33 @@
+
+
+func CSNDK_FORCED_BLANK:
+{
+	FORCED_BLANK
+}
+
+func CSNDK_Init:
+{
+	//asm "rep #$10"
+	TM = 0x1F
+	SNDK_Light = 0x1F
+}
+
+func CSNDK_JOYPAD1A:
+{
+	return SNDK_Joypad.pad1l
+}
+
+func CSNDK_JOYPAD1B:
+{
+	return SNDK_Joypad.pad1h
+}
+
+func CSNDK_JOYPAD1AN:
+{
+	return SNDK_Joypad.npad1l
+}
+
+func CSNDK_JOYPAD1BN:
+{
+	return SNDK_Joypad.npad1h
+}

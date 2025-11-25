@@ -1,3 +1,5 @@
+#define uint16 unsigned short
+#define uint8 unsigned char
 
 void SNDK_LZ_VRAM( uint16 nlabel)
 {

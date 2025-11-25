@@ -1,0 +1,215 @@
+
+
+.macro MC_SNDK_SpriteEngineDrawModeTile
+	
+
+	if attribute & OAM_XFLIP
+	{
+		acc = .arg1&0xF
+		tmpx = acc <<4
+		
+		tmpy =  .arg1&0xF0
+		MODE16
+		acc = posx - tmpx
+		if acc & 0xFF00
+		{
+			MODE8
+			.arg3 |= .arg4
+		}
+		MODE8
+		[SNDK_OAM0.x,idx] = posx - tmpx;
+	}
+	else
+	{
+		MODE16
+		acc = .arg1&0xF
+		tmpx = acc
+		acc = 5 - tmpx
+		tmpx = acc <<4
+		tmpx -= 0x40
+		
+		acc = posx - tmpx
+		if acc & 0xFF00
+		{
+			MODE8
+			.arg3 |= .arg4
+		}
+		MODE8
+		tmpy =  .arg1&0xF0
+		
+		
+		[SNDK_OAM0.x,idx] = posx - tmpx;
+	}
+	
+	if .arg1 == 0xFF
+	{
+		[SNDK_OAM0.y,idx] = 0xE0;
+	}
+	else
+	{
+		[SNDK_OAM0.y,idx] = posy + tmpy;
+	}
+	
+	
+	[SNDK_OAM0.t,idx] = tile + .arg2;
+	[SNDK_OAM0.a,idx] = attribute;
+	
+	
+	idx += 4
+
+	
+.endmacro
+
+//-------------
+
+funclib SNDK_SpriteEngineDrawModeTile:
+{
+	lib uint16 posx,posy
+	lib uint8 tile,attribute,draw,draw2;
+	lib uint16 posxh,indexh;
+	lib uint16 fptr,oldx;
+	
+	lib uint8 ctile1,ctile2,ctile3,ctile4
+	lib uint8 ctile5,ctile6,ctile7,ctile8
+	lib uint8 ctile9,ctile10,ctile11,ctile12
+	lib uint8 ctile13,ctile14,ctile15,ctile16
+	
+	lib uint16 tmpx,tmpy
+	lib uint16 list
+	lib uint8 flag1,flag2,flag3,flag4
+	
+	MODE16
+	
+	acc = posx
+	if acc & 0x2000
+	{
+		if acc < 0x3F80
+		{
+			asm "rts"
+		}
+	}
+	else
+	{
+		if acc >= 0x180
+		{
+			asm "rts"
+		}
+	}
+
+	
+	tmpx = 0
+	idx = oldx
+	list = [SNDK_SPRITE.add,idx]>>7
+	acc = [SNDK_SPRITE.bank,idx]&0xF
+	acc = acc << 8
+	list += acc
+	
+	[SNDK_SPRITE.visible,idx]  = 1
+	idx = SNDK_Sprite.oam;
+	indexh = idx>>4;
+	
+	SNDK_Sprite.oam += 0x40;	
+	
+	
+	MODE8
+	
+	flag1 = 0
+	flag2 = 0
+	flag3 = 0
+	flag4 = 0
+	
+	SAVEX
+	idx = list
+	
+	ctile1 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	ctile2 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	ctile3 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	ctile4 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	ctile5 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	ctile6 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	ctile7 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	ctile8 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	ctile9 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	ctile10 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	ctile11 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	ctile12 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	ctile13 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	ctile14 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	ctile15 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	ctile16 = [SPRITE_TILE:,idx]
+	idx+=1
+	
+	RESTOREX
+	
+	
+	MC_SNDK_SpriteEngineDrawModeTile ctile1,0,flag1,0x01
+	MC_SNDK_SpriteEngineDrawModeTile ctile2,2,flag1,0x04
+	MC_SNDK_SpriteEngineDrawModeTile ctile3,4,flag1,0x10
+	MC_SNDK_SpriteEngineDrawModeTile ctile4,6,flag1,0x40
+	
+	MC_SNDK_SpriteEngineDrawModeTile ctile5,8,flag2,0x01
+	MC_SNDK_SpriteEngineDrawModeTile ctile6,10,flag2,0x04
+	MC_SNDK_SpriteEngineDrawModeTile ctile7,12,flag2,0x10
+	MC_SNDK_SpriteEngineDrawModeTile ctile8,14,flag2,0x40
+	
+	MC_SNDK_SpriteEngineDrawModeTile ctile9,0x20,flag3,0x01
+	MC_SNDK_SpriteEngineDrawModeTile ctile10,0x22,flag3,0x04
+	MC_SNDK_SpriteEngineDrawModeTile ctile11,0x24,flag3,0x10
+	MC_SNDK_SpriteEngineDrawModeTile ctile12,0x26,flag3,0x40
+	
+	MC_SNDK_SpriteEngineDrawModeTile ctile13,0x28,flag4,0x01
+	MC_SNDK_SpriteEngineDrawModeTile ctile14,0x2A,flag4,0x04
+	MC_SNDK_SpriteEngineDrawModeTile ctile15,0x2C,flag4,0x10
+	MC_SNDK_SpriteEngineDrawModeTile ctile16,0x2E,flag4,0x40
+	
+	
+	idx = indexh
+	[SNDK_OAMH,idx] = flag1;
+	idx+=1
+	
+	[SNDK_OAMH,idx] = flag2;
+	idx+=1
+	
+	[SNDK_OAMH,idx] = flag3;
+	idx+=1
+	
+	[SNDK_OAMH,idx] = flag4;
+	
+	
+	MODE16
+	
+	asm "rts"
+	
+}
+
+MODE8

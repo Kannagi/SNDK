@@ -1,0 +1,168 @@
+
+
+;-------------------------------------------------------------------------------
+set_inst:
+	cmp a,#$1F
+	bne +
+		;mov REG_ADD, #KOF
+		;or REG_DATA,ckon
+		
+		mov a,tkof
+		or a,schannel
+		mov tkof,a
+		
+		ret
+	+:
+	
+	mov tmp,a
+
+	push y
+	
+	mov y,#$3
+	mul ya
+	
+	mov y,a
+	
+	mov a,!SKSINDEX+0+y
+	mov arg+1,a
+	
+	mov a,!SKSINDEX+1+y
+	mov arg+2,a
+	
+	mov a,!SKSINDEX+2+y
+	mov arg+3,a
+	
+	
+	clrc
+	mov a,tmp
+	adc a,#$40
+	mov arg+0,a
+	
+	
+	mov a,schannelx
+	inc a
+	inc a
+	inc a
+	
+	;SRCN
+	inc a
+	mov y,arg+0
+	movw REG_ADD,YA
+	
+	;ADSR1
+	inc a
+	mov y,arg+1
+	movw REG_ADD,YA
+	
+	;ADSR2
+	inc a
+	mov y,arg+2
+	movw REG_ADD,YA
+	
+	;GAIN
+	inc a
+	mov y,arg+3
+	movw REG_ADD,YA
+	
+	mov a,tkon
+	or a,schannel
+	mov tkon,a
+
+	;SPC700 KON,schannel
+	
+	pop y
+
+	ret
+	
+	
+set_volume:
+	
+	push y
+	
+	mov a,schannelx
+
+	;VOLL
+	mov y,tmp+0
+	movw REG_ADD,YA
+
+	;VOLR
+	inc a
+	mov y,tmp+1
+	movw REG_ADD,YA
+	
+	pop y
+	
+	ret
+	
+	
+set_pitch:
+	
+	push y
+	
+	mov a,schannelx
+	inc a
+
+	;PITCHL
+	inc a
+	mov y,tmp+0
+	movw REG_ADD,YA
+	
+	;PITCHH
+	inc a
+	mov y,tmp+1
+	movw REG_ADD,YA
+	
+	pop y
+	
+	ret
+
+set_voice:
+
+	mov a,x
+	
+	mov y,#$10
+	mul ya
+
+	;VOLL
+	mov y,arg+4
+	movw REG_ADD,YA
+
+	;VOLR
+	inc a
+	mov y,arg+5
+	movw REG_ADD,YA
+	
+	;PITCHL
+	inc a
+	mov y,arg+6
+	movw REG_ADD,YA
+	
+	;PITCHH
+	inc a
+	mov y,arg+7
+	movw REG_ADD,YA
+
+	;SRCN
+	inc a
+	mov y,arg+0
+	movw REG_ADD,YA
+	
+	;ADSR1
+	inc a
+	mov y,arg+1
+	movw REG_ADD,YA
+	
+	;ADSR2
+	inc a
+	mov y,arg+2
+	movw REG_ADD,YA
+	
+	;GAIN
+	inc a
+	mov y,arg+3
+	movw REG_ADD,YA
+	
+	ret
+
+
+

@@ -1,4 +1,8 @@
 
+
+
+
+
 proc main:
 {
 	FORCED_BLANK
@@ -14,8 +18,6 @@ proc main:
 	
 	uint8 fade
 	fade = 0
-	
-	
 	
 	do
 	{

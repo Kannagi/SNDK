@@ -1,0 +1,119 @@
+
+.macro MC_SNDK_SpriteEngineDrawMode0
+	
+	[SNDK_SPRITE.visible,idx]  = 0
+	
+	
+	acc = posy + 0xC020;
+	if acc & 0x3F00
+	{
+		SNDK_Sprite.oam += 0x4;	
+		asm "rts"
+	}
+	
+	acc = posx + 0xC000;
+	acc += tmp
+	if acc ?= 0
+	{
+		acc = SNDK_Sprite.oam>>2
+		tmp = acc&3
+		
+		if tmp == 0
+		{
+			posxh |= 0x01;
+		}
+		
+		if tmp == 1
+		{
+			posxh |= 0x04;
+		}
+		
+		if tmp == 2
+		{
+			posxh |= 0x10;
+		}
+		
+		if tmp == 3
+		{
+			posxh |= 0x40;
+		}
+		
+
+	}else
+	{
+		acc -= tmp;
+		if acc & 0x3F00
+		{
+			SNDK_Sprite.oam += 0x4;	
+			asm "rts"
+		}
+	}	
+	draw = [SNDK_SPRITE.draw,idx] 
+	[SNDK_SPRITE.visible,idx]  = 1
+	acc = SNDK_Sprite.oam;
+	idx = acc
+	indexh = acc>>4;
+	
+	
+	MODE8
+	
+	if draw != 0
+	{
+		MODE16
+		SNDK_Sprite.oam += 0x4;
+		asm "rts"
+		MODE8
+	}
+	
+	
+	[SNDK_OAM0.x,idx] = posx;
+	[SNDK_OAM0.y,idx] = posy;
+	[SNDK_OAM0.t,idx] = tile;
+	[SNDK_OAM0.a,idx] = attribute;
+	
+	
+	[SNDK_OAMH,indexh] |= posxh;
+.endmacro
+
+
+proc SNDK_SpriteEngineDrawMode0:
+{
+	lib uint16 posx,posy;
+	lib uint8 tile,attribute,draw,draw2;
+	lib uint16 posxh,indexh;
+	lib uint16 tmp,oldx;
+	
+	MODE16
+	
+	tmp = SNDK_SPR_SIZE&0xFF
+	idx = oldx
+	
+	posxh = [SNDK_SPRITE.flag,idx]
+	
+	MC_SNDK_SpriteEngineDrawMode0
+	
+	MODE16
+	SNDK_Sprite.oam += 0x4;	
+	asm "rts"
+}
+
+proc SNDK_SpriteEngineDrawMode0z:
+{
+	lib uint16 posx,posy;
+	lib uint8 tile,attribute,draw,draw2;
+	lib uint16 posxh,indexh;
+	lib uint16 tmp,oldx;
+	
+	MODE16
+	
+	tmp = SNDK_SPR_SIZE2&0xFF
+	idx = oldx
+	
+	posxh = [SNDK_SPRITE.flag,idx] |  0xAA
+	
+	MC_SNDK_SpriteEngineDrawMode0
+	
+	MODE16
+	SNDK_Sprite.oam += 0x4;	
+	asm "rts"
+}
