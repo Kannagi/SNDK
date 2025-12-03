@@ -259,13 +259,17 @@ funclib SNDK_UnpackBGC:
 	MODE8
 	do
 	{
-		acc = @adr		
+		acc = @adr	
+		MODE16	
 		adr += 1
+		MODE8
 		if acc & 0x80
 		{
 			data = acc&0x7F
 			rle = @adr
+			MODE16
 			adr += 1
+			MODE8
 			idy -= 1
 			
 			asm "phy"
